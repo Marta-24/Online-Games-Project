@@ -1,0 +1,46 @@
+@@ -0,0 +1,45 @@
+# This ignores the library and build folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+
+# User-specific files
+[Tt]rash/
+*.userprefs
+*.sln
+*.suo
+*.csproj
+*.pidb
+*.user
+*.unityproj
+*.booproj
+
+# Visual Studio cache
+.vscode/
+.vs/
+*.csproj
+*.userprefs
+*.sln
+*.suo
+
+# Unity3D Generated Files
+[Dd]ebug/
+[Rr]elease/
+[Aa]ssets/AssetStoreTools*
+
+# Backup & temp files
+*.tmp
+*.bak
+*.swp
+*.swm
+*.swo
+*.temp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore any other specific files or folders you don't want to track
