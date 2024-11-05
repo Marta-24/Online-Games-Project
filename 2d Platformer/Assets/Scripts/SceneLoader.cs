@@ -5,11 +5,11 @@ public class SceneLoader : MonoBehaviour
 {
     public void LoadSceneClient(string Client)
     {
-        SceneManager.LoadScene("Client");
+        SceneManager.LoadScene("ClientScene");
     }
     public void LoadSceneServer(string Server)
     {
-        SceneManager.LoadScene("Server");
+        SceneManager.LoadScene("ServerScene");
     }
     public void LoadSceneMainMenu(string MainMenu)
     {
