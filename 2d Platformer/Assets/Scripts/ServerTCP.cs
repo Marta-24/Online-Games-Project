@@ -14,6 +14,13 @@ using System.IO;
 
 namespace Scripts
 {
+    public enum CommandMessage : int
+    {
+        FirstMessage = 0,
+        StartGame = 1,
+        UpdatePosition = 2,
+    }
+
     public class User
     {
         public string Name;
@@ -90,7 +97,7 @@ namespace Scripts
 
         async void Receive(Socket sock)
         {
-            
+
             byte[] data = new byte[1024];
 
             int res = sock.Receive(data);
@@ -105,7 +112,7 @@ namespace Scripts
             Thread answer = new Thread(() => Send(user.Socket));
             answer.Start();
         }
-        
+
         public void OnDataReceived(IAsyncResult state)
         {
             Debug.Log("sending ping");
@@ -123,26 +130,41 @@ namespace Scripts
             Debug.Log("data Send and recieved");
         }
 
-        void SerializePos()
+        public void ReceivePosition()
         {
-            var t = new testClass();
-            t.pos = new List<int> { 10, 3 };
-            string json = JsonUtility.ToJson(t);
-            stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(json);
-        }
+            Debug.Log("starting receive");
+            byte[] data_ = new byte[1024];
 
-        void DeserializePos()
-        {
-            var t = new testClass();
-            BinaryReader reader = new BinaryReader(stream);
-            stream.Seek(0, SeekOrigin.Begin);
+            User user = _clientSockets.Find(x => x.Socket != null);
 
-            string json = reader.ReadString();
-            Debug.Log(json);
-            t = JsonUtility.FromJson<testClass>(json);
-            Debug.Log(t.pos.ToString());
+            if (user.Socket != null)
+            {
+                Debug.Log("socket works!");
+                user.Socket.Receive(data_);
+                Debug.Log("data received" + data_);
+
+                MemoryStream _stream = new MemoryStream();
+                _stream.Write(data_, 0, data_.Length);
+                Debug.Log(data_.Length);
+
+                var t = new testClass();
+                BinaryReader reader = new BinaryReader(_stream);
+                
+
+                
+                //stream.Seek(0, SeekOrigin.Begin);
+                
+                //string json = reader.ReadString();
+                //Debug.Log(json);
+                //t = JsonUtility.FromJson<testClass>(json);
+                //Debug.Log(t);
+            }
+            else
+            {
+                Debug.Log("it didn't work");
+            }
+
+
         }
     }
 }

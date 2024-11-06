@@ -15,6 +15,7 @@ namespace Scripts
 
     public class testClass
     {
+        public int comand = 1;
         public List<int> pos = new List<int> { 3, 3 };
     }
 
@@ -38,13 +39,15 @@ namespace Scripts
         {
             if (goToSampleScene == true)
             {
-                SceneManager.LoadScene(sceneName: "GameScene");
+                //SceneManager.LoadScene(sceneName: "GameScene");
             }
 
-            if (SceneManager.GetActiveScene().name == "GameScene")
+            if (goToSampleScene == true)
             {
                 if (serializeTry)
                 {
+                    //SendPosition();
+
                     //Serialize shit
                     //SerializePos();
                     //DeserializePos();
@@ -91,26 +94,55 @@ namespace Scripts
             goToSampleScene = true;
         }
 
-        void SerializePos()
+        public void SendPosition() // This is a test
         {
             var t = new testClass();
+            t.comand = 2;
             t.pos = new List<int> { 10, 3 };
+
             string json = JsonUtility.ToJson(t);
+
             stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
             writer.Write(json);
+
+            byte[] data_ = new byte[stream.ToString().Length];
+            data_ = Encoding.ASCII.GetBytes(stream.ToString());
+            Debug.Log(data_);
+
+            server.Send(data_);
+
+            ReceiveTest(stream.ToString());
         }
 
-        void DeserializePos()
+        public void ReceiveTest(string data)
         {
+            Debug.Log("starting receive");
+            byte[] data_ = new byte[data.Length];
+
+            data_ = Encoding.ASCII.GetBytes(data.ToString());
+
+
+
+
+            MemoryStream _stream = new MemoryStream();
+            _stream.Write(data_, 0, data_.Length);
+            Debug.Log(data_.Length);
+
             var t = new testClass();
-            BinaryReader reader = new BinaryReader(stream);
+            BinaryReader reader = new BinaryReader(_stream);
+
+
+
             stream.Seek(0, SeekOrigin.Begin);
 
             string json = reader.ReadString();
             Debug.Log(json);
             t = JsonUtility.FromJson<testClass>(json);
-            Debug.Log(t.pos.ToString());
+            Debug.Log(t);
+
+
+
         }
     }
 }
