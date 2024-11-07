@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Required for scene management
+using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -14,5 +14,9 @@ public class SceneLoader : MonoBehaviour
     public void LoadSceneMainMenu(string MainMenu)
     {
         SceneManager.LoadScene("MainMenu");
+    }
+    public void LoadSceneWaitingRoom(string WaitingRoom)
+    {
+        SceneManager.LoadScene("WaitingRoom");
     }
 }

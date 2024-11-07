@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System;
 
 namespace Scripts
 {
@@ -37,9 +38,10 @@ namespace Scripts
 
         void Update()
         {
-            if (goToSampleScene == true)
+            if (goToSampleScene)
             {
-                //SceneManager.LoadScene(sceneName: "GameScene");
+                SceneManager.LoadScene("WaitingRoom");
+                goToSampleScene = false;
             }
 
             if (goToSampleScene == true)
@@ -92,6 +94,17 @@ namespace Scripts
             recv = server.Receive(data);
             Debug.Log("data recieved: " + Encoding.ASCII.GetString(data));
             goToSampleScene = true;
+            CommandMessage command = (CommandMessage)BitConverter.ToInt32(data, 0);
+
+            if (command == CommandMessage.FirstMessage)
+            {
+                goToSampleScene = true;
+            }
+            else if (command == CommandMessage.StartGame)
+            {
+                Debug.Log("StartGame command received.");
+                SceneManager.LoadScene("Scene1");
+            }
         }
 
         public void SendPosition() // This is a test

@@ -52,8 +52,19 @@ namespace Scripts
 
         string serverText;
 
-        void Start()
+        public void StartGame()
         {
+            foreach (User client in _clientSockets)
+            {
+                SendCommand(client.Socket, CommandMessage.StartGame);
+            }
+        }
+
+        void SendCommand(Socket socket, CommandMessage command)
+        {
+            byte[] data = BitConverter.GetBytes((int)command);
+            socket.Send(data);
+            Debug.Log("Sent StartGame command to client.");
         }
 
 
