@@ -48,7 +48,7 @@ namespace Scripts
         public AsyncCallback pfnCallBack;
         IAsyncResult m_asynResult;
         private List<User> _clientSockets = new List<User>();
-        static MemoryStream stream;
+        static MemoryStream stream = new MemoryStream();
 
         string serverText;
 
@@ -141,41 +141,31 @@ namespace Scripts
             Debug.Log("data Send and recieved");
         }
 
-        public void ReceivePosition()
+        public void deserializeJson()
         {
-            Debug.Log("starting receive");
+            // Getting the stream
             byte[] data_ = new byte[1024];
-
             User user = _clientSockets.Find(x => x.Socket != null);
 
-            if (user.Socket != null)
+            if(user == null)
             {
-                Debug.Log("socket works!");
-                user.Socket.Receive(data_);
-                Debug.Log("data received" + data_);
-
-                MemoryStream _stream = new MemoryStream();
-                _stream.Write(data_, 0, data_.Length);
-                Debug.Log(data_.Length);
-
-                var t = new testClass();
-                BinaryReader reader = new BinaryReader(_stream);
-                
-
-                
-                //stream.Seek(0, SeekOrigin.Begin);
-                
-                //string json = reader.ReadString();
-                //Debug.Log(json);
-                //t = JsonUtility.FromJson<testClass>(json);
-                //Debug.Log(t);
-            }
-            else
-            {
-                Debug.Log("it didn't work");
+                Debug.Log("Didn't work"); return;
             }
 
+            user.Socket.Receive(data_);
+            Debug.Log("Data received" + data_);
 
+            
+            stream.Write(data_, 0, data_.Length);
+
+            var t = new testClass();
+            BinaryReader reader = new BinaryReader(stream);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            string json = reader.ReadString();
+            Debug.Log(json);
+            t = JsonUtility.FromJson<testClass>(json);
+            Debug.Log(t.comand);
         }
     }
 }

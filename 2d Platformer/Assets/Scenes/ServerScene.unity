@@ -251,7 +251,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 137970128}
         m_TargetAssemblyTypeName: Scripts.ServerTCP, Assembly-CSharp
-        m_MethodName: ReceivePosition
+        m_MethodName: deserializeJson
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

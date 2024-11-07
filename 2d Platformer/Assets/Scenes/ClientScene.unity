@@ -4791,7 +4791,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 723523459}
         m_TargetAssemblyTypeName: Scripts.ClientTCP, Assembly-CSharp
-        m_MethodName: SendPosition
+        m_MethodName: serializeJson
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

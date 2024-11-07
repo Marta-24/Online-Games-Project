@@ -38,21 +38,18 @@ namespace Scripts
 
         void Update()
         {
-            if (goToSampleScene)
-            {
-                SceneManager.LoadScene("WaitingRoom");
-                goToSampleScene = false;
-            }
+            //if (goToSampleScene)
+            //{
+            //    SceneManager.LoadScene("WaitingRoom");
+            //    goToSampleScene = false;
+            //}
 
             if (goToSampleScene == true)
             {
                 if (serializeTry)
                 {
-                    //SendPosition();
-
-                    //Serialize shit
-                    //SerializePos();
-                    //DeserializePos();
+                    //serializeJson();
+                    //deserializeJson();
                     serializeTry = false;
                 }
             }
@@ -107,55 +104,33 @@ namespace Scripts
             }
         }
 
-        public void SendPosition() // This is a test
+         public void serializeJson()
         {
             var t = new testClass();
             t.comand = 2;
-            t.pos = new List<int> { 10, 3 };
-
+            t.pos = new List<int> { 69, 9 };
             string json = JsonUtility.ToJson(t);
-
             stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
             writer.Write(json);
+            
+            byte[] data = new byte[1024];
+            Debug.Log("sSending position: " + Encoding.ASCII.GetString(stream.ToArray()));
+            data = stream.ToArray();
 
-            byte[] data_ = new byte[stream.ToString().Length];
-            data_ = Encoding.ASCII.GetBytes(stream.ToString());
-            Debug.Log(data_);
-
-            server.Send(data_);
-
-            ReceiveTest(stream.ToString());
+            server.Send(data); //this should work;
         }
-
-        public void ReceiveTest(string data)
+        
+        void deserializeJson()
         {
-            Debug.Log("starting receive");
-            byte[] data_ = new byte[data.Length];
-
-            data_ = Encoding.ASCII.GetBytes(data.ToString());
-
-
-
-
-            MemoryStream _stream = new MemoryStream();
-            _stream.Write(data_, 0, data_.Length);
-            Debug.Log(data_.Length);
-
             var t = new testClass();
-            BinaryReader reader = new BinaryReader(_stream);
-
-
-
+            BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
             string json = reader.ReadString();
             Debug.Log(json);
             t = JsonUtility.FromJson<testClass>(json);
-            Debug.Log(t);
-
-
-
+            Debug.Log(t.comand);
         }
     }
 }
