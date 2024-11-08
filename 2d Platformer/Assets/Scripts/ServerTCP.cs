@@ -14,11 +14,9 @@ using System.IO;
 
 namespace Scripts
 {
-    public enum CommandMessage : int
+    public class CommandMessage
     {
-        FirstMessage = 0,
-        StartGame = 1,
-        UpdatePosition = 2,
+        public int com = 0;
     }
 
     public class User
@@ -48,24 +46,23 @@ namespace Scripts
         public AsyncCallback pfnCallBack;
         IAsyncResult m_asynResult;
         private List<User> _clientSockets = new List<User>();
-        static MemoryStream stream = new MemoryStream();
-
+        private List<Thread> _clientThreads = new List<Thread>();
         string serverText;
 
         public void StartGame()
         {
             foreach (User client in _clientSockets)
             {
-                SendCommand(client.Socket, CommandMessage.StartGame);
+                //SendCommand(client.Socket, CommandMessage.StartGame);
             }
         }
 
-        void SendCommand(Socket socket, CommandMessage command)
-        {
-            byte[] data = BitConverter.GetBytes((int)command);
-            socket.Send(data);
-            Debug.Log("Sent StartGame command to client.");
-        }
+        //void SendCommand(Socket socket, CommandMessage command)
+        //{
+        //    byte[] data = BitConverter.GetBytes((int)command);
+        //    socket.Send(data);
+        //    Debug.Log("Sent StartGame command to client.");
+        //}
 
 
         void Update()
@@ -100,15 +97,14 @@ namespace Scripts
 
                 IPEndPoint clientep = (IPEndPoint)socket.RemoteEndPoint;
 
-                Thread newConnection = new Thread(() => Receive(_socket));
+                Thread newConnection = new Thread(() => AcceptConnection(_socket));
                 newConnection.Start();
             }
         }
 
 
-        async void Receive(Socket sock)
+        async void AcceptConnection(Socket sock)
         {
-
             byte[] data = new byte[1024];
 
             int res = sock.Receive(data);
@@ -122,7 +118,43 @@ namespace Scripts
             Debug.Log("New socket added: " + name);
             Thread answer = new Thread(() => Send(user.Socket));
             answer.Start();
+
+            Thread clientThread = new Thread(() => ReceiveJob(user));
+            clientThread.Start();
+            _clientThreads.Add(clientThread);
         }
+
+        private void ReceiveJob(User user_)
+        {
+            while (true)
+            {
+                Debug.Log("start receiving job!");
+                int rec = ReceiveTCP(user_);
+
+                if (rec == 0)
+                {
+                    _clientSockets.Remove(user_);
+                }
+                break;
+            }
+        }
+
+        private int ReceiveTCP(User user_)
+        {
+            byte[] data = new byte[2048];
+            Debug.Log("start receiveing");
+            int rec = user_.Socket.Receive(data);
+
+            if (rec == 0)
+            {
+                return 0;
+            }
+
+            int com = deserializeJson(data);
+
+            return rec;
+        }
+
 
         public void OnDataReceived(IAsyncResult state)
         {
@@ -141,31 +173,26 @@ namespace Scripts
             Debug.Log("data Send and recieved");
         }
 
-        public void deserializeJson()
+        public int deserializeJson(byte[] data_)
         {
-            // Getting the stream
-            byte[] data_ = new byte[1024];
-            User user = _clientSockets.Find(x => x.Socket != null);
-
-            if(user == null)
-            {
-                Debug.Log("Didn't work"); return;
-            }
-
-            user.Socket.Receive(data_);
-            Debug.Log("Data received" + data_);
-
-            
+            MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
+            var command = new CommandMessage();
             var t = new testClass();
             BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
-            string json = reader.ReadString();
-            Debug.Log(json);
-            t = JsonUtility.FromJson<testClass>(json);
-            Debug.Log(t.comand);
+            string json01 = reader.ReadString();
+            string json02 = reader.ReadString();
+
+            command = JsonUtility.FromJson<CommandMessage>(json01);
+            Debug.Log(command.com);
+
+            t = JsonUtility.FromJson<testClass>(json02);
+            Debug.Log(t.pos[0] + "," + t.pos);
+
+            return command.com;
         }
     }
 }

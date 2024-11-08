@@ -16,7 +16,6 @@ namespace Scripts
 
     public class testClass
     {
-        public int comand = 1;
         public List<int> pos = new List<int> { 3, 3 };
     }
 
@@ -91,28 +90,32 @@ namespace Scripts
             recv = server.Receive(data);
             Debug.Log("data recieved: " + Encoding.ASCII.GetString(data));
             goToSampleScene = true;
-            CommandMessage command = (CommandMessage)BitConverter.ToInt32(data, 0);
-
-            if (command == CommandMessage.FirstMessage)
-            {
-                goToSampleScene = true;
-            }
-            else if (command == CommandMessage.StartGame)
-            {
-                Debug.Log("StartGame command received.");
-                SceneManager.LoadScene("Scene1");
-            }
+            //CommandMessage command = (CommandMessage)BitConverter.ToInt32(data, 0);
+//
+            //if (command == CommandMessage.FirstMessage)
+            //{
+            //    goToSampleScene = true;
+            //}
+            //else if (command == CommandMessage.StartGame)
+            //{
+            //    Debug.Log("StartGame command received.");
+            //    SceneManager.LoadScene("Scene1");
+            //}
         }
 
          public void serializeJson()
         {
+            var command = new CommandMessage();
+            command.com = 2;
+
             var t = new testClass();
-            t.comand = 2;
             t.pos = new List<int> { 69, 9 };
-            string json = JsonUtility.ToJson(t);
+            string json01 = JsonUtility.ToJson(command);
+            string json02 = JsonUtility.ToJson(t);
             stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(json);
+            writer.Write(json01);
+            writer.Write(json02);
             
             byte[] data = new byte[1024];
             Debug.Log("sSending position: " + Encoding.ASCII.GetString(stream.ToArray()));
@@ -130,7 +133,7 @@ namespace Scripts
             string json = reader.ReadString();
             Debug.Log(json);
             t = JsonUtility.FromJson<testClass>(json);
-            Debug.Log(t.comand);
+           
         }
     }
 }
