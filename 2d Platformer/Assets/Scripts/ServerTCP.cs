@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 using System.IO;
 
 
+
 namespace Scripts
 {
     public class CommandMessage
@@ -48,7 +49,8 @@ namespace Scripts
         private List<User> _clientSockets = new List<User>();
         private List<Thread> _clientThreads = new List<Thread>();
         string serverText;
-
+        public GameObject objectPlayer;
+        public PlayerMovementServer PlayerScript;
         public void StartGame()
         {
             foreach (User client in _clientSockets)
@@ -128,21 +130,20 @@ namespace Scripts
         {
             while (true)
             {
-                Debug.Log("start receiving job!");
                 int rec = ReceiveTCP(user_);
 
                 if (rec == 0)
                 {
                     _clientSockets.Remove(user_);
+                    break;
                 }
-                break;
+
             }
         }
 
         private int ReceiveTCP(User user_)
         {
             byte[] data = new byte[2048];
-            Debug.Log("start receiveing");
             int rec = user_.Socket.Receive(data);
 
             if (rec == 0)
@@ -190,9 +191,37 @@ namespace Scripts
             Debug.Log(command.com);
 
             t = JsonUtility.FromJson<testClass>(json02);
-            Debug.Log(t.pos[0] + "," + t.pos);
+
+            // trying to set position
+            SetPlayerPosition(t);
 
             return command.com;
+        }
+
+        public void SetPlayerPosition(testClass pos)
+        {
+            Debug.Log("changing player position:  " + pos.pos[0] + "," + pos.pos[1]);
+            if (PlayerScript != null)
+            {
+                PlayerScript.SetPosition(pos.pos);
+            }
+        }
+
+        public void ConnectToPlayer()
+        {
+            if (PlayerScript == null)
+            {
+                objectPlayer = GameObject.Find("Player1");
+                if (objectPlayer != null)
+                {
+                    PlayerScript = objectPlayer.GetComponent<PlayerMovementServer>();
+
+                    if (PlayerScript != null)
+                    {
+                        Debug.Log("Player Script found!!!");
+                    }
+                }
+            }
         }
     }
 }

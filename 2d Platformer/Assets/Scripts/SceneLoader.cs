@@ -19,4 +19,13 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.LoadScene("WaitingRoom");
     }
+
+    public void LoadScene01Client()
+    {
+        SceneManager.LoadScene("Scene1Client");
+    }
+     public void LoadScene01Server()
+    {
+        SceneManager.LoadScene("Scene1Server");
+    }
 }

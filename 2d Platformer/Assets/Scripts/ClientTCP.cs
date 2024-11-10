@@ -16,7 +16,7 @@ namespace Scripts
 
     public class testClass
     {
-        public List<int> pos = new List<int> { 3, 3 };
+        public Vector2 pos;
     }
 
     public class ClientTCP : MonoBehaviour
@@ -37,21 +37,7 @@ namespace Scripts
 
         void Update()
         {
-            //if (goToSampleScene)
-            //{
-            //    SceneManager.LoadScene("WaitingRoom");
-            //    goToSampleScene = false;
-            //}
 
-            if (goToSampleScene == true)
-            {
-                if (serializeTry)
-                {
-                    //serializeJson();
-                    //deserializeJson();
-                    serializeTry = false;
-                }
-            }
         }
 
         public void StartClient()
@@ -103,13 +89,34 @@ namespace Scripts
             //}
         }
 
+        public void SendPosition(Vector2 position)
+        {
+            var command = new CommandMessage();
+            command.com = 2;
+
+            var t = new testClass();
+            t.pos = position;
+            string json01 = JsonUtility.ToJson(command);
+            string json02 = JsonUtility.ToJson(t);
+            stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+            writer.Write(json01);
+            writer.Write(json02);
+            
+            byte[] data = new byte[1024];
+            Debug.Log("sSending position: " + Encoding.ASCII.GetString(stream.ToArray()));
+            data = stream.ToArray();
+
+            server.Send(data); //this should work;
+        }
+
          public void serializeJson()
         {
             var command = new CommandMessage();
             command.com = 2;
 
             var t = new testClass();
-            t.pos = new List<int> { 69, 9 };
+            t.pos = new Vector2(0, 0);
             string json01 = JsonUtility.ToJson(command);
             string json02 = JsonUtility.ToJson(t);
             stream = new MemoryStream();

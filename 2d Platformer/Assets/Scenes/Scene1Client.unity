@@ -633,6 +633,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
+  objectClient: {fileID: 0}
 --- !u!212 &949132181
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -8675,7 +8676,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1768322548}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6915d2f81c9481a40ac3c97cfc81a91c, type: 3}
   m_Name: 
@@ -8686,6 +8687,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
+  objectClient: {fileID: 0}
 --- !u!212 &1768322553
 SpriteRenderer:
   m_ObjectHideFlags: 0

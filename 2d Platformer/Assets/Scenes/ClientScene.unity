@@ -471,6 +471,50 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &90177728
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 90177730}
+  - component: {fileID: 90177729}
+  m_Layer: 0
+  m_Name: SceneLoader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &90177729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90177728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fd4cfa7b7d4b2c4fbe3bf743b9cde88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &90177730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90177728}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 244.12184, y: 173.65587, z: 0.87598985}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &146651600
 GameObject:
   m_ObjectHideFlags: 0
@@ -3140,8 +3184,9 @@ GameObject:
   m_Component:
   - component: {fileID: 723523460}
   - component: {fileID: 723523459}
+  - component: {fileID: 723523461}
   m_Layer: 0
-  m_Name: Computer
+  m_Name: ClientManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3175,6 +3220,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &723523461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723523458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639952510d0ac934a92a18006dcf50e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &784428433
 GameObject:
   m_ObjectHideFlags: 0
@@ -4719,7 +4776,7 @@ GameObject:
   - component: {fileID: 1709097388}
   - component: {fileID: 1709097387}
   m_Layer: 0
-  m_Name: SerializeData - Button
+  m_Name: Ready
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4789,9 +4846,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 723523459}
-        m_TargetAssemblyTypeName: Scripts.ClientTCP, Assembly-CSharp
-        m_MethodName: serializeJson
+      - m_Target: {fileID: 90177729}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene01Client
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5140,7 +5197,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Serialize
+  m_text: Ready!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5393,6 +5450,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1543372960}
   - {fileID: 696114366}
-  - {fileID: 723523460}
   - {fileID: 2106207574}
   - {fileID: 2111039221}
+  - {fileID: 90177730}
+  - {fileID: 723523460}
