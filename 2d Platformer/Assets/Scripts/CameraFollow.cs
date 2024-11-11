@@ -16,4 +16,10 @@ public class CameraFollow : MonoBehaviour
 
         transform.position = smoothedPosition;
     }
+
+    public void ChangeTarget(Transform newTarget)
+    {
+        target = newTarget;
+        Debug.Log("target changed");
+    }
 }

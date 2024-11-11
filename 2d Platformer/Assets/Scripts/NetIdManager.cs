@@ -20,18 +20,17 @@ namespace Scripts
         public List<NetId> netIdList = new List<NetId>();
         public GameObject objectServer;
         public ServerTCP server;
+        public GameObject netIdManagerGameObject;
+        public Instanciator instanciator_;
+        
+        
 
         void Start()
         {
             AddServer();
+            FindInstanciator();
 
-            if (server != null) // this is hardcoded, should not be here
-            {
-                // create players and assing Id´s
-                // create all objects that require net id
-                GameObject exampleOne = new GameObject();
-                exampleOne.name = "GameObject1";
-            }
+            CreateNetId(instanciator_.InstancePlayerOne());
         }
 
         // Update is called once per frame
@@ -52,7 +51,11 @@ namespace Scripts
                     Debug.Log("Server found!!!, pinging him, netidmanager speaking :)");
                 }
             }
+        }
 
+        void FindInstanciator()
+        {
+            instanciator_ = GetComponent<Instanciator>();
         }
         public void CreateNetId(GameObject gameObject_)
         {
