@@ -15,11 +15,6 @@ using System.IO;
 
 namespace Scripts
 {
-    public class CommandMessage
-    {
-        public int com = 0;
-    }
-
     public class User
     {
         public string Name;
@@ -179,7 +174,7 @@ namespace Scripts
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
-            var command = new CommandMessage();
+            var command = new ReplicationMessage();
             var t = new testClass();
             BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
@@ -187,15 +182,15 @@ namespace Scripts
             string json01 = reader.ReadString();
             string json02 = reader.ReadString();
 
-            command = JsonUtility.FromJson<CommandMessage>(json01);
-            Debug.Log(command.com);
+            command = JsonUtility.FromJson<ReplicationMessage>(json01);
+            Debug.Log(command.action);
 
             t = JsonUtility.FromJson<testClass>(json02);
 
             // trying to set position
             SetPlayerPosition(t);
 
-            return command.com;
+            return command.action   ;
         }
 
         public void SetPlayerPosition(testClass pos)

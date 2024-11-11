@@ -13,6 +13,11 @@ using System;
 
 namespace Scripts
 {
+    public class ReplicationMessage
+    {
+        public int NetID = 0;
+        public int action = 0;
+    }
 
     public class testClass
     {
@@ -58,8 +63,37 @@ namespace Scripts
             Thread sendThread = new Thread(Send);
             sendThread.Start();
 
-            Thread receiveThread = new Thread(Receive);
+            Thread receiveThread = new Thread(ReceiveJob);
             receiveThread.Start();
+        }
+
+        private void ReceiveJob()
+        {
+            while (true)
+            {
+                int rec = ReceiveTCP();
+
+                if (rec == 0)
+                {
+                    break;
+                }
+
+            }
+        }
+
+        private int ReceiveTCP()
+        {
+            byte[] data = new byte[2048];
+            int rec = server.Receive(data);
+
+            if (rec == 0)
+            {
+                return 0;
+            }
+
+            // receive the orders here
+
+            return rec;
         }
         void Send()
         {
@@ -91,32 +125,12 @@ namespace Scripts
 
         public void SendPosition(Vector2 position)
         {
-            var command = new CommandMessage();
-            command.com = 2;
+            var command = new ReplicationMessage();
+            command.NetID = 0;
+            command.action = 2;
 
             var t = new testClass();
             t.pos = position;
-            string json01 = JsonUtility.ToJson(command);
-            string json02 = JsonUtility.ToJson(t);
-            stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(json01);
-            writer.Write(json02);
-            
-            byte[] data = new byte[1024];
-            Debug.Log("sSending position: " + Encoding.ASCII.GetString(stream.ToArray()));
-            data = stream.ToArray();
-
-            server.Send(data); //this should work;
-        }
-
-         public void serializeJson()
-        {
-            var command = new CommandMessage();
-            command.com = 2;
-
-            var t = new testClass();
-            t.pos = new Vector2(0, 0);
             string json01 = JsonUtility.ToJson(command);
             string json02 = JsonUtility.ToJson(t);
             stream = new MemoryStream();
