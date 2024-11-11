@@ -20,12 +20,14 @@ namespace Scripts
 
         public GameObject InstancePlayerOne()
         {
-
+            GameObject instance = new GameObject();
+            return instance;
         }
 
         public GameObject InstancePlayerTwo()
         {
-
+            GameObject instance = new GameObject();
+            return instance;
         }
     }
 }
