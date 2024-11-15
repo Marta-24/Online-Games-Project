@@ -11,8 +11,10 @@ namespace Scripts
         public LayerMask groundLayer;
         public Animator animator;
         private Vector3 initialScale;
-        public GameObject objectServer;
+        public GameObject objectTCP;
+        public ClientTCP client;
         public ServerTCP server;
+        public bool TCPConnection;
         private Vector2 futurePosition;
         void Start()
         {
@@ -23,23 +25,19 @@ namespace Scripts
             initialScale = transform.localScale;
 
             //Call server to connect
-            objectServer = GameObject.Find("ServerManager");
-            if (objectServer != null)
-            {
-                server = objectServer.GetComponent<ServerTCP>();
-
-                if (server != null)
-                {
-                    Debug.Log("Server found!!!, pinging him");
-                    server.ConnectToPlayer();
-                }
-            }
+            FindTCP();
         }
 
         // Update is called once per frame
         void Update()
         {
             rb.MovePosition(futurePosition);
+
+
+            if (objectTCP == null)
+            {
+                FindTCP();
+            }
         }
 
         public void SetPosition(Vector2 position)
@@ -47,5 +45,42 @@ namespace Scripts
             Debug.Log("trying to change position!");
             futurePosition = position;
         }
+
+        public void FindTCP()
+        {
+            if (objectTCP == null) objectTCP = GameObject.Find("ClientManager");
+            if (objectTCP == null) objectTCP = GameObject.Find("ServerManager");
+            if (server == null)
+            {
+                server = objectTCP.GetComponent<ServerTCP>();
+
+                if (server != null)
+                {
+                    Debug.Log("Server found!!!, pinging him");
+                    server.ConnectToPlayer();
+                    TCPConnection = true;
+                }
+                else
+                {
+                    Debug.Log("Server not found");
+                }
+            }
+            if (client == null)
+            {
+                client = objectTCP.GetComponent<ClientTCP>();
+
+                if (client != null)
+                {
+                    Debug.Log("Server found!!!, pinging him");
+                    client.ConnectToPlayer();
+                    TCPConnection = false;
+                }
+                else
+                {
+                    Debug.Log("Server not found");
+                }
+            }
+        }
     }
 }
+

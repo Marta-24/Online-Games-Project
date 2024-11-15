@@ -54,12 +54,6 @@ namespace Scripts
             }
         }
 
-        //void SendCommand(Socket socket, CommandMessage command)
-        //{
-        //    byte[] data = BitConverter.GetBytes((int)command);
-        //    socket.Send(data);
-        //    Debug.Log("Sent StartGame command to client.");
-        //}
 
 
         void Update()
@@ -72,7 +66,7 @@ namespace Scripts
         {
             Debug.Log("initializing startserver()");
 
-            IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 9050);
+            IPEndPoint localEp = new IPEndPoint(IPAddress.Any, 9090);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(localEp);
@@ -146,7 +140,7 @@ namespace Scripts
                 return 0;
             }
 
-            int com = deserializeJson(data);
+            int com = DeserializeJson(data);
 
             return rec;
         }
@@ -162,14 +156,11 @@ namespace Scripts
         void Send(Socket socket_)
         {
 
-            byte[] data_ = new byte[1024];
-
-            data_ = Encoding.ASCII.GetBytes("serverName");
-            socket_.Send(data_);
+            SendServerName(socket_);
             Debug.Log("data Send and recieved");
         }
 
-        public int deserializeJson(byte[] data_)
+        public int DeserializeJson(byte[] data_)
         {
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
@@ -200,6 +191,50 @@ namespace Scripts
             {
                 PlayerScript.SetPosition(pos.pos);
             }
+        }
+
+        public void SendPlayerPositionToClient(Vector2 position)
+        {
+            var command = new ReplicationMessage();
+            command.NetID = 0;
+            command.action = 2;
+
+            var t = new testClass();
+            t.pos = position;
+            string json01 = JsonUtility.ToJson(command);
+            string json02 = JsonUtility.ToJson(t);
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+            writer.Write(json01);
+            writer.Write(json02);
+            
+            byte[] data = new byte[1024];
+            Debug.Log("Sending position: " + Encoding.ASCII.GetString(stream.ToArray()));
+            data = stream.ToArray();
+
+            // For now we send the data to all clients
+
+            foreach (User client in _clientSockets)
+            {
+                client.Socket.Send(data);
+            }
+            //_clientSockets.ForEach(Send(socket, data));
+            //server.Send(data); //this should work;
+        }
+
+        public void SendServerName(Socket socket)
+        {
+            var command = new ReplicationMessage();
+            command.NetID = 0;
+            command.action = 1;
+
+            string json01 = JsonUtility.ToJson(command);
+             MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+            writer.Write(json01);
+            byte[] data = new byte[1024];
+            data = stream.ToArray();
+            socket.Send(data);
         }
 
         public void ConnectToPlayer()

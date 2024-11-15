@@ -21,9 +21,12 @@ namespace Scripts
         // Store the initial scale to preserve size
         private Vector3 initialScale;
 
-        // Client objects
-        public GameObject objectClient;
+        // server objects
+        public GameObject objectTCP;
+        public ServerTCP server;
         public ClientTCP client;
+        public bool TCPConnection = false;
+
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -36,16 +39,7 @@ namespace Scripts
             jumpVelocity = Mathf.Sqrt(2 * gravity * maxJumpHeight);
 
             //Get client component
-            objectClient = GameObject.Find("ClientManager");
-            if (objectClient != null)
-            {
-                client = objectClient.GetComponent<ClientTCP>();
-
-                if (client != null)
-                {
-                    Debug.Log("Client found!!!");
-                }
-            }
+            FindTCP();
 
         }
 
@@ -81,8 +75,16 @@ namespace Scripts
                 transform.localScale = new Vector3(Mathf.Abs(initialScale.x), initialScale.y, initialScale.z);
             }
 
+            if (objectTCP == null)
+            {
+                if (TCPConnection == true)
+                {
+                    if (server == null) FindTCP();
+                }
+                else if (client == null) FindTCP();
 
-            SendPosition(); //Send the position to the server every fram for the moment
+            }
+            SendPlayerPosition(); //Send the position to the server every fram for the moment
         }
 
         void FixedUpdate()
@@ -97,12 +99,58 @@ namespace Scripts
             return Physics2D.IsTouchingLayers(coll, groundLayer);
         }
 
-        void SendPosition()
+        void SendPlayerPosition()
         {
-        
-			Debug.Log(rb.position);
 
-            client.SendPosition(rb.position);
+            Debug.Log(rb.position);
+            if (objectTCP != null)
+            {
+                if (TCPConnection)
+                {
+                    server.SendPlayerPositionToClient(rb.position);
+                }
+                else
+                {
+                    client.SendPosition(rb.position);
+                }
+            }
+        }
+        public void FindTCP()
+        {
+            if (objectTCP == null) objectTCP = GameObject.Find("ClientManager");
+            if (objectTCP == null) objectTCP = GameObject.Find("ServerManager");
+
+            if (server == null)
+            {
+                server = objectTCP.GetComponent<ServerTCP>();
+
+                if (server != null)
+                {
+                    Debug.Log("Server found!!!, pinging him");
+                    server.ConnectToPlayer();
+                    TCPConnection = true;
+                }
+                else
+                {
+                    Debug.Log("Server not found");
+                }
+            }
+            if (client == null)
+            {
+                client = objectTCP.GetComponent<ClientTCP>();
+
+                if (client != null)
+                {
+                    Debug.Log("Server found!!!, pinging him");
+                    client.ConnectToPlayer();
+                    TCPConnection = false;
+                }
+                else
+                {
+                    Debug.Log("Server not found");
+                }
+            }
         }
     }
+
 }

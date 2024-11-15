@@ -31,6 +31,7 @@ namespace Scripts
             FindInstanciator();
 
             CreateNetId(instanciator_.InstancePlayerOne());
+            CreateNetId(instanciator_.InstancePlayerTwo());
         }
 
         // Update is called once per frame

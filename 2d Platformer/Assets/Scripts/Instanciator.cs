@@ -6,7 +6,8 @@ namespace Scripts
 {
     public class Instanciator : MonoBehaviour
     {
-        public GameObject playerPrefab;
+        public GameObject player1Prefab;
+        public GameObject player2Prefab;
         public GameObject camera;
         // Start is called before the first frame update
         void Start()
@@ -31,15 +32,15 @@ namespace Scripts
             player.GetComponent<BoxCollider2D>();
             player.GetComponent<Animator>();
             return player;*/
-            Instantiate(playerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-            camera.GetComponent<CameraFollow>().ChangeTarget(playerPrefab.transform);
-            return playerPrefab;
+            Instantiate(player1Prefab, new Vector3(0, 0, 0), Quaternion.identity);
+            camera.GetComponent<CameraFollow>().ChangeTarget(player1Prefab.transform);
+            return player1Prefab;
         }
 
         public GameObject InstancePlayerTwo()
         {
-            GameObject instance = new GameObject();
-            return instance;
+           Instantiate(player2Prefab, new Vector3(0, 0, 0), Quaternion.identity);
+            return player2Prefab;
         }
     }
 }

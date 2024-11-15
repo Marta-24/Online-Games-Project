@@ -35,7 +35,8 @@ namespace Scripts
         bool goToSampleScene = false;
         bool serializeTry = true;
         static MemoryStream stream;
-
+        public GameObject objectPlayer;
+        public PlayerMovementServer PlayerScript;
         void Start()
         {
         }
@@ -55,7 +56,7 @@ namespace Scripts
         {
             Debug.Log("connecting to server");
 
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9050);
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9090);
 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.Connect(ipep);
@@ -84,15 +85,17 @@ namespace Scripts
         private int ReceiveTCP()
         {
             byte[] data = new byte[2048];
+            Debug.Log("receiving data");
             int rec = server.Receive(data);
 
             if (rec == 0)
             {
+                Debug.Log("breaking receive");
                 return 0;
             }
 
             // receive the orders here
-
+            int com = deserializeJson(data);
             return rec;
         }
         void Send()
@@ -111,7 +114,7 @@ namespace Scripts
             Debug.Log("data recieved: " + Encoding.ASCII.GetString(data));
             goToSampleScene = true;
             //CommandMessage command = (CommandMessage)BitConverter.ToInt32(data, 0);
-//
+            //
             //if (command == CommandMessage.FirstMessage)
             //{
             //    goToSampleScene = true;
@@ -137,24 +140,73 @@ namespace Scripts
             BinaryWriter writer = new BinaryWriter(stream);
             writer.Write(json01);
             writer.Write(json02);
-            
+
             byte[] data = new byte[1024];
             Debug.Log("sSending position: " + Encoding.ASCII.GetString(stream.ToArray()));
             data = stream.ToArray();
 
             server.Send(data); //this should work;
         }
-        
-        void deserializeJson()
+
+        int deserializeJson(byte[] data_)
         {
+            Debug.Log("starting deserialize");
+            MemoryStream stream = new MemoryStream();
+            stream.Write(data_, 0, data_.Length);
+
+            var command = new ReplicationMessage();
             var t = new testClass();
             BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
-            string json = reader.ReadString();
-            Debug.Log(json);
-            t = JsonUtility.FromJson<testClass>(json);
-           
+            string json01 = reader.ReadString();
+            string json02 = reader.ReadString();
+            
+            command = JsonUtility.FromJson<ReplicationMessage>(json01);
+            Debug.Log(command.action);
+
+            if (command.action == 1)
+            {   
+                Debug.Log("Servername received");
+            }
+            else if (command.action == 2)
+            {
+                
+
+                t = JsonUtility.FromJson<testClass>(json02);
+
+                // trying to set position
+                SetPlayerPosition(t);
+            }
+            return command.action;
+        }
+
+        void SetPlayerPosition(testClass pos)
+        {
+            if (PlayerScript == null)
+            {
+                Debug.Log("player not found");
+            }
+            else if (PlayerScript != null)
+            {
+                PlayerScript.SetPosition(pos.pos);
+            }
+        }
+        public void ConnectToPlayer()
+        {
+            if (PlayerScript == null)
+            {
+                objectPlayer = GameObject.Find("Player1");
+                if (objectPlayer != null)
+                {
+                    PlayerScript = objectPlayer.GetComponent<PlayerMovementServer>();
+
+                    if (PlayerScript != null)
+                    {
+                        Debug.Log("Player Script found!!!");
+                    }
+                }
+            }
         }
     }
 }
