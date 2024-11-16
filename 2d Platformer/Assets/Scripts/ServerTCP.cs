@@ -237,11 +237,11 @@ namespace Scripts
             socket.Send(data);
         }
 
-        public void ConnectToPlayer()
+        public void ConnectToPlayer(GameObject gameObject)
         {
             if (PlayerScript == null)
             {
-                objectPlayer = GameObject.Find("Player1");
+                objectPlayer = gameObject;
                 if (objectPlayer != null)
                 {
                     PlayerScript = objectPlayer.GetComponent<PlayerMovementServer>();

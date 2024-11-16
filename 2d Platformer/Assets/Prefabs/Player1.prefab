@@ -105,8 +105,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
-  objectServer: {fileID: 0}
+  objectTCP: {fileID: 0}
+  client: {fileID: 0}
   server: {fileID: 0}
+  TCPConnection: 0
+  parent: {fileID: 5608416850473110640}
 --- !u!114 &3201230090733099262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,8 +128,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   animator: {fileID: 0}
-  objectClient: {fileID: 0}
+  objectTCP: {fileID: 0}
+  server: {fileID: 0}
   client: {fileID: 0}
+  TCPConnection: 0
+  parent: {fileID: 5608416850473110640}
+  camera: {fileID: 0}
 --- !u!50 &1010398609851588582
 Rigidbody2D:
   serializedVersion: 4

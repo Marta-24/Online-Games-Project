@@ -16,6 +16,7 @@ namespace Scripts
         public ServerTCP server;
         public bool TCPConnection;
         private Vector2 futurePosition;
+        public GameObject parent;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -56,13 +57,9 @@ namespace Scripts
 
                 if (server != null)
                 {
-                    Debug.Log("Server found!!!, pinging him");
-                    server.ConnectToPlayer();
+                    Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                    server.ConnectToPlayer(parent);
                     TCPConnection = true;
-                }
-                else
-                {
-                    Debug.Log("Server not found");
                 }
             }
             if (client == null)
@@ -71,13 +68,8 @@ namespace Scripts
 
                 if (client != null)
                 {
-                    Debug.Log("Server found!!!, pinging him");
                     client.ConnectToPlayer();
                     TCPConnection = false;
-                }
-                else
-                {
-                    Debug.Log("Server not found");
                 }
             }
         }

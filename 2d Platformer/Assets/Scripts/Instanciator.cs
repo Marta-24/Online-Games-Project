@@ -8,7 +8,7 @@ namespace Scripts
     {
         public GameObject player1Prefab;
         public GameObject player2Prefab;
-        public GameObject camera;
+        
         // Start is called before the first frame update
         void Start()
         {
@@ -33,7 +33,7 @@ namespace Scripts
             player.GetComponent<Animator>();
             return player;*/
             Instantiate(player1Prefab, new Vector3(0, 0, 0), Quaternion.identity);
-            camera.GetComponent<CameraFollow>().ChangeTarget(player1Prefab.transform);
+            
             return player1Prefab;
         }
 

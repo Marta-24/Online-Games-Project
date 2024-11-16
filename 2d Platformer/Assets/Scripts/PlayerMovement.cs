@@ -26,7 +26,8 @@ namespace Scripts
         public ServerTCP server;
         public ClientTCP client;
         public bool TCPConnection = false;
-
+        public GameObject parent;
+        public GameObject camera;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -41,6 +42,13 @@ namespace Scripts
             //Get client component
             FindTCP();
 
+            camera = GameObject.Find("Main Camera");
+            if (camera == null)
+            {
+                Debug.Log("CAMERA NOT FOUND!!");
+            }
+
+            camera.GetComponent<CameraFollow>().ChangeTarget(parent.transform);
         }
 
 
@@ -127,7 +135,7 @@ namespace Scripts
                 if (server != null)
                 {
                     Debug.Log("Server found!!!, pinging him");
-                    server.ConnectToPlayer();
+                    
                     TCPConnection = true;
                 }
                 else
