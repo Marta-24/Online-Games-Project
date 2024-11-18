@@ -35,6 +35,7 @@ namespace Scripts
     }
     public class ServerUDP : MonoBehaviour
     {
+
         private AutoResetEvent _waitHandle = new AutoResetEvent(false);
         Thread mainThread = null;
         private List<UserUDP> _clientEndPoints = new List<UserUDP>();
@@ -43,6 +44,8 @@ namespace Scripts
         public PlayerMovementServer playerScript;
         Socket socket;
         UserUDP user;
+
+        // Function called with a button to start the udp server
         public void StartServer()
         {
             Debug.Log("Initializing udp server");
@@ -56,17 +59,10 @@ namespace Scripts
             newConnection.Start();
         }
 
-        void Update()
-        {
-
-        }
-
         void Receive()
         {
             int recv;
             byte[] _data = new byte[2048];
-
-
 
             while (true)
             {
@@ -89,6 +85,7 @@ namespace Scripts
             }
         }
 
+
         void SendHello(EndPoint Remote)
         {
             var command = new ReplicationMessage();
@@ -107,8 +104,7 @@ namespace Scripts
             byte[] data = new byte[2048];
             data = stream.ToArray();
             
-            socket.SendTo(data, data.Length, SocketFlags.None, Remote);
-            
+            socket.SendTo(data, data.Length, SocketFlags.None, Remote);   
         }
 
         void ReceiveJob(UserUDP user)
@@ -122,7 +118,6 @@ namespace Scripts
                     _clientEndPoints.Remove(user);
                     break;
                 }
-
             }
         }
 
@@ -143,6 +138,7 @@ namespace Scripts
             return rec;
         }
 
+        //Right now this function only decodes the position of a player, in a future this function will either redistribute the calls from the client or be one little part of various functions to deserialize
         public int DeserializeJson(byte[] data_)
         {
             Debug.Log("deserializing data");
@@ -189,8 +185,6 @@ namespace Scripts
             Debug.Log("sending position update");
             
             socket.SendTo(data, SocketFlags.None, user.endPoint);
-            
-
         }
 
         public void SetPlayerPosition(testClass pos)
@@ -201,6 +195,8 @@ namespace Scripts
                 playerScript.SetPosition(pos.pos);
             }
         }
+
+        //This function is called from player movement, it is used so "playerScript" finds the object component, in the future we will want to call the netId manager to move orders, right now we are hardcoding it
         public void ConnectToPlayer(GameObject gameObject)
         {
             if (playerScript == null)

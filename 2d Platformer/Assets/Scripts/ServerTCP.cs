@@ -43,21 +43,6 @@ namespace Scripts
         private List<Thread> _clientThreads = new List<Thread>();
         public GameObject objectPlayer;
         public PlayerMovementServer PlayerScript;
-        public void StartGame()
-        {
-            foreach (User client in _clientSockets)
-            {
-                //SendCommand(client.Socket, CommandMessage.StartGame);
-            }
-        }
-
-
-
-        void Update()
-        {
-
-        }
-
 
         public void startServer()
         {
@@ -123,7 +108,6 @@ namespace Scripts
                     _clientSockets.Remove(user_);
                     break;
                 }
-
             }
         }
 
@@ -138,7 +122,6 @@ namespace Scripts
             }
 
             int com = DeserializeJson(data);
-
             return rec;
         }
 
@@ -152,7 +135,6 @@ namespace Scripts
 
         void Send(Socket socket_)
         {
-
             SendServerName(socket_);
             Debug.Log("data Send and recieved");
         }
@@ -210,13 +192,10 @@ namespace Scripts
             data = stream.ToArray();
 
             // For now we send the data to all clients
-
             foreach (User client in _clientSockets)
             {
                 client.Socket.Send(data);
             }
-            //_clientSockets.ForEach(Send(socket, data));
-            //server.Send(data); //this should work;
         }
 
         public void SendServerName(Socket socket)

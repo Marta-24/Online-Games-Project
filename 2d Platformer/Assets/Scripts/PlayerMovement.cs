@@ -64,13 +64,13 @@ namespace Scripts
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-                //animator.SetBool("isJumping", true);
+                animator.SetBool("isJumping", true);
             }
 
             // Set isJumping to false when grounded
             if (IsGrounded())
             {
-                //animator.SetBool("isJumping", false);
+                animator.SetBool("isJumping", false);
             }
 
             // Flip the character's sprite based on movement direction, preserving the initial scale
@@ -97,11 +97,11 @@ namespace Scripts
 
         void FixedUpdate()
         {
-            // Apply horizontal movement
+            //Apply horizontal movement
             rb.velocity = new Vector2(movement.x * moveSpeed, rb.velocity.y);
         }
 
-        // Ground check using collision layers
+        //Ground check using collision layers
         bool IsGrounded()
         {
             return Physics2D.IsTouchingLayers(coll, groundLayer);
@@ -121,6 +121,8 @@ namespace Scripts
                 }
             }
         }
+
+        //This function is called at Start, the objective is to find the gameobject of the client or server
         public void FindUDP()
         {
             if (objectUDP == null) objectUDP = GameObject.Find("ClientManager");
@@ -158,5 +160,4 @@ namespace Scripts
             }
         }
     }
-
 }

@@ -32,7 +32,6 @@ namespace Scripts
             FindTCP();
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (futurePosition != futurePositionCheck)
@@ -42,9 +41,7 @@ namespace Scripts
                 futurePositionCheck = futurePosition;
             }
 
-
-
-            if (objectTCP == null)
+            if (objectTCP == null) // Even though this is called at start, we had some problems and for now this is a way to make sure we find the server or client
             {
                 FindTCP();
             }

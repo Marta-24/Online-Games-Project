@@ -4,7 +4,6 @@ using System.Text;
 using UnityEngine;
 using System.Threading;
 using TMPro;
-//using UnityEngine.tvOS;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -32,14 +31,6 @@ namespace Scripts
         static MemoryStream stream;
         public GameObject objectPlayer;
         public PlayerMovementServer PlayerScript;
-        void Start()
-        {
-        }
-
-        void Update()
-        {
-
-        }
 
         public void StartClient()
         {
@@ -73,7 +64,6 @@ namespace Scripts
                 {
                     break;
                 }
-
             }
         }
 
@@ -107,18 +97,6 @@ namespace Scripts
             int recv = 0;
             recv = server.Receive(data);
             Debug.Log("data recieved: " + Encoding.ASCII.GetString(data));
-            goToSampleScene = true;
-            //CommandMessage command = (CommandMessage)BitConverter.ToInt32(data, 0);
-            //
-            //if (command == CommandMessage.FirstMessage)
-            //{
-            //    goToSampleScene = true;
-            //}
-            //else if (command == CommandMessage.StartGame)
-            //{
-            //    Debug.Log("StartGame command received.");
-            //    SceneManager.LoadScene("Scene1");
-            //}
         }
 
         public void SendPosition(Vector2 position)
@@ -140,7 +118,7 @@ namespace Scripts
             Debug.Log("sSending position: " + Encoding.ASCII.GetString(stream.ToArray()));
             data = stream.ToArray();
 
-            server.Send(data); //this should work;
+            server.Send(data); 
         }
 
         int deserializeJson(byte[] data_)
