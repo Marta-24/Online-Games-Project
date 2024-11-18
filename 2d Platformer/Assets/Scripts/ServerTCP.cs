@@ -39,11 +39,8 @@ namespace Scripts
         Socket socket;
         Socket socWorker;
         Thread mainThread = null;
-        public AsyncCallback pfnCallBack;
-        IAsyncResult m_asynResult;
         private List<User> _clientSockets = new List<User>();
         private List<Thread> _clientThreads = new List<Thread>();
-        string serverText;
         public GameObject objectPlayer;
         public PlayerMovementServer PlayerScript;
         public void StartGame()

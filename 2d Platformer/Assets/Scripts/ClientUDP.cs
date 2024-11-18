@@ -13,25 +13,15 @@ using System;
 
 namespace Scripts
 {
-    public class ReplicationMessage
-    {
-        public int NetID = 0;
-        public int action = 0;
-    }
-
-    public class testClass
-    {
-        public Vector2 pos;
-    }
-
-    public class ClientTCP : MonoBehaviour
+    public class ClientUDP : MonoBehaviour
     {
         Socket server;
         bool goToSampleScene = false;
-        bool serializeTry = true;
         static MemoryStream stream;
         public GameObject objectPlayer;
-        public PlayerMovementServer PlayerScript;
+        public PlayerMovementServer playerScript;
+        IPEndPoint ipep;
+
         void Start()
         {
         }
@@ -51,23 +41,21 @@ namespace Scripts
         {
             Debug.Log("connecting to server");
 
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9090);
+            ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9090);
 
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            server.Connect(ipep);
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+          
 
             Thread sendThread = new Thread(Send);
             sendThread.Start();
 
-            Thread receiveThread = new Thread(ReceiveJob);
-            receiveThread.Start();
         }
 
         private void ReceiveJob()
         {
             while (true)
             {
-                int rec = ReceiveTCP();
+                int rec = ReceiveUDP();
 
                 if (rec == 0)
                 {
@@ -77,11 +65,15 @@ namespace Scripts
             }
         }
 
-        private int ReceiveTCP()
+        private int ReceiveUDP()
         {
             byte[] data = new byte[2048];
             Debug.Log("receiving data");
-            int rec = server.Receive(data);
+
+            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint _remote = (EndPoint)(sender);
+
+            int rec = server.ReceiveFrom(data, ref _remote);
 
             if (rec == 0)
             {
@@ -95,52 +87,26 @@ namespace Scripts
         }
         void Send()
         {
-            byte[] data = new byte[1024];
+            byte[] data = new byte[2048];
             Debug.Log("sending userName");
             data = Encoding.ASCII.GetBytes("userName");
-            server.Send(data);
+            server.SendTo(data, 0, SocketFlags.None, ipep);
+            Receive();
         }
 
         void Receive()
         {
-            byte[] data = new byte[1024];
+            byte[] data = new byte[2048];
             int recv = 0;
-            recv = server.Receive(data);
+            Debug.Log("receiveing name");
+            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            EndPoint Remote = (EndPoint)(sender);
+
+            recv = server.ReceiveFrom(data, data.Length, SocketFlags.None, ref Remote);
             Debug.Log("data recieved: " + Encoding.ASCII.GetString(data));
-            goToSampleScene = true;
-            //CommandMessage command = (CommandMessage)BitConverter.ToInt32(data, 0);
-            //
-            //if (command == CommandMessage.FirstMessage)
-            //{
-            //    goToSampleScene = true;
-            //}
-            //else if (command == CommandMessage.StartGame)
-            //{
-            //    Debug.Log("StartGame command received.");
-            //    SceneManager.LoadScene("Scene1");
-            //}
-        }
 
-        public void SendPosition(Vector2 position)
-        {
-            var command = new ReplicationMessage();
-            command.NetID = 0;
-            command.action = 2;
-
-            var t = new testClass();
-            t.pos = position;
-            string json01 = JsonUtility.ToJson(command);
-            string json02 = JsonUtility.ToJson(t);
-            stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
-            writer.Write(json01);
-            writer.Write(json02);
-
-            byte[] data = new byte[1024];
-            Debug.Log("sSending position: " + Encoding.ASCII.GetString(stream.ToArray()));
-            data = stream.ToArray();
-
-            server.Send(data); //this should work;
+            Thread receiveThread = new Thread(ReceiveJob);
+            receiveThread.Start();
         }
 
         int deserializeJson(byte[] data_)
@@ -166,8 +132,6 @@ namespace Scripts
             }
             else if (command.action == 2)
             {
-                
-
                 t = JsonUtility.FromJson<testClass>(json02);
 
                 // trying to set position
@@ -178,25 +142,49 @@ namespace Scripts
 
         void SetPlayerPosition(testClass pos)
         {
-            if (PlayerScript == null)
+            if (playerScript == null)
             {
                 Debug.Log("player not found");
             }
-            else if (PlayerScript != null)
+            else if (playerScript != null)
             {
-                PlayerScript.SetPosition(pos.pos);
+                playerScript.SetPosition(pos.pos);
             }
         }
-        public void ConnectToPlayer()
+
+        public void SendPosition(Vector2 position)
         {
-            if (PlayerScript == null)
+            var command = new ReplicationMessage();
+            command.NetID = 0;
+            command.action = 2;
+
+            var t = new testClass();
+            t.pos = position;
+            string json01 = JsonUtility.ToJson(command);
+            string json02 = JsonUtility.ToJson(t);
+            stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+            writer.Write(json01);
+            writer.Write(json02);
+
+            byte[] data = new byte[2048];
+            data = stream.ToArray();
+            Debug.Log("Sending position to server: " + data);
+            
+
+            server.SendTo(data, SocketFlags.None, ipep); //this should work;
+        }
+
+        public void ConnectToPlayer(GameObject gameObject)
+        {
+            if (playerScript == null)
             {
-                objectPlayer = GameObject.Find("Player1");
+                objectPlayer = gameObject;
                 if (objectPlayer != null)
                 {
-                    PlayerScript = objectPlayer.GetComponent<PlayerMovementServer>();
+                    playerScript = objectPlayer.GetComponent<PlayerMovementServer>();
 
-                    if (PlayerScript != null)
+                    if (playerScript != null)
                     {
                         Debug.Log("Player Script found!!!");
                     }

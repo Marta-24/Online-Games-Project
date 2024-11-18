@@ -604,11 +604,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 242684262328041083, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2171314910842685484, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
       propertyPath: m_Name
@@ -17268,11 +17268,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1401711604770308296, guid: a004b19a22796354f8285ec2a384db54, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3201230090733099262, guid: a004b19a22796354f8285ec2a384db54, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5216834470660996277, guid: a004b19a22796354f8285ec2a384db54, type: 3}
       propertyPath: m_LocalPosition.x

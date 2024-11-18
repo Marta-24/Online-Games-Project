@@ -1123,8 +1123,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 723523459}
-        m_TargetAssemblyTypeName: Scripts.ClientTCP, Assembly-CSharp
+      - m_Target: {fileID: 723523462}
+        m_TargetAssemblyTypeName: Scripts.ClientUDP, Assembly-CSharp
         m_MethodName: StartClient
         m_Mode: 1
         m_Arguments:
@@ -3184,6 +3184,7 @@ GameObject:
   - component: {fileID: 723523460}
   - component: {fileID: 723523459}
   - component: {fileID: 723523461}
+  - component: {fileID: 723523462}
   m_Layer: 0
   m_Name: ClientManager
   m_TagString: Untagged
@@ -3198,12 +3199,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 723523458}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 921b71b7003f9d943b1034e1bfc9ac85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   UIText: {fileID: 0}
+  objectPlayer: {fileID: 0}
+  PlayerScript: {fileID: 0}
 --- !u!4 &723523460
 Transform:
   m_ObjectHideFlags: 0
@@ -3231,6 +3234,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639952510d0ac934a92a18006dcf50e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &723523462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723523458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 687ba4d6879f8794d922415b74952286, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectPlayer: {fileID: 0}
+  PlayerScript: {fileID: 0}
 --- !u!1 &784428433
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,10 +22,10 @@ namespace Scripts
         private Vector3 initialScale;
 
         // server objects
-        public GameObject objectTCP;
-        public ServerTCP server;
-        public ClientTCP client;
-        public bool TCPConnection = false;
+        public GameObject objectUDP;
+        public ServerUDP server;
+        public ClientUDP client;
+        public bool UDPConnection = false;
         public GameObject parent;
         public GameObject camera;
         void Start()
@@ -40,7 +40,7 @@ namespace Scripts
             jumpVelocity = Mathf.Sqrt(2 * gravity * maxJumpHeight);
 
             //Get client component
-            FindTCP();
+            FindUDP();
 
             camera = GameObject.Find("Main Camera");
             if (camera == null)
@@ -64,13 +64,13 @@ namespace Scripts
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-                animator.SetBool("isJumping", true);
+                //animator.SetBool("isJumping", true);
             }
 
             // Set isJumping to false when grounded
             if (IsGrounded())
             {
-                animator.SetBool("isJumping", false);
+                //animator.SetBool("isJumping", false);
             }
 
             // Flip the character's sprite based on movement direction, preserving the initial scale
@@ -83,13 +83,13 @@ namespace Scripts
                 transform.localScale = new Vector3(Mathf.Abs(initialScale.x), initialScale.y, initialScale.z);
             }
 
-            if (objectTCP == null)
+            if (objectUDP == null)
             {
-                if (TCPConnection == true)
+                if (UDPConnection == true)
                 {
-                    if (server == null) FindTCP();
+                    if (server == null) FindUDP();
                 }
-                else if (client == null) FindTCP();
+                else if (client == null) FindUDP();
 
             }
             SendPlayerPosition(); //Send the position to the server every fram for the moment
@@ -109,11 +109,9 @@ namespace Scripts
 
         void SendPlayerPosition()
         {
-
-            Debug.Log(rb.position);
-            if (objectTCP != null)
+            if (objectUDP != null)
             {
-                if (TCPConnection)
+                if (UDPConnection)
                 {
                     server.SendPlayerPositionToClient(rb.position);
                 }
@@ -123,20 +121,20 @@ namespace Scripts
                 }
             }
         }
-        public void FindTCP()
+        public void FindUDP()
         {
-            if (objectTCP == null) objectTCP = GameObject.Find("ClientManager");
-            if (objectTCP == null) objectTCP = GameObject.Find("ServerManager");
+            if (objectUDP == null) objectUDP = GameObject.Find("ClientManager");
+            if (objectUDP == null) objectUDP = GameObject.Find("ServerManager");
 
             if (server == null)
             {
-                server = objectTCP.GetComponent<ServerTCP>();
+                server = objectUDP.GetComponent<ServerUDP>();
 
                 if (server != null)
                 {
                     Debug.Log("Server found!!!, pinging him");
                     
-                    TCPConnection = true;
+                    UDPConnection = true;
                 }
                 else
                 {
@@ -145,13 +143,13 @@ namespace Scripts
             }
             if (client == null)
             {
-                client = objectTCP.GetComponent<ClientTCP>();
+                client = objectUDP.GetComponent<ClientUDP>();
 
                 if (client != null)
                 {
                     Debug.Log("Server found!!!, pinging him");
-                    client.ConnectToPlayer();
-                    TCPConnection = false;
+                    client.ConnectToPlayer(parent);
+                    UDPConnection = false;
                 }
                 else
                 {

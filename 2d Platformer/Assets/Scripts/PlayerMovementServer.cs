@@ -12,10 +12,11 @@ namespace Scripts
         public Animator animator;
         private Vector3 initialScale;
         public GameObject objectTCP;
-        public ClientTCP client;
-        public ServerTCP server;
+        public ClientUDP client;
+        public ServerUDP server;
         public bool TCPConnection;
         private Vector2 futurePosition;
+        private Vector2 futurePositionCheck;
         public GameObject parent;
         void Start()
         {
@@ -25,6 +26,8 @@ namespace Scripts
 
             initialScale = transform.localScale;
 
+            futurePosition = new Vector2(0.0f, 0.0f);
+            futurePositionCheck  = new Vector2(0.0f, 0.0f);
             //Call server to connect
             FindTCP();
         }
@@ -32,7 +35,13 @@ namespace Scripts
         // Update is called once per frame
         void Update()
         {
-            rb.MovePosition(futurePosition);
+            if (futurePosition != futurePositionCheck)
+            {
+                Debug.Log("Changing player position");
+                rb.MovePosition(futurePosition);
+                futurePositionCheck = futurePosition;
+            }
+
 
 
             if (objectTCP == null)
@@ -43,7 +52,6 @@ namespace Scripts
 
         public void SetPosition(Vector2 position)
         {
-            Debug.Log("trying to change position!");
             futurePosition = position;
         }
 
@@ -53,22 +61,22 @@ namespace Scripts
             if (objectTCP == null) objectTCP = GameObject.Find("ServerManager");
             if (server == null)
             {
-                server = objectTCP.GetComponent<ServerTCP>();
+                server = objectTCP.GetComponent<ServerUDP>();
 
                 if (server != null)
                 {
-                    Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                    Debug.Log("AAAA");
                     server.ConnectToPlayer(parent);
                     TCPConnection = true;
                 }
             }
             if (client == null)
             {
-                client = objectTCP.GetComponent<ClientTCP>();
+                client = objectTCP.GetComponent<ClientUDP>();
 
                 if (client != null)
                 {
-                    client.ConnectToPlayer();
+                    client.ConnectToPlayer(parent);
                     TCPConnection = false;
                 }
             }

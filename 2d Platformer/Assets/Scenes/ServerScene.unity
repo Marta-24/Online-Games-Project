@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 137970129}
   - component: {fileID: 137970128}
   - component: {fileID: 137970130}
+  - component: {fileID: 137970131}
   m_Layer: 0
   m_Name: ServerManager
   m_TagString: Untagged
@@ -147,7 +148,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 137970127}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46c8b1907a6812045a3e6cbf1f6118f9, type: 3}
   m_Name: 
@@ -181,6 +182,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 639952510d0ac934a92a18006dcf50e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &137970131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137970127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 710bbdecc9274b14886f082acd30c136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectPlayer: {fileID: 0}
+  playerScript: {fileID: 0}
 --- !u!1 &228115241
 GameObject:
   m_ObjectHideFlags: 0
@@ -2727,9 +2742,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137970128}
-        m_TargetAssemblyTypeName: Scripts.ServerTCP, Assembly-CSharp
-        m_MethodName: startServer
+      - m_Target: {fileID: 137970131}
+        m_TargetAssemblyTypeName: Scripts.ServerUDP, Assembly-CSharp
+        m_MethodName: StartServer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
