@@ -35,6 +35,7 @@ namespace Scripts
         {
             Thread connect = new Thread(Connect);
             connect.Start();
+
         }
 
         void Connect()
@@ -48,6 +49,7 @@ namespace Scripts
 
             Thread sendThread = new Thread(Send);
             sendThread.Start();
+            SceneManager.LoadScene("WaitingRoom");
 
         }
 

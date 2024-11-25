@@ -3204,7 +3204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 921b71b7003f9d943b1034e1bfc9ac85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UIText: {fileID: 0}
   objectPlayer: {fileID: 0}
   PlayerScript: {fileID: 0}
 --- !u!4 &723523460
@@ -3247,7 +3246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectPlayer: {fileID: 0}
-  PlayerScript: {fileID: 0}
+  playerScript: {fileID: 0}
 --- !u!1 &784428433
 GameObject:
   m_ObjectHideFlags: 0
@@ -4632,7 +4631,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Client TPC
+  m_text: Start Client
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
