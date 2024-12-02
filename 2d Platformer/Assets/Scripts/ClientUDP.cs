@@ -21,7 +21,8 @@ namespace Scripts
         public GameObject objectPlayer;
         public PlayerMovementServer playerScript;
         IPEndPoint ipep;
-
+        public GameObject textPanel;
+        string text;
         void Start()
         {
         }
@@ -33,6 +34,8 @@ namespace Scripts
 
         public void StartClient()
         {
+            //127.0.0.1
+            text = textPanel.GetComponent<TMP_InputField>().text;
             Thread connect = new Thread(Connect);
             connect.Start();
 
@@ -42,14 +45,14 @@ namespace Scripts
         {
             Debug.Log("connecting to server");
 
-            ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9090);
+            ipep = new IPEndPoint(IPAddress.Parse(text), 9090);
 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-          
+
 
             Thread sendThread = new Thread(Send);
             sendThread.Start();
-            SceneManager.LoadScene("WaitingRoom");
+            //SceneManager.LoadScene("WaitingRoom");
 
         }
 
@@ -124,12 +127,12 @@ namespace Scripts
 
             string json01 = reader.ReadString();
             string json02 = reader.ReadString();
-            
+
             command = JsonUtility.FromJson<ReplicationMessage>(json01);
             Debug.Log(command.action);
 
             if (command.action == 1)
-            {   
+            {
                 Debug.Log("Servername received");
             }
             else if (command.action == 2)
@@ -172,7 +175,7 @@ namespace Scripts
             byte[] data = new byte[2048];
             data = stream.ToArray();
             Debug.Log("Sending position to server: " + data);
-            
+
 
             server.SendTo(data, SocketFlags.None, ipep); //this should work;
         }
