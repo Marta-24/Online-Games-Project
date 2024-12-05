@@ -24,14 +24,17 @@ namespace Scripts
         public Instanciator instanciator_;
         
         
+        
 
         void Start()
         {
+            //Generate Random instance
+
             AddServer();
             FindInstanciator();
 
-            CreateNetId(instanciator_.InstancePlayerOne());
-            CreateNetId(instanciator_.InstancePlayerTwo());
+            CreateNetId(instanciator_.InstancePlayerOne()); // player one created, send the clients the command create!!!
+            CreateNetId(instanciator_.InstancePlayerTwo()); // same
         }
 
         // Update is called once per frame
@@ -58,22 +61,34 @@ namespace Scripts
         {
             instanciator_ = GetComponent<Instanciator>();
         }
+
         public void CreateNetId(GameObject gameObject_)
         {
             NetId id = new NetId(GenerateId(), gameObject_);
             netIdList.Add(id);
 
-            SendNetId(id);
+            Debug.Log("Added new NetId with name and id:" + gameObject_.name + " " + id.netId);
         }
 
         private int GenerateId()
         {
-            return 0;
-        }
+            
+            while(true)
+            {
+            bool sec = true;
+            int num = Random.Range(0, int.MaxValue); //Generate random number
 
-        private void SendNetId(NetId id)
-        {
-            // Send to client this information se the lists are the same
+            //Check if number already exists 
+            for(int i = 0; i < netIdList.Count; i++)
+            {
+                if(netIdList[i].netId == num)
+                {
+                    sec = false;
+                }
+            }
+            
+            if (sec) return num;
+            }
         }
     }
 }

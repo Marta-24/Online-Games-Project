@@ -14,6 +14,95 @@ using System.IO;
 
 namespace Scripts
 {
+    public abstract class Field
+    {
+        //public int type;
+        public abstract void Serialize(List<string> stringList);
+    }
+
+    public class FieldString : Field
+    {
+        string data;
+
+        public FieldString(string data)
+        {
+            this.data = data;
+        }
+
+        public override void Serialize(List<string> stringList)
+        {
+            stringList.Add(JsonUtility.ToJson(this.data));
+        }
+    }
+
+    public class FieldDoubleInt : Field
+    {
+        int a, b;
+
+        public FieldDoubleInt(int x, int y)
+        {
+            this.a = x;
+            this.b = y;
+        }
+
+
+        public override void Serialize(List<string> stringList)
+        {
+            stringList.Add(JsonUtility.ToJson(this.a));
+            stringList.Add(JsonUtility.ToJson(this.b));
+        }
+    }
+
+    public class Command
+    {
+        public int netID;
+        public int action;
+        public List<Field> fieldList;
+
+        Command(int netID, int action)
+        {
+            this.netID = netID;
+            this.action = action;
+        }
+
+        Command(int netID, int action, List<Field> list)
+        {
+            this.netID = netID;
+            this.action = action;
+            this.fieldList = list;
+        }
+
+        public byte[] Serialize()
+        {
+            byte[] data = new byte[2048];
+
+            string jsonNetId = JsonUtility.ToJson(this.netID);
+            string jsonAction = JsonUtility.ToJson(this.action);
+
+            List<string> stringList = new List<string>();
+
+            for (int i = 0; i < fieldList.Count; i++)
+            {
+                fieldList[i].Serialize(stringList);
+            }
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(jsonNetId);
+            writer.Write(jsonAction);
+
+            for (int i = 0; i < stringList.Count; i++)
+            {
+                writer.Write(stringList[i]);
+            }
+
+            data = stream.ToArray();
+            return data;
+        }
+    }
+
+
     public class UserUDP
     {
         public EndPoint endPoint;
@@ -93,7 +182,7 @@ namespace Scripts
             command.action = 3;
 
             var s = new StringJson("serverName");
-            
+
             string json01 = JsonUtility.ToJson(command);
             string json02 = JsonUtility.ToJson(s);
             MemoryStream stream = new MemoryStream();
@@ -103,8 +192,8 @@ namespace Scripts
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
-            
-            socket.SendTo(data, data.Length, SocketFlags.None, Remote);   
+
+            socket.SendTo(data, data.Length, SocketFlags.None, Remote);
         }
 
         void ReceiveJob(UserUDP user)
@@ -183,7 +272,7 @@ namespace Scripts
             data = stream.ToArray();
 
             Debug.Log("sending position update");
-            
+
             socket.SendTo(data, SocketFlags.None, user.endPoint);
         }
 
