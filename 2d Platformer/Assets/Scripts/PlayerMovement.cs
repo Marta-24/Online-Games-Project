@@ -6,7 +6,6 @@ namespace Scripts
     {
         public float moveSpeed = 5f;
         public float maxJumpHeight = 2f;
-
         private float jumpVelocity;
         private Rigidbody2D rb;
         private Vector2 movement;
@@ -28,6 +27,7 @@ namespace Scripts
         public bool UDPConnection = false;
         public GameObject parent;
         public GameObject camera;
+
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -50,7 +50,6 @@ namespace Scripts
 
             camera.GetComponent<CameraFollow>().ChangeTarget(parent.transform);
         }
-
 
         void Update()
         {

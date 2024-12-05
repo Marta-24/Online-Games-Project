@@ -14,10 +14,17 @@ using System.IO;
 
 namespace Scripts
 {
+    public enum UdpActions : int
+    {
+        Hello = 0,
+        Position,
+        Create
+    }
+
     public abstract class Field
     {
         //public int type;
-        public abstract void Serialize(List<string> stringList);
+        public abstract string Serialize();
     }
 
     public class FieldString : Field
@@ -29,9 +36,9 @@ namespace Scripts
             this.data = data;
         }
 
-        public override void Serialize(List<string> stringList)
+        public override string Serialize()
         {
-            stringList.Add(JsonUtility.ToJson(this.data));
+            return JsonUtility.ToJson(this.data);
         }
     }
 
@@ -46,10 +53,15 @@ namespace Scripts
         }
 
 
-        public override void Serialize(List<string> stringList)
+        public override string Serialize()
         {
-            stringList.Add(JsonUtility.ToJson(this.a));
-            stringList.Add(JsonUtility.ToJson(this.b));
+            string str1 = JsonUtility.ToJson(this.a);
+            string str2 = JsonUtility.ToJson(this.b);
+
+            str1 = str1 + " " + str2;
+            Debug.Log(str1);
+
+            return str1;
         }
     }
 
@@ -59,23 +71,37 @@ namespace Scripts
         public int action;
         public List<Field> fieldList;
 
-        Command(int netID, int action)
+        public Command()
+        {
+            this.fieldList = new List<Field>();
+        }
+        public Command(int netID, int action)
         {
             this.netID = netID;
             this.action = action;
         }
 
-        Command(int netID, int action, List<Field> list)
+        public Command(int netID, int action, List<Field> list)
         {
             this.netID = netID;
             this.action = action;
             this.fieldList = list;
         }
 
+        public Command(int netID, int action, Field field)
+        {
+            this.netID = netID;
+            this.action = action;
+            this.fieldList = new List<Field>();
+            this.fieldList.Add(field);
+        }
+
         public byte[] Serialize()
         {
-            byte[] data = new byte[2048];
+            Debug.Log("starting serialization");
 
+            byte[] data = new byte[2048];
+            Debug.Log(this.netID);
             string jsonNetId = JsonUtility.ToJson(this.netID);
             string jsonAction = JsonUtility.ToJson(this.action);
 
@@ -83,11 +109,14 @@ namespace Scripts
 
             for (int i = 0; i < fieldList.Count; i++)
             {
-                fieldList[i].Serialize(stringList);
+                stringList.Add(fieldList[i].Serialize());
             }
 
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
+
+            Debug.Log(jsonNetId);
+            Debug.Log(jsonAction);
 
             writer.Write(jsonNetId);
             writer.Write(jsonAction);
@@ -177,21 +206,25 @@ namespace Scripts
 
         void SendHello(EndPoint Remote)
         {
-            var command = new ReplicationMessage();
-            command.NetID = 0;
-            command.action = 3;
+            string str = "serverName";
+            FieldString fld = new FieldString(str);
+            Command com = new Command(0, 0, fld);
+            Debug.Log(com.netID);
+            Debug.Log(com.action);
 
-            var s = new StringJson("serverName");
-
-            string json01 = JsonUtility.ToJson(command);
-            string json02 = JsonUtility.ToJson(s);
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(com.fieldList);
+            
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
             writer.Write(json01);
-            writer.Write(json02);
+            
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
+
+
+            Debug.Log("SendHello Serialized:" + data);
 
             socket.SendTo(data, data.Length, SocketFlags.None, Remote);
         }

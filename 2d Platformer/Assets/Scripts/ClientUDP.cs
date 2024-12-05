@@ -108,8 +108,8 @@ namespace Scripts
             EndPoint Remote = (EndPoint)(sender);
 
             recv = server.ReceiveFrom(data, data.Length, SocketFlags.None, ref Remote);
-            Debug.Log("data recieved: " + Encoding.ASCII.GetString(data));
-
+            
+            deserializeJson(data);
             Thread receiveThread = new Thread(ReceiveJob);
             receiveThread.Start();
         }
@@ -120,29 +120,33 @@ namespace Scripts
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
-            var command = new ReplicationMessage();
-            var t = new testClass();
+            //var command = new ReplicationMessage();
+            var com = new Command();
+
+            //var t = new testClass();
             BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
             string json01 = reader.ReadString();
             string json02 = reader.ReadString();
 
-            command = JsonUtility.FromJson<ReplicationMessage>(json01);
-            Debug.Log(command.action);
+            com = JsonUtility.FromJson<Command>(json01);
+            com.fieldList = JsonUtility.FromJson<List<Field>>(json02);
+            Debug.Log(com.netID);
+            Debug.Log(com.fieldList[1]);
 
-            if (command.action == 1)
-            {
-                Debug.Log("Servername received");
-            }
-            else if (command.action == 2)
-            {
-                t = JsonUtility.FromJson<testClass>(json02);
-
-                // trying to set position
-                SetPlayerPosition(t);
-            }
-            return command.action;
+            //if (command.action == 1)
+            //{
+            //    Debug.Log("Servername received");
+            //}
+            //else if (command.action == 2)
+            //{
+            //    t = JsonUtility.FromJson<testClass>(json02);
+//
+            //    // trying to set position
+            //    SetPlayerPosition(t);
+            //}
+            return 1;
         }
 
         void SetPlayerPosition(testClass pos)
