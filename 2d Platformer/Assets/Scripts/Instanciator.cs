@@ -8,7 +8,8 @@ namespace Scripts
     {
         public GameObject player1Prefab;
         public GameObject player2Prefab;
-        
+        public GameObject enemyPrefab;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -42,5 +43,11 @@ namespace Scripts
            Instantiate(player2Prefab, new Vector3(0, 0, 0), Quaternion.identity);
             return player2Prefab;
         }
+
+        public GameObject InstanceEnemyPrefab()
+        {
+            return Instantiate(enemyPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        }
+
     }
 }

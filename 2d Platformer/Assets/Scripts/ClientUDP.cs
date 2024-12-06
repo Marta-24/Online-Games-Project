@@ -23,6 +23,7 @@ namespace Scripts
         IPEndPoint ipep;
         public GameObject textPanel;
         string text;
+        public GameObject enemyPrefab;
         void Start()
         {
         }
@@ -135,6 +136,17 @@ namespace Scripts
             Debug.Log(com.netID);
             Debug.Log(com.fieldList[1]);
 
+            if (com.action == (int)UdpActions.Create)
+            {
+                // Assume position fields are sent as integers
+                var field = com.fieldList[0] as FieldDoubleInt;
+                Vector3 position = new Vector3(field.a, field.b, 0);
+
+                Debug.Log($"Spawning enemy at position {position} on client.");
+                Instantiate(enemyPrefab, position, Quaternion.identity);
+            }
+
+
             //if (command.action == 1)
             //{
             //    Debug.Log("Servername received");
@@ -142,7 +154,7 @@ namespace Scripts
             //else if (command.action == 2)
             //{
             //    t = JsonUtility.FromJson<testClass>(json02);
-//
+            //
             //    // trying to set position
             //    SetPlayerPosition(t);
             //}

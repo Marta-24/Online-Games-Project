@@ -44,7 +44,7 @@ namespace Scripts
 
     public class FieldDoubleInt : Field
     {
-        int a, b;
+        public int a, b;
 
         public FieldDoubleInt(int x, int y)
         {
@@ -162,6 +162,7 @@ namespace Scripts
         public PlayerMovementServer playerScript;
         Socket socket;
         UserUDP user;
+        public GameObject enemyPrefab;
 
         // Function called with a button to start the udp server
         public void StartServer()
@@ -335,5 +336,29 @@ namespace Scripts
                 }
             }
         }
+
+        public void SpawnEnemy()
+        {
+            Debug.Log("Spawning enemy on the server.");
+
+            // Create an enemy object in the server scene
+            GameObject enemy = Instantiate(enemyPrefab, new Vector3(5, 5, 0), Quaternion.identity); // Example position
+
+            // Send data to the client to replicate the enemy
+            SendEnemyDataToClient(enemy.transform.position);
+        }
+
+        public void SendEnemyDataToClient(Vector3 position)
+        {
+            var command = new Command(0, (int)UdpActions.Create); // Create action
+            var fieldPosition = new FieldDoubleInt((int)position.x, (int)position.y); // Simplified serialization for position
+            command.fieldList.Add(fieldPosition);
+
+            byte[] data = command.Serialize();
+            Debug.Log("Sending enemy data to client.");
+            socket.SendTo(data, SocketFlags.None, user.endPoint);
+        }
+
+
     }
 }

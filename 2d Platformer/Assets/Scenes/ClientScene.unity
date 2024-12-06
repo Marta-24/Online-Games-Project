@@ -3456,6 +3456,7 @@ MonoBehaviour:
   objectPlayer: {fileID: 0}
   playerScript: {fileID: 0}
   textPanel: {fileID: 1481681149}
+  enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
 --- !u!1 &784428433
 GameObject:
   m_ObjectHideFlags: 0
