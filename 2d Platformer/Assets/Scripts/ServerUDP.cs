@@ -14,54 +14,64 @@ using System.IO;
 
 namespace Scripts
 {
-    public enum UdpActions : int
+    public enum UdpActions_ : int
     {
         Hello = 0,
         Position,
         Create
     }
 
+    public enum FieldType_ : int
+    {
+        String = 0,
+        DoubleInt
+    }
+
     public abstract class Field
     {
         //public int type;
-        public abstract string Serialize();
+        public abstract string GetString();
+        public abstract Vector2 GetPos();
     }
 
     public class FieldString : Field
     {
-        string data;
+        public string data;
 
         public FieldString(string data)
         {
             this.data = data;
         }
 
-        public override string Serialize()
+        public override string GetString()
         {
-            return JsonUtility.ToJson(this.data);
+            return data;
+        }
+
+        public override Vector2 GetPos()
+        {
+            Vector2 vec = new Vector2(0, 0);
+            return vec;
         }
     }
 
     public class FieldDoubleInt : Field
     {
-        public int a, b;
+        Vector2 doubleInt;
 
-        public FieldDoubleInt(int x, int y)
+        public FieldDoubleInt(Vector2 data)
         {
-            this.a = x;
-            this.b = y;
+            doubleInt = data;
         }
 
-
-        public override string Serialize()
+        public override string GetString()
         {
-            string str1 = JsonUtility.ToJson(this.a);
-            string str2 = JsonUtility.ToJson(this.b);
+            return "";
+        }
 
-            str1 = str1 + " " + str2;
-            Debug.Log(str1);
-
-            return str1;
+        public override Vector2 GetPos()
+        {
+            return doubleInt;
         }
     }
 
@@ -69,65 +79,38 @@ namespace Scripts
     {
         public int netID;
         public int action;
+        public List<int> fieldType;
         public List<Field> fieldList;
 
         public Command()
         {
+            this.fieldType = new List<int>();
             this.fieldList = new List<Field>();
         }
         public Command(int netID, int action)
         {
             this.netID = netID;
             this.action = action;
+            this.fieldType = new List<int>();
+            this.fieldList = new List<Field>();
         }
 
-        public Command(int netID, int action, List<Field> list)
+        public Command(int netID, int action, List<int> typeList, List<Field> list)
         {
             this.netID = netID;
             this.action = action;
+            this.fieldType = typeList;
             this.fieldList = list;
         }
 
-        public Command(int netID, int action, Field field)
+        public Command(int netID, int action, int type, Field field)
         {
             this.netID = netID;
             this.action = action;
+            this.fieldType = new List<int>();
+            this.fieldType.Add(type);
             this.fieldList = new List<Field>();
             this.fieldList.Add(field);
-        }
-
-        public byte[] Serialize()
-        {
-            Debug.Log("starting serialization");
-
-            byte[] data = new byte[2048];
-            Debug.Log(this.netID);
-            string jsonNetId = JsonUtility.ToJson(this.netID);
-            string jsonAction = JsonUtility.ToJson(this.action);
-
-            List<string> stringList = new List<string>();
-
-            for (int i = 0; i < fieldList.Count; i++)
-            {
-                stringList.Add(fieldList[i].Serialize());
-            }
-
-            MemoryStream stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
-
-            Debug.Log(jsonNetId);
-            Debug.Log(jsonAction);
-
-            writer.Write(jsonNetId);
-            writer.Write(jsonAction);
-
-            for (int i = 0; i < stringList.Count; i++)
-            {
-                writer.Write(stringList[i]);
-            }
-
-            data = stream.ToArray();
-            return data;
         }
     }
 
@@ -209,17 +192,23 @@ namespace Scripts
         {
             string str = "serverName";
             FieldString fld = new FieldString(str);
-            Command com = new Command(0, 0, fld);
-            Debug.Log(com.netID);
-            Debug.Log(com.action);
+            Command com = new Command(0, 0, 0, fld);
+            
 
             string json01 = JsonUtility.ToJson(com);
-            string json02 = JsonUtility.ToJson(com.fieldList);
+            string json02;
             
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
+
             writer.Write(json01);
-            
+
+            for(int i = 0; i < com.fieldList.Count; i++)
+            {
+                json02 = JsonUtility.ToJson((com.fieldList[i]));
+                Debug.Log(json02);
+                writer.Write(json02);
+            }
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
@@ -289,23 +278,27 @@ namespace Scripts
 
         public void SendPlayerPositionToClient(Vector2 position)
         {
-            var command = new ReplicationMessage();
-            command.NetID = 0;
-            command.action = 2;
+            FieldDoubleInt intData = new FieldDoubleInt(position);
+            Command com = new Command(0, (int)UdpActions_.Position, (int)FieldType_.DoubleInt, intData);
+            
 
-            var t = new testClass();
-            t.pos = position;
-            string json01 = JsonUtility.ToJson(command);
-            string json02 = JsonUtility.ToJson(t);
+            string json01 = JsonUtility.ToJson(com);
+            string json02;
+            
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
+
             writer.Write(json01);
-            writer.Write(json02);
+
+            for(int i = 0; i < com.fieldList.Count; i++)
+            {
+                json02 = JsonUtility.ToJson((com.fieldList[i]));
+                Debug.Log(json02);
+                writer.Write(json02);
+            }
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
-
-            Debug.Log("sending position update");
 
             socket.SendTo(data, SocketFlags.None, user.endPoint);
         }
@@ -350,13 +343,13 @@ namespace Scripts
 
         public void SendEnemyDataToClient(Vector3 position)
         {
-            var command = new Command(0, (int)UdpActions.Create); // Create action
-            var fieldPosition = new FieldDoubleInt((int)position.x, (int)position.y); // Simplified serialization for position
-            command.fieldList.Add(fieldPosition);
-
-            byte[] data = command.Serialize();
-            Debug.Log("Sending enemy data to client.");
-            socket.SendTo(data, SocketFlags.None, user.endPoint);
+            //var command = new Command(0, (int)UdpActions_.Create); // Create action
+            //var fieldPosition = new FieldDoubleInt((int)position.x, (int)position.y); // Simplified serialization for position
+            //command.fieldList.Add(fieldPosition);
+//
+            //byte[] data = command.Serialize();
+            //Debug.Log("Sending enemy data to client.");
+            //socket.SendTo(data, SocketFlags.None, user.endPoint);
         }
 
 
