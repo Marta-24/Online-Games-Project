@@ -253,27 +253,48 @@ namespace Scripts
         //Right now this function only decodes the position of a player, in a future this function will either redistribute the calls from the client or be one little part of various functions to deserialize
         public int DeserializeJson(byte[] data_)
         {
-            Debug.Log("deserializing data");
+            Debug.Log("starting deserialize");
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
-            var command = new ReplicationMessage();
-            var t = new testClass();
+            //var command = new ReplicationMessage();
+            var com = new Command();
+
+            
             BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
             string json01 = reader.ReadString();
-            string json02 = reader.ReadString();
+            string json02;
 
-            command = JsonUtility.FromJson<ReplicationMessage>(json01);
-            Debug.Log(command.action);
+            com = JsonUtility.FromJson<Command>(json01);
+            com.fieldList = new List<Field>();
 
-            t = JsonUtility.FromJson<testClass>(json02);
+            Debug.Log(com.fieldType[0]);
 
-            // trying to set position
-            SetPlayerPosition(t);
+            for (int i = 0; i < com.fieldType.Count; i++)
+            {
+                json02 = reader.ReadString();
+                
+                Debug.Log(json02);
+                if (com.fieldType[i] == (int)FieldType_.String)
+                {
+                    com.fieldList.Add(JsonUtility.FromJson<FieldString>(json02));
+                    Debug.Log(com.fieldList[0].GetString());
+                }
+                if(com.fieldType[i] == (int)FieldType_.DoubleInt)
+                {
+                    com.fieldList.Add(JsonUtility.FromJson<FieldDoubleInt>(json02));
+                }
+            }
+            
+            // DO Diferent actions with the data received
+            if (com.action == (int)UdpActions_.Position)
+            {
+                SetPlayerPosition(com.fieldList[0].GetPos());
+            }
 
-            return command.action;
+            return 1;
         }
 
         public void SendPlayerPositionToClient(Vector2 position)
