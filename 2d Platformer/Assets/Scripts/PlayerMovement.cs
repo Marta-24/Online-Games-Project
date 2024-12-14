@@ -27,6 +27,8 @@ namespace Scripts
         public bool UDPConnection = false;
         public GameObject parent;
         public GameObject camera;
+        public GameObject netIdManager;
+        public NetIdManager netIdScript;
 
         void Start()
         {
@@ -40,7 +42,7 @@ namespace Scripts
             jumpVelocity = Mathf.Sqrt(2 * gravity * maxJumpHeight);
 
             //Get client component
-            FindUDP();
+            FindNetIdManager();
 
             camera = GameObject.Find("Main Camera");
             if (camera == null)
@@ -86,9 +88,9 @@ namespace Scripts
             {
                 if (UDPConnection == true)
                 {
-                    if (server == null) FindUDP();
+                    if (server == null) FindNetIdManager();
                 }
-                else if (client == null) FindUDP();
+                else if (client == null) FindNetIdManager();
 
             }
             SendPlayerPosition(); //Send the position to the server every fram for the moment
@@ -108,55 +110,14 @@ namespace Scripts
 
         void SendPlayerPosition()
         {
-            if (objectUDP != null)
-            {
-                if (UDPConnection)
-                {
-                    server.SendPlayerPositionToClient(rb.position);
-                }
-                else
-                {
-                    client.SendPosition(rb.position);
-                }
-            }
+            netIdScript.SendPosition(parent, rb.position);
         }
 
         //This function is called at Start, the objective is to find the gameobject of the client or server
-        public void FindUDP()
+        public void FindNetIdManager()
         {
-            if (objectUDP == null) objectUDP = GameObject.Find("ClientManager");
-            if (objectUDP == null) objectUDP = GameObject.Find("ServerManager");
-
-            if (server == null)
-            {
-                server = objectUDP.GetComponent<ServerUDP>();
-
-                if (server != null)
-                {
-                    Debug.Log("Server found!!!, pinging him");
-                    
-                    UDPConnection = true;
-                }
-                else
-                {
-                    Debug.Log("Server not found");
-                }
-            }
-            if (client == null)
-            {
-                client = objectUDP.GetComponent<ClientUDP>();
-
-                if (client != null)
-                {
-                    Debug.Log("Server found!!!, pinging him");
-                    client.ConnectToPlayer(parent);
-                    UDPConnection = false;
-                }
-                else
-                {
-                    Debug.Log("Server not found");
-                }
-            }
+           netIdManager = GameObject.Find("NetIdManager");
+            if (netIdManager != null) netIdScript = netIdManager.GetComponent<NetIdManager>();
         }
     }
 }

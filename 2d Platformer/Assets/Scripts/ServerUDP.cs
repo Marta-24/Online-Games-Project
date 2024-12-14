@@ -14,103 +14,27 @@ using System.IO;
 
 namespace Scripts
 {
-    public enum UdpActions_ : int
+    public enum UdpActions_ 
     {
         Hello = 0,
-        Position,
-        Create
+        Position = 1,
+        Create = 2,
+        StartGame
     }
 
-    public enum FieldType_ : int
-    {
-        String = 0,
-        DoubleInt
-    }
-
-    public abstract class Field
-    {
-        //public int type;
-        public abstract string GetString();
-        public abstract Vector2 GetPos();
-    }
-
-    public class FieldString : Field
-    {
-        public string data;
-
-        public FieldString(string data)
-        {
-            this.data = data;
-        }
-
-        public override string GetString()
-        {
-            return data;
-        }
-
-        public override Vector2 GetPos()
-        {
-            Vector2 vec = new Vector2(0, 0);
-            return vec;
-        }
-    }
-
-    public class FieldDoubleInt : Field
-    {
-        Vector2 doubleInt;
-
-        public FieldDoubleInt(Vector2 data)
-        {
-            doubleInt = data;
-        }
-
-        public override string GetString()
-        {
-            return "";
-        }
-
-        public override Vector2 GetPos()
-        {
-            return doubleInt;
-        }
-    }
 
     public class Command
     {
         public int netID;
-        public int action;
-        public List<int> fieldType;
-        public List<Field> fieldList;
-
+        public UdpActions_ action;
         public Command()
         {
-            this.fieldType = new List<int>();
-            this.fieldList = new List<Field>();
-        }
-        public Command(int netID, int action)
-        {
-            this.netID = netID;
-            this.action = action;
-            this.fieldType = new List<int>();
-            this.fieldList = new List<Field>();
-        }
 
-        public Command(int netID, int action, List<int> typeList, List<Field> list)
-        {
-            this.netID = netID;
-            this.action = action;
-            this.fieldType = typeList;
-            this.fieldList = list;
         }
-
-        public Command(int netID, int action, int type, Field field)
+        public Command(int netID, UdpActions_ action)
         {
             this.netID = netID;
             this.action = action;
-            this.fieldType = new List<int>();
-            this.fieldType.Add(type);
-            this.fieldList = new List<Field>();
-            this.fieldList.Add(field);
         }
     }
 
@@ -171,10 +95,10 @@ namespace Scripts
                 IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
                 EndPoint Remote = (EndPoint)(sender);
 
-                Debug.Log("starting ReceiveFrom Server");
+
                 recv = socket.ReceiveFrom(_data, ref Remote);
 
-                Debug.Log(Encoding.ASCII.GetString(_data, 0, recv));
+
 
                 //Creating user
                 UserUDP user_ = new UserUDP(Remote, Encoding.ASCII.GetString(_data, 0, recv));
@@ -187,34 +111,43 @@ namespace Scripts
             }
         }
 
-
-        void SendHello(EndPoint Remote)
+        public void StartGame()
         {
-            string str = "serverName";
-            FieldString fld = new FieldString(str);
-            Command com = new Command(0, 0, 0, fld);
-            
-
+            Command com = new Command(0, UdpActions_.StartGame);
             string json01 = JsonUtility.ToJson(com);
-            string json02;
-            
+
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
 
             writer.Write(json01);
+            byte[] data = new byte[2048];
+            data = stream.ToArray();
 
-            for(int i = 0; i < com.fieldList.Count; i++)
-            {
-                json02 = JsonUtility.ToJson((com.fieldList[i]));
-                Debug.Log(json02);
-                writer.Write(json02);
-            }
+            socket.SendTo(data, SocketFlags.None, user.endPoint);
+        }
+
+        void SendHello(EndPoint Remote)
+        {
+            string str = "serverName";
+            
+            Command com = new Command(0, UdpActions_.Hello);
+
+
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(str);
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(json01);
+            writer.Write(json02);
+            
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
 
 
-            Debug.Log("SendHello Serialized:" + data);
+
 
             socket.SendTo(data, data.Length, SocketFlags.None, Remote);
         }
@@ -236,7 +169,7 @@ namespace Scripts
         int ReceiveUDP(UserUDP user)
         {
             byte[] data = new byte[2048];
-            Debug.Log("startint receive");
+
             int rec = socket.ReceiveFrom(data, ref user.endPoint); // This works because there is only one connection
             Debug.Log("Received message!!!" + rec);
 
@@ -253,7 +186,6 @@ namespace Scripts
         //Right now this function only decodes the position of a player, in a future this function will either redistribute the calls from the client or be one little part of various functions to deserialize
         public int DeserializeJson(byte[] data_)
         {
-            Debug.Log("starting deserialize");
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
@@ -268,55 +200,33 @@ namespace Scripts
             string json02;
 
             com = JsonUtility.FromJson<Command>(json01);
-            com.fieldList = new List<Field>();
 
-            Debug.Log(com.fieldType[0]);
-
-            for (int i = 0; i < com.fieldType.Count; i++)
-            {
-                json02 = reader.ReadString();
-                
-                Debug.Log(json02);
-                if (com.fieldType[i] == (int)FieldType_.String)
-                {
-                    com.fieldList.Add(JsonUtility.FromJson<FieldString>(json02));
-                    Debug.Log(com.fieldList[0].GetString());
-                }
-                if(com.fieldType[i] == (int)FieldType_.DoubleInt)
-                {
-                    com.fieldList.Add(JsonUtility.FromJson<FieldDoubleInt>(json02));
-                }
-            }
+            Debug.Log("this is it" + com.action);
             
             // DO Diferent actions with the data received
-            if (com.action == (int)UdpActions_.Position)
+            if (com.action == UdpActions_.Position)
             {
-                SetPlayerPosition(com.fieldList[0].GetPos());
+                json02 = reader.ReadString();
+                Debug.Log("changing player position");
+                Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
+                SetPlayerPosition(vec);
             }
 
             return 1;
         }
 
-        public void SendPlayerPositionToClient(Vector2 position)
+        public void SendPosition(int netId, Vector2 position)
         {
-            FieldDoubleInt intData = new FieldDoubleInt(position);
-            Command com = new Command(0, (int)UdpActions_.Position, (int)FieldType_.DoubleInt, intData);
-            
+            Command com = new Command(netId, UdpActions_.Position);
 
             string json01 = JsonUtility.ToJson(com);
-            string json02;
-            
+            string json02 = JsonUtility.ToJson(position);
+
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
 
             writer.Write(json01);
-
-            for(int i = 0; i < com.fieldList.Count; i++)
-            {
-                json02 = JsonUtility.ToJson((com.fieldList[i]));
-                Debug.Log(json02);
-                writer.Write(json02);
-            }
+            writer.Write(json02);
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
@@ -324,12 +234,33 @@ namespace Scripts
             socket.SendTo(data, SocketFlags.None, user.endPoint);
         }
 
-        public void SetPlayerPosition(testClass pos)
+        public void SendCreateObject(int netId, gameObjectType type, Vector2 pos)
         {
-            Debug.Log("changing player position:  " + pos.pos[0] + "," + pos.pos[1]);
+            Command com = new Command(netId , UdpActions_.Create);
+
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(type);
+            string json03 = JsonUtility.ToJson(pos);
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(json01);
+            writer.Write(json02);
+            writer.Write(json03);
+
+            byte[] data = new byte[2048];
+            data = stream.ToArray();
+
+            socket.SendTo(data, SocketFlags.None, user.endPoint);
+        }
+
+        public void SetPlayerPosition(Vector2 pos)
+        {
+
             if (playerScript != null)
             {
-                playerScript.SetPosition(pos.pos);
+                playerScript.SetPosition(pos);
             }
         }
 
@@ -353,7 +284,7 @@ namespace Scripts
 
         public void SpawnEnemy()
         {
-            Debug.Log("Spawning enemy on the server.");
+
 
             // Create an enemy object in the server scene
             GameObject enemy = Instantiate(enemyPrefab, new Vector3(5, 5, 0), Quaternion.identity); // Example position
@@ -367,7 +298,7 @@ namespace Scripts
             //var command = new Command(0, (int)UdpActions_.Create); // Create action
             //var fieldPosition = new FieldDoubleInt((int)position.x, (int)position.y); // Simplified serialization for position
             //command.fieldList.Add(fieldPosition);
-//
+            //
             //byte[] data = command.Serialize();
             //Debug.Log("Sending enemy data to client.");
             //socket.SendTo(data, SocketFlags.None, user.endPoint);

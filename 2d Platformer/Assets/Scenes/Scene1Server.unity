@@ -17648,8 +17648,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcd4fe2534eb3cc46b91ad112203132a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectServer: {fileID: 0}
+  objectUDP: {fileID: 0}
   server: {fileID: 0}
+  client: {fileID: 0}
   netIdManagerGameObject: {fileID: 0}
   instanciator_: {fileID: 0}
 --- !u!4 &1297117378

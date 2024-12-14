@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
-
+using UnityEngine.SceneManagement;
 namespace Scripts
 {
     public class ClientUDP : MonoBehaviour
@@ -24,13 +24,21 @@ namespace Scripts
         public GameObject textPanel;
         string text;
         public GameObject enemyPrefab;
+        public GameObject netManager;
+        public NetIdManager netIdScript;
+        public GameObject sceneManager;
+        public SceneLoader sceneLoader;
         void Start()
         {
+            sceneLoader = sceneManager.GetComponent<SceneLoader>();
         }
 
         void Update()
         {
-
+            if (netManager == null) // Even though this is called at start, we had some problems and for now this is a way to make sure we find the server or client
+            {
+                FindNetIdManager();
+            }
         }
 
         public void StartClient()
@@ -44,7 +52,7 @@ namespace Scripts
 
         void Connect()
         {
-            Debug.Log("connecting to server");
+
 
             ipep = new IPEndPoint(IPAddress.Parse(text), 9090);
 
@@ -74,7 +82,7 @@ namespace Scripts
         private int ReceiveUDP()
         {
             byte[] data = new byte[2048];
-            Debug.Log("receiving data");
+  
 
             IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
             EndPoint _remote = (EndPoint)(sender);
@@ -94,7 +102,7 @@ namespace Scripts
         void Send()
         {
             byte[] data = new byte[2048];
-            Debug.Log("sending userName");
+     
             data = Encoding.ASCII.GetBytes("userName");
             server.SendTo(data, 0, SocketFlags.None, ipep);
             Receive();
@@ -104,7 +112,7 @@ namespace Scripts
         {
             byte[] data = new byte[2048];
             int recv = 0;
-            Debug.Log("receiveing name");
+
             IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
             EndPoint Remote = (EndPoint)(sender);
 
@@ -117,7 +125,7 @@ namespace Scripts
 
         int deserializeJson(byte[] data_)
         {
-            Debug.Log("starting deserialize");
+           
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
@@ -132,30 +140,31 @@ namespace Scripts
             string json02;
 
             com = JsonUtility.FromJson<Command>(json01);
-            com.fieldList = new List<Field>();
 
-            Debug.Log(com.fieldType[0]);
-
-            for (int i = 0; i < com.fieldType.Count; i++)
-            {
-                json02 = reader.ReadString();
-                
-                Debug.Log(json02);
-                if (com.fieldType[i] == (int)FieldType_.String)
-                {
-                    com.fieldList.Add(JsonUtility.FromJson<FieldString>(json02));
-                    Debug.Log(com.fieldList[0].GetString());
-                }
-                if(com.fieldType[i] == (int)FieldType_.DoubleInt)
-                {
-                    com.fieldList.Add(JsonUtility.FromJson<FieldDoubleInt>(json02));
-                }
-            }
+            Debug.Log("this is it" + com.action);
             
             // DO Diferent actions with the data received
-            if (com.action == (int)UdpActions_.Position)
+            if (com.action == UdpActions_.Position)
             {
-                SetPlayerPosition(com.fieldList[0].GetPos());
+                json02 = reader.ReadString();
+                Debug.Log("changing player position");
+                Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
+                //changing player position
+                SetPosition(com.netID, vec);
+            }
+            else if(com.action == UdpActions_.Create)
+            {
+                Debug.Log("creating something");
+                json02 = reader.ReadString();
+                gameObjectType type = JsonUtility.FromJson<gameObjectType>(json02);
+                json02 = reader.ReadString();
+                Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
+                netIdScript.StackObject(com.netID, type, vec);
+            }
+            else if(com.action == UdpActions_.StartGame)
+            {
+       
+                sceneLoader.LoadScene01Client_();
             }
 
             //if (com.action == (int)UdpActions_.Create)
@@ -183,39 +192,42 @@ namespace Scripts
             return 1;
         }
 
-        void SetPlayerPosition(Vector2 pos)
+        void SetPosition(int netId, Vector2 pos)
         {
-            if (playerScript == null)
-            {
-                Debug.Log("player not found");
-            }
-            else if (playerScript != null)
-            {
-                playerScript.SetPosition(pos);
-            }
+            if(netManager != null) netIdScript.SetPosition(netId, pos);
+            //if (playerScript == null)
+            //{
+//
+            //}
+            //else if (playerScript != null)
+            //{
+            //    playerScript.SetPosition(pos);
+            //}
         }
 
-        public void SendPosition(Vector2 position)
+        public void SendPosition(int netId, Vector2 position)
         {
-            var command = new ReplicationMessage();
-            command.NetID = 0;
-            command.action = 2;
+            Command com = new Command(netId, UdpActions_.Position);
 
-            var t = new testClass();
-            t.pos = position;
-            string json01 = JsonUtility.ToJson(command);
-            string json02 = JsonUtility.ToJson(t);
-            stream = new MemoryStream();
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(position);
+
+            MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
+
             writer.Write(json01);
             writer.Write(json02);
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
-            Debug.Log("Sending position to server: " + data);
-
 
             server.SendTo(data, SocketFlags.None, ipep); //this should work;
+        }
+
+        public void FindNetIdManager()
+        {
+            netManager = GameObject.Find("NetIdManager");
+            if (netManager != null) netIdScript = netManager.GetComponent<NetIdManager>();
         }
 
         public void ConnectToPlayer(GameObject gameObject)
@@ -229,7 +241,7 @@ namespace Scripts
 
                     if (playerScript != null)
                     {
-                        Debug.Log("Player Script found!!!");
+     
                     }
                 }
             }

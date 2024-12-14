@@ -3,6 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    bool clientScene = false;
+
+    void Update()
+    {
+        if (clientScene)
+        {
+            clientScene = false;
+            SceneManager.LoadScene("Scene1Client");
+        }
+    }
     public void LoadSceneClient(string Client)
     {
         SceneManager.LoadScene("ClientScene");
@@ -24,8 +34,12 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.LoadScene("Scene1Client");
     }
-     public void LoadScene01Server()
+    public void LoadScene01Server()
     {
         SceneManager.LoadScene("Scene1Server");
+    }
+    public void LoadScene01Client_()
+    {
+        clientScene = true;
     }
 }
