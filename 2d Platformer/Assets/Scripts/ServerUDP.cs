@@ -241,6 +241,8 @@ namespace Scripts
             string json01 = JsonUtility.ToJson(com);
             string json02 = JsonUtility.ToJson(type);
             string json03 = JsonUtility.ToJson(pos);
+            
+            Debug.Log("sending comand create type " + ((int)type));
 
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);

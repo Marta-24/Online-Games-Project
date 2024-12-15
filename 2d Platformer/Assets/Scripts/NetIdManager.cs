@@ -6,10 +6,10 @@ namespace Scripts
 {
     public enum gameObjectType : int
     {
-        none = -1,
-        player1 = 0,
-        player2 = 1,
-        enemy = 1,
+        none = 0,
+        player1 = 1,
+        player2 = 2,
+        enemy = 3,
     }
     public class NetId
     {
@@ -87,7 +87,7 @@ namespace Scripts
             {
                 NetId id = CreateNetId(instanciator_.InstancePlayerOne(), gameObjectType.player1); // player one created, send the clients the command create!!!
                 server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f));
-                CreateNetId(instanciator_.InstancePlayerTwo(), gameObjectType.player2); // same
+                id = CreateNetId(instanciator_.InstancePlayerTwo(), gameObjectType.player2); // same
                 server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f));
             
             }
@@ -128,7 +128,7 @@ namespace Scripts
             NetId id = new NetId(GenerateId(), gameObject_, type);
             netIdList.Add(id);
 
-            Debug.Log("Added new NetId with name and id:" + gameObject_.name + " " + id.netId);
+            Debug.Log("Added new NetId with name and id:" + gameObject_.name + " " + id.netId + " " + id.type);
             return id;
         }
 
@@ -161,6 +161,7 @@ namespace Scripts
         }
         public void StackObject(int netId, gameObjectType type, Vector2 pos)
         {
+            Debug.Log("object stacked: " + ((int)type));
             NeedToCreateList.Add(new FutureObject(netId, pos, type));
         }
 
