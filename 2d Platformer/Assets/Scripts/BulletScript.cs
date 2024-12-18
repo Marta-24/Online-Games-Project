@@ -24,7 +24,7 @@ public class BulletScript : MonoBehaviour
         if (lifeTime < 0)
         {
             Debug.Log("Deleting bullet because of time");
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
 
@@ -34,7 +34,7 @@ public class BulletScript : MonoBehaviour
         // Destroy the bullet if it hits an enemy or goes out of bounds
         if (other.CompareTag("Wall") || other.CompareTag("Player1") || other.CompareTag("Enemy")) // Change this thing later
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
 }

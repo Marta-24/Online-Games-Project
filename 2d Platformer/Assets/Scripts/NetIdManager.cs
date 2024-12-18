@@ -17,12 +17,22 @@ namespace Scripts
         public int netId;
         public GameObject gameObject;
         public gameObjectType type;
+        public List<Component> compList;
 
         public NetId(int netId_, GameObject gameObject_, gameObjectType type)
         {
             this.netId = netId_;
             gameObject = gameObject_;
             this.type = type;
+            compList = new List<Component>();
+        }
+
+        public NetId(int netId_, GameObject gameObject_, gameObjectType type, List<Component> compList)
+        {
+            this.netId = netId_;
+            gameObject = gameObject_;
+            this.type = type;
+            this.compList = compList;
         }
     }
 
@@ -51,6 +61,7 @@ namespace Scripts
         public List<FutureObject> NeedToCreateList = new List<FutureObject>();
         public int frameCounter = 60;
 
+        public GameObject bulletPrefab;
         void Start()
         {
             //Generate Random instance
@@ -86,12 +97,23 @@ namespace Scripts
                 frameCounter--;
                 if (server != null)
                 {
-                    NetId id = CreateNetId(instanciator_.InstancePlayerOne(), gameObjectType.player1); // player one created, send the clients the command create!!!
-                    
-                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f));
-                    id = CreateNetId(instanciator_.InstancePlayerTwo(), gameObjectType.player2); // same
+                    GameObject obj = instanciator_.InstancePlayerOne();
+                    List<Component> list = new List<Component>();
+                    PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
+                    list.Add(a);
+
+                    NetId id = CreateNetId(obj, gameObjectType.player1, list); // player one created, send the clients the command create!!!
+
                     server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f));
 
+
+                    obj = instanciator_.InstancePlayerTwo();
+                    list = new List<Component>();
+                    a = obj.GetComponent<PlayerMovementServer>();
+                    list.Add(a);
+
+                    id = CreateNetId(obj, gameObjectType.player2, list); // same
+                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f));
                 }
             }
 
@@ -129,18 +151,37 @@ namespace Scripts
 
             return -1;
         }
-        public NetId CreateNetId(GameObject obj, gameObjectType type)
+        public NetId CreateNetId(GameObject obj, gameObjectType type, List<Component> list = null)
         {
-            NetId id = new NetId(GenerateId(), obj, type);
+            NetId id;
+
+            if (list != null)
+            {
+                id = new NetId(GenerateId(), obj, type, list);
+            }
+            else
+            {
+                id = new NetId(GenerateId(), obj, type);
+            }
+
             netIdList.Add(id);
 
             Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
             return id;
         }
 
-        public NetId AddNetId(int intId, GameObject obj, gameObjectType type)
+        public NetId AddNetId(int intId, GameObject obj, gameObjectType type, List<Component> optionalList = null)
         {
-            NetId id = new NetId(intId, obj, type);
+            NetId id;
+            if (optionalList.Count == 0 && (optionalList != null))
+            {
+                id = new NetId(intId, obj, type);
+            }
+            else
+            {
+                id = new NetId(intId, obj, type, optionalList);
+            }
+
             netIdList.Add(id);
 
             Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
@@ -153,11 +194,10 @@ namespace Scripts
             {
                 if (netIdList[i].netId == id)
                 {
-                    Debug.Log("object found between all id" + id);
+
                     return netIdList[i];
                 }
             }
-            Debug.Log("object not found in list" + id);
             return null;
         }
         private int GenerateId()
@@ -215,34 +255,89 @@ namespace Scripts
                 Debug.Log("creating something");
                 if (type == gameObjectType.player1)
                 {
-                    AddNetId(netId, instanciator_.InstancePlayerOne(), gameObjectType.player1); // player one created, send the clients the command create!!!
+                    GameObject obj = instanciator_.InstancePlayerOne();
+                    List<Component> list = new List<Component>();
+                    if (server != null)
+                    {
+                        obj.GetComponent<PlayerMovementServer>().enabled = false;
+                        obj.GetComponent<PlayerMovement>().enabled = true;
+                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
+                        list.Add(a);
+                    }
+                    if (client != null)
+                    {
+                        obj.GetComponent<PlayerMovementServer>().enabled = true;
+                        obj.GetComponent<PlayerMovement>().enabled = false;
+                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
+                        list.Add(a);
+                        Debug.Log("adding playermovement to client");
+                    }
+
+
+                    AddNetId(netId, obj, gameObjectType.player1, list); // player one created, send the clients the command create!!!
                 }
                 else if (type == gameObjectType.player2)
                 {
-                    AddNetId(netId, instanciator_.InstancePlayerTwo(), gameObjectType.player2); // same
+                    GameObject obj = instanciator_.InstancePlayerTwo();
+                    List<Component> list = new List<Component>();
+                    if (server != null)
+                    {
+                        obj.GetComponent<PlayerMovementServer>().enabled = true;
+                        obj.GetComponent<PlayerMovement>().enabled = false;
+                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
+                        list.Add(a);
+                    }
+                    if (client != null)
+                    {
+                        obj.GetComponent<PlayerMovementServer>().enabled = false;
+                        obj.GetComponent<PlayerMovement>().enabled = true;
+                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
+                        list.Add(a);
+                    }
+
+
+
+
+
+                    AddNetId(netId, obj, gameObjectType.player2, list); // same
                 }
                 else if (type == gameObjectType.bullet)
                 {
-                    Debug.Log("order of creating bullet reached!!!");
+                    Transform myTransform = new GameObject().transform;
+                    myTransform.position = pos;
+                    Instantiate(bulletPrefab, myTransform);
                 }
             }
         }
 
         public void SetPosition(int id, Vector2 pos)
         {
-            Debug.Log("receiveing orders to move");
+            //Debug.Log("receiveing orders to move");
             NetId obj = FindObject(id);
-
             if (obj != null)
             {
-                if (obj.type == gameObjectType.player1 || obj.type == gameObjectType.player2)
+                if (obj.compList != null || obj.compList.Count != 0)
                 {
-                    Debug.Log("changing player position");
-                    obj.gameObject.GetComponent<PlayerMovementServer>().SetPosition(pos);
+                    if (obj.type == gameObjectType.player1)
+                    {
+                        Debug.Log("player1is working");
+                        if (client != null)
+                        {
+                            Debug.Log("this is working");
+                            PlayerMovementServer a = obj.compList[0] as PlayerMovementServer;
+                            a.SetPosition(pos);
+                        }
+                    }
+                    else if (obj.type == gameObjectType.player2)
+                    {
+                        if (server != null)
+                        {
+                            PlayerMovementServer a = obj.compList[0] as PlayerMovementServer;
+                            a.SetPosition(pos);
+                        }
+                    }
                 }
             }
-
-
         }
 
         private void FindServerOrClient()

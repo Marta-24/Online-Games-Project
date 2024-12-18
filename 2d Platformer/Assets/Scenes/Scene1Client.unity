@@ -17489,6 +17489,7 @@ MonoBehaviour:
   instanciator_: {fileID: 0}
   startEnded: 0
   frameCounter: 60
+  bulletPrefab: {fileID: 2807193202124031089, guid: f23debcb139aaa94c981b177b204f6d6, type: 3}
 --- !u!4 &2077018158
 Transform:
   m_ObjectHideFlags: 0

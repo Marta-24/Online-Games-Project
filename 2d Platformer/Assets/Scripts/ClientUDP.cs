@@ -82,7 +82,7 @@ namespace Scripts
         private int ReceiveUDP()
         {
             byte[] data = new byte[2048];
-  
+
 
             IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
             EndPoint _remote = (EndPoint)(sender);
@@ -102,7 +102,7 @@ namespace Scripts
         void Send()
         {
             byte[] data = new byte[2048];
-     
+
             data = Encoding.ASCII.GetBytes("userName");
             server.SendTo(data, 0, SocketFlags.None, ipep);
             Receive();
@@ -125,14 +125,14 @@ namespace Scripts
 
         int deserializeJson(byte[] data_)
         {
-           
+
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
             //var command = new ReplicationMessage();
             var com = new Command();
 
-            
+
             BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -142,7 +142,7 @@ namespace Scripts
             com = JsonUtility.FromJson<Command>(json01);
 
             Debug.Log("this is it" + com.action);
-            
+
             // DO Diferent actions with the data received
             if (com.action == UdpActions_.Position)
             {
@@ -152,7 +152,7 @@ namespace Scripts
                 //changing player position
                 SetPosition(com.netID, vec);
             }
-            else if(com.action == UdpActions_.Create)
+            else if (com.action == UdpActions_.Create)
             {
                 Debug.Log("creating something");
                 json02 = reader.ReadString();
@@ -161,7 +161,7 @@ namespace Scripts
                 Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
                 netIdScript.StackObject(com.netID, type, vec);
             }
-            else if(com.action == UdpActions_.StartGame)
+            else if (com.action == UdpActions_.StartGame)
             {
                 sceneLoader.LoadScene01Client_();
             }
@@ -171,10 +171,13 @@ namespace Scripts
 
         void SetPosition(int netId, Vector2 pos)
         {
-            if(netManager != null) netIdScript.SetPosition(netId, pos);
+            if (netManager != null)
+            {
+                netIdScript.SetPosition(netId, pos);
+            }
             //if (playerScript == null)
             //{
-//
+            //
             //}
             //else if (playerScript != null)
             //{
@@ -203,12 +206,12 @@ namespace Scripts
 
         public void SendCreateObject(int netId, gameObjectType type, Vector2 pos)
         {
-            Command com = new Command(netId , UdpActions_.Create);
+            Command com = new Command(netId, UdpActions_.Create);
 
             string json01 = JsonUtility.ToJson(com);
             string json02 = JsonUtility.ToJson(type);
             string json03 = JsonUtility.ToJson(pos);
-            
+
             Debug.Log("sending comand create type " + ((int)type));
 
             MemoryStream stream = new MemoryStream();
@@ -241,7 +244,7 @@ namespace Scripts
 
                     if (playerScript != null)
                     {
-     
+
                     }
                 }
             }
