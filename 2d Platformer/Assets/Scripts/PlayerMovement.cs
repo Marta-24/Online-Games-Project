@@ -4,6 +4,7 @@ namespace Scripts
 {
     public class PlayerMovement : MonoBehaviour
     {
+        public int netId;
         public float moveSpeed = 5f;
         public float maxJumpHeight = 2f;
         private float jumpVelocity;
@@ -29,7 +30,8 @@ namespace Scripts
         public GameObject camera;
         public GameObject netIdManager;
         public NetIdManager netIdScript;
-
+        public GameObject bulletPrefab;
+        public Transform firePoint;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -74,6 +76,11 @@ namespace Scripts
                 animator.SetBool("isJumping", false);
             }
 
+            if (Input.GetButtonDown("j"))
+            {
+                FireBullet();
+            }
+
             // Flip the character's sprite based on movement direction, preserving the initial scale
             if (movement.x < 0)
             {
@@ -96,6 +103,15 @@ namespace Scripts
             SendPlayerPosition(); //Send the position to the server every fram for the moment
         }
 
+        void FireBullet()
+        {
+            // Instantiate a bullet at the fire point
+            
+
+            //Sending server creation of bullet
+            netIdScript.CreateBullet(Instantiate(bulletPrefab, rb.transform.position, rb.transform.rotation) as GameObject, rb.transform.position);
+        }
+
         void FixedUpdate()
         {
             //Apply horizontal movement
@@ -116,7 +132,7 @@ namespace Scripts
         //This function is called at Start, the objective is to find the gameobject of the client or server
         public void FindNetIdManager()
         {
-           netIdManager = GameObject.Find("NetIdManager");
+            netIdManager = GameObject.Find("NetIdManager");
             if (netIdManager != null) netIdScript = netIdManager.GetComponent<NetIdManager>();
         }
     }

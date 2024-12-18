@@ -621,7 +621,7 @@ GameObject:
   - component: {fileID: 1006465718}
   m_Layer: 3
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17482,10 +17482,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcd4fe2534eb3cc46b91ad112203132a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectServer: {fileID: 0}
+  objectUDP: {fileID: 0}
   server: {fileID: 0}
+  client: {fileID: 0}
   netIdManagerGameObject: {fileID: 0}
   instanciator_: {fileID: 0}
+  startEnded: 0
+  frameCounter: 60
 --- !u!4 &2077018158
 Transform:
   m_ObjectHideFlags: 0

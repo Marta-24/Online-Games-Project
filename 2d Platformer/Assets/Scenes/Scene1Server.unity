@@ -621,7 +621,7 @@ GameObject:
   - component: {fileID: 1006465718}
   m_Layer: 3
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17653,6 +17653,8 @@ MonoBehaviour:
   client: {fileID: 0}
   netIdManagerGameObject: {fileID: 0}
   instanciator_: {fileID: 0}
+  startEnded: 0
+  frameCounter: 60
 --- !u!4 &1297117378
 Transform:
   m_ObjectHideFlags: 0

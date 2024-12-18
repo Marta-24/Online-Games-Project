@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 7689278694677516779}
   m_Layer: 0
   m_Name: Player2
-  m_TagString: Untagged
+  m_TagString: Player1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134,6 +134,10 @@ MonoBehaviour:
   UDPConnection: 0
   parent: {fileID: 2936886951809000417}
   camera: {fileID: 0}
+  netIdManager: {fileID: 0}
+  netIdScript: {fileID: 0}
+  bulletPrefab: {fileID: 2807193202124031089, guid: f23debcb139aaa94c981b177b204f6d6, type: 3}
+  firePoint: {fileID: 0}
 --- !u!50 &5808071855560141079
 Rigidbody2D:
   serializedVersion: 4

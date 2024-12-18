@@ -14,7 +14,7 @@ using System.IO;
 
 namespace Scripts
 {
-    public enum UdpActions_ 
+    public enum UdpActions_
     {
         Hello = 0,
         Position = 1,
@@ -70,6 +70,8 @@ namespace Scripts
         Socket socket;
         UserUDP user;
         public GameObject enemyPrefab;
+        public GameObject netManager;
+        public NetIdManager netIdScript;
 
         // Function called with a button to start the udp server
         public void StartServer()
@@ -83,6 +85,14 @@ namespace Scripts
 
             Thread newConnection = new Thread(Receive);
             newConnection.Start();
+        }
+
+         void Update()
+        {
+            if (netManager == null) // Even though this is called at start, we had some problems and for now this is a way to make sure we find the server or client
+            {
+                FindNetIdManager();
+            }
         }
 
         void Receive()
@@ -129,7 +139,7 @@ namespace Scripts
         void SendHello(EndPoint Remote)
         {
             string str = "serverName";
-            
+
             Command com = new Command(0, UdpActions_.Hello);
 
 
@@ -141,7 +151,7 @@ namespace Scripts
 
             writer.Write(json01);
             writer.Write(json02);
-            
+
 
             byte[] data = new byte[2048];
             data = stream.ToArray();
@@ -192,7 +202,7 @@ namespace Scripts
             //var command = new ReplicationMessage();
             var com = new Command();
 
-            
+
             BinaryReader reader = new BinaryReader(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
@@ -202,15 +212,26 @@ namespace Scripts
             com = JsonUtility.FromJson<Command>(json01);
 
             Debug.Log("this is it" + com.action);
-            
+
             // DO Diferent actions with the data received
             if (com.action == UdpActions_.Position)
             {
                 json02 = reader.ReadString();
                 Debug.Log("changing player position");
                 Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
-                SetPlayerPosition(vec);
+                //changing player position
+                SetPosition(com.netID, vec);
             }
+            else if (com.action == UdpActions_.Create)
+            {
+                Debug.Log("creating something");
+                json02 = reader.ReadString();
+                gameObjectType type = JsonUtility.FromJson<gameObjectType>(json02);
+                json02 = reader.ReadString();
+                Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
+                netIdScript.StackObject(com.netID, type, vec);
+            }
+            
 
             return 1;
         }
@@ -236,12 +257,12 @@ namespace Scripts
 
         public void SendCreateObject(int netId, gameObjectType type, Vector2 pos)
         {
-            Command com = new Command(netId , UdpActions_.Create);
+            Command com = new Command(netId, UdpActions_.Create);
 
             string json01 = JsonUtility.ToJson(com);
             string json02 = JsonUtility.ToJson(type);
             string json03 = JsonUtility.ToJson(pos);
-            
+
             Debug.Log("sending comand create type " + ((int)type));
 
             MemoryStream stream = new MemoryStream();
@@ -257,13 +278,9 @@ namespace Scripts
             socket.SendTo(data, SocketFlags.None, user.endPoint);
         }
 
-        public void SetPlayerPosition(Vector2 pos)
+        public void SetPosition(int netId, Vector2 pos)
         {
-
-            if (playerScript != null)
-            {
-                playerScript.SetPosition(pos);
-            }
+            if (netManager != null) netIdScript.SetPosition(netId, pos);
         }
 
         //This function is called from player movement, it is used so "playerScript" finds the object component, in the future we will want to call the netId manager to move orders, right now we are hardcoding it
@@ -283,6 +300,13 @@ namespace Scripts
                 }
             }
         }
+
+        public void FindNetIdManager()
+        {
+            netManager = GameObject.Find("NetIdManager");
+            if (netManager != null) netIdScript = netManager.GetComponent<NetIdManager>();
+        }
+
 
         public void SpawnEnemy()
         {

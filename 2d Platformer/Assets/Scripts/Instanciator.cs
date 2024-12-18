@@ -33,15 +33,18 @@ namespace Scripts
             player.GetComponent<BoxCollider2D>();
             player.GetComponent<Animator>();
             return player;*/
-            Instantiate(player1Prefab, new Vector3(0, 0, 0), Quaternion.identity);
-            
-            return player1Prefab;
+            GameObject obj = Instantiate(player1Prefab, new Vector3(0, 0, 0), Quaternion.identity);
+            obj.name = "Player1";
+            return obj;
         }
 
         public GameObject InstancePlayerTwo()
         {
-           Instantiate(player2Prefab, new Vector3(0, 0, 0), Quaternion.identity);
-            return player2Prefab;
+          
+            
+            GameObject obj =  Instantiate(player2Prefab, new Vector3(0, 0, 0), Quaternion.identity);
+            obj.name = "Player2";
+            return obj;
         }
 
         public GameObject InstanceEnemyPrefab()

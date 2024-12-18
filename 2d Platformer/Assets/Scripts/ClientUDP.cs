@@ -163,32 +163,9 @@ namespace Scripts
             }
             else if(com.action == UdpActions_.StartGame)
             {
-       
                 sceneLoader.LoadScene01Client_();
             }
 
-            //if (com.action == (int)UdpActions_.Create)
-            //{
-            //    // Assume position fields are sent as integers
-            //    var field = com.fieldList[0] as FieldDoubleInt;
-            //    Vector3 position = new Vector3(field.a, field.b, 0);
-//
-            //    Debug.Log($"Spawning enemy at position {position} on client.");
-            //    Instantiate(enemyPrefab, position, Quaternion.identity);
-            //}
-
-
-            //if (command.action == 1)
-            //{
-            //    Debug.Log("Servername received");
-            //}
-            //else if (command.action == 2)
-            //{
-            //    t = JsonUtility.FromJson<testClass>(json02);
-            //
-            //    // trying to set position
-            //    SetPlayerPosition(t);
-            //}
             return 1;
         }
 
@@ -222,6 +199,29 @@ namespace Scripts
             data = stream.ToArray();
 
             server.SendTo(data, SocketFlags.None, ipep); //this should work;
+        }
+
+        public void SendCreateObject(int netId, gameObjectType type, Vector2 pos)
+        {
+            Command com = new Command(netId , UdpActions_.Create);
+
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(type);
+            string json03 = JsonUtility.ToJson(pos);
+            
+            Debug.Log("sending comand create type " + ((int)type));
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(json01);
+            writer.Write(json02);
+            writer.Write(json03);
+
+            byte[] data = new byte[2048];
+            data = stream.ToArray();
+
+            server.SendTo(data, SocketFlags.None, ipep);
         }
 
         public void FindNetIdManager()
