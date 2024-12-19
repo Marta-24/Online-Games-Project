@@ -40,7 +40,7 @@ namespace Scripts
     {
         public int netID;
         public Vector2 pos;
-        public int direction;
+        public Vector2 direction;
         public gameObjectType type;
 
         public FutureObject(int netID, Vector2 pos, gameObjectType type)
@@ -48,10 +48,10 @@ namespace Scripts
             this.netID = netID;
             this.pos = pos;
             this.type = type;
-            direction = 0;
+            direction = new Vector2(0.0f, 0.0f);
         }
 
-        public FutureObject(int netID, Vector2 pos, gameObjectType type, int direction)
+        public FutureObject(int netID, Vector2 pos, gameObjectType type, Vector2 direction)
         {
             this.netID = netID;
             this.pos = pos;
@@ -91,6 +91,7 @@ namespace Scripts
             {
                 for (int i = 0; i < NeedToCreateList.Count; i++)
                 {
+                    Debug.Log(NeedToCreateList[i].pos);
                     CreateObject(NeedToCreateList[i].netID, NeedToCreateList[i].type, NeedToCreateList[i].pos, NeedToCreateList[i].direction);
                     NeedToCreateList[i].type = gameObjectType.none;
                 }
@@ -252,11 +253,12 @@ namespace Scripts
         public void CreateBullet(GameObject obj, Vector2 pos, int dir)
         {
             int id = GenerateId();
+            Vector2 direction = new Vector2((float)dir, 0.0f);
 
             CreateNetId(obj, gameObjectType.bullet);
 
-            if (server != null) server.SendCreateObject(id, gameObjectType.bullet, pos, dir);
-            if (client != null) client.SendCreateObject(id, gameObjectType.bullet, pos, dir);
+            if (server != null) server.SendCreateObject_(id, gameObjectType.bullet, pos, direction);
+            if (client != null) client.SendCreateObject_(id, gameObjectType.bullet, pos, direction);
         }
 
         public void StackObject(int netId, gameObjectType type, Vector2 pos)
@@ -265,13 +267,13 @@ namespace Scripts
             NeedToCreateList.Add(new FutureObject(netId, pos, type));
         }
 
-        public void StackObject(int netId, gameObjectType type, Vector2 pos, int direction)
+        public void StackObject(int netId, gameObjectType type, Vector2 pos, Vector2 direction)
         {
-            Debug.Log("object stacked: " + ((int)type));
+            Debug.Log("object stacked: " + ((int)type) + "this is the weird one");
             NeedToCreateList.Add(new FutureObject(netId, pos, type, direction));
         }
 
-        public void CreateObject(int netId, gameObjectType type, Vector2 pos, int direction)
+        public void CreateObject(int netId, gameObjectType type, Vector2 pos, Vector2 direction)
         {
             if (startEnded)
             {
@@ -321,20 +323,22 @@ namespace Scripts
                 }
                 else if (type == gameObjectType.bullet)
                 {
-                    Transform myTransform = new GameObject().transform;
-                    myTransform.position = pos + (new Vector2(1.0f, 0.0f) * direction);
-
-                    GameObject obj = Instantiate(bulletPrefab, myTransform);
+                    
+                    Vector3 vec = new Vector3(pos.x, pos.y, 0.0f);//new Vector3(pos.x, pos.y + 0.5f, 0.0f) * direction;
+                    Debug.Log(vec.x + " " + vec.y + "" + direction);
+                    vec += new Vector3(0.4f, 0.0f, 0.0f) * direction.x;
+Debug.Log(vec.x + " " + vec.y + "second time");
+                    GameObject obj = Instantiate(bulletPrefab, vec, Quaternion.identity);
                     BulletScript bulletScript = obj.GetComponent<BulletScript>();
                     bulletScript.Start_();
-                    Debug.Log(direction);
+                    //Debug.Log(direction);
                     bulletScript.rb.velocity = 10f * direction * transform.right;
 
                     AddNetId(netId, obj, gameObjectType.bullet); // same
                 }
                 else if (type == gameObjectType.enemy)
                 {
-                    Debug.Log("this is triggering an enourmous amount of times");
+                    //Debug.Log("this is triggering an enourmous amount of times");
                     GameObject obj = instanciator_.InstanceEnemyPrefab(pos);
 
                     AddNetId(netId, obj, gameObjectType.enemy);

@@ -67,7 +67,7 @@ public class EnemyScript : MonoBehaviour
         Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
         foreach (RaycastHit2D hit2d in hit_)
         {
-            Debug.Log("hitting things" + hit2d.collider.tag);
+           // Debug.Log("hitting things" + hit2d.collider.tag);
             if (hit2d.collider.tag == "Wall") hittingGround = false;
             //Hit something, print the tag of the object
             
@@ -81,7 +81,7 @@ public class EnemyScript : MonoBehaviour
 
     void FlipDirection()
     {
-        Debug.Log("flipping direction");
+        //Debug.Log("flipping direction");
         movementDirection *= -1;
     }
 }

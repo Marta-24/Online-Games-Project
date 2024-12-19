@@ -162,15 +162,15 @@ namespace Scripts
 
                 netIdScript.StackObject(com.netID, type, vec);
             }
-            else if (com.action ==UdpActions_.CreateBullet)
+            else if (com.action == UdpActions_.CreateBullet)
             {
-                 Debug.Log("creating BULLET");
+                Debug.Log("creating BULLET");
                 json02 = reader.ReadString();
                 gameObjectType type = JsonUtility.FromJson<gameObjectType>(json02);
                 json02 = reader.ReadString();
                 Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
                 json02 = reader.ReadString();
-                int direction = JsonUtility.FromJson<int>(json02);
+                Vector2 direction = JsonUtility.FromJson<Vector2>(json02);
                 netIdScript.StackObject(com.netID, type, vec, direction);
             }
             else if (com.action == UdpActions_.StartGame)
@@ -234,7 +234,7 @@ namespace Scripts
             server.SendTo(data, SocketFlags.None, ipep);
         }
 
-        public void SendCreateObject(int netId, gameObjectType type, Vector2 pos, int direction)
+        public void SendCreateObject_(int netId, gameObjectType type, Vector2 pos, Vector2 direction)
         {
             Command com = new Command(netId, UdpActions_.Create);
             if (type == gameObjectType.bullet)

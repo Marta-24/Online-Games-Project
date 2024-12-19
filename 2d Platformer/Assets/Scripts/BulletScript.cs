@@ -31,11 +31,11 @@ namespace Scripts
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log("this triggered" + " " + other.gameObject.tag);
+           // Debug.Log("this triggered" + " " + other.gameObject.tag);
             // Destroy the bullet if it hits an enemy or goes out of bounds
             if (other.CompareTag("Wall") || other.CompareTag("Enemy")) // Change this thing later
             {
-                Debug.Log("destroying");
+                //Debug.Log("destroying");
                 Destroy(gameObject);
             }
         }
