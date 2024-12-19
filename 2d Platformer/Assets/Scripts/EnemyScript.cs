@@ -4,84 +4,110 @@ using UnityEngine;
 
 using UnityEngine;
 
-public class EnemyScript : MonoBehaviour
+namespace Scripts
 {
-    float laserLength = 1f;
-
-    // Velocidad del enemigo
-    public float speed;
-
-    // Dirección de movimiento: -1 para izquierda, 1 para derecha
-    public int movementDirection = 1;
-
-    // Referencia al Rigidbody2D
-    private Rigidbody2D rb;
-    void Start()
+    
+    public class EnemyScript : MonoBehaviour
     {
-        // Obtén el componente Rigidbody2D
-        rb = GetComponent<Rigidbody2D>();
-        speed = 0.05f;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        CheckPosition();
-        MoveEnemy();
-    }
-
-    void MoveEnemy()
-    {
-        float movement = movementDirection * speed;
-
-        rb.MovePosition(new Vector2(transform.position.x + movement, transform.position.y));
-    }
-
-    void CheckPosition()
-    {
-        Vector3 vec = transform.position + (new Vector3(0.55f, 0, 0)* movementDirection);
-
-        //Checking ground
-        RaycastHit2D[] hit = Physics2D.RaycastAll(vec, Vector2.down, laserLength);
-        Vector3 vec3 = new Vector3(0, -1 * laserLength, 0);
-
-        Debug.DrawLine(vec, vec + vec3);
-        Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
-
-        bool hittingGround = false;
-        foreach (RaycastHit2D hit2d in hit)
+        float laserLength = 1f;
+        public float speed;
+        public int movementDirection = 1;
+        private int health;
+        private Rigidbody2D rb;
+        public GameObject netIdManager;
+        public NetIdManager netIdScript;
+        GameObject parent;
+        void Start()
         {
-            if (hit2d.collider.tag == "Wall") hittingGround = true;
-            //Hit something, print the tag of the object
-            
+            rb = GetComponent<Rigidbody2D>();
+            speed = 0.05f;
+            health = 100;
+
+            //Get client component
+            FindNetIdManager();
+            parent = gameObject;
         }
 
-        //Checking front
-        vec = transform.position;
-        RaycastHit2D[] hit_ = Physics2D.RaycastAll(vec, Vector2.right, laserLength - 0.45f);
-
-        vec3 = new Vector3(1 * laserLength * movementDirection, 0, 0);
-
-        Debug.DrawLine(vec, vec + vec3);
-
-        Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
-        foreach (RaycastHit2D hit2d in hit_)
+        // Update is called once per frame
+        void Update()
         {
-           // Debug.Log("hitting things" + hit2d.collider.tag);
-            if (hit2d.collider.tag == "Wall") hittingGround = false;
-            //Hit something, print the tag of the object
-            
+            CheckPosition();
+            MoveEnemy();
+
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+            }
         }
 
-        if (hittingGround == false)
+        void MoveEnemy()
         {
-            FlipDirection();
-        }
-    }
+            float movement = movementDirection * speed;
 
-    void FlipDirection()
-    {
-        //Debug.Log("flipping direction");
-        movementDirection *= -1;
+            rb.MovePosition(new Vector2(transform.position.x + movement, transform.position.y));
+        }
+
+        void CheckPosition()
+        {
+            Vector3 vec = transform.position + (new Vector3(0.55f, 0, 0) * movementDirection);
+
+            //Checking ground
+            RaycastHit2D[] hit = Physics2D.RaycastAll(vec, Vector2.down, laserLength);
+            Vector3 vec3 = new Vector3(0, -1 * laserLength, 0);
+
+            Debug.DrawLine(vec, vec + vec3);
+            Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
+
+            bool hittingGround = false;
+            foreach (RaycastHit2D hit2d in hit)
+            {
+                if (hit2d.collider.tag == "Wall") hittingGround = true;
+                //Hit something, print the tag of the object
+
+            }
+
+            //Checking front
+            vec = transform.position;
+            RaycastHit2D[] hit_ = Physics2D.RaycastAll(vec, Vector2.right, laserLength - 0.45f);
+
+            vec3 = new Vector3(1 * laserLength * movementDirection, 0, 0);
+
+            Debug.DrawLine(vec, vec + vec3);
+
+            Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
+            foreach (RaycastHit2D hit2d in hit_)
+            {
+                if (hit2d.collider.tag == "Wall") hittingGround = false;
+                //Hit something, print the tag of the object
+            }
+
+            if (hittingGround == false)
+            {
+                FlipDirection();
+            }
+        }
+
+        public void TakeDamage(int dmg)
+        {
+            Debug.Log("taking damage");
+            health -= dmg;
+
+            netIdScript.TakeDamage(parent, dmg);
+        }
+
+        public void ReceiveDamage(int dmg)
+        {
+            health -= dmg;
+        }
+        void FlipDirection()
+        {
+            movementDirection *= -1;
+        }
+
+        public void FindNetIdManager()
+        {
+            netIdManager = GameObject.Find("NetIdManager");
+            if (netIdManager != null) netIdScript = netIdManager.GetComponent<NetIdManager>();
+        }
     }
 }

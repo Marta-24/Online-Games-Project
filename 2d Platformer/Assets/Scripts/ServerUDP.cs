@@ -20,9 +20,19 @@ namespace Scripts
         Position = 1,
         Create = 2,
         CreateBullet = 3,
-        StartGame = 4
+        Damage = 4,
+        //Dead = 5, we are not using this for the moment
+        StartGame = 6
     }
 
+    struct int_
+    {
+        public int i;
+        public int_(int i)
+        {
+            this.i = i;
+        }
+    }
 
     public class Command
     {
@@ -250,6 +260,14 @@ namespace Scripts
                 Debug.Log(vec.x + " " + vec.y + " " + direction);
                 netIdScript.StackObject(com.netID, type, vec, direction);
             }
+             else if (com.action == UdpActions_.Damage)
+            {
+                Debug.Log("mesage received");
+                json02 = reader.ReadString();
+                int_ dmg = JsonUtility.FromJson<int_>(json02);
+                Debug.Log("DAMAGE" + dmg.i);
+                netIdScript.GiveDamage(com.netID, dmg.i);
+            }
             
 
             return 1;
@@ -330,6 +348,27 @@ namespace Scripts
             socket.SendTo(data, SocketFlags.None, user.endPoint);
         }
 
+        public void SendDamage(int netId, int health)
+        {
+            Command com = new Command(netId, UdpActions_.Damage);
+
+            int_ i = new int_(health);
+
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(i);
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(json01);
+            writer.Write(json02);
+
+            byte[] data = new byte[2048];
+            data = stream.ToArray();
+
+            socket.SendTo(data, SocketFlags.None, user.endPoint);
+        }
+
         public void SetPosition(int netId, Vector2 pos)
         {
             if (netManager != null) netIdScript.SetPosition(netId, pos);
@@ -358,30 +397,5 @@ namespace Scripts
             netManager = GameObject.Find("NetIdManager");
             if (netManager != null) netIdScript = netManager.GetComponent<NetIdManager>();
         }
-
-
-        public void SpawnEnemy()
-        {
-
-
-            // Create an enemy object in the server scene
-            GameObject enemy = Instantiate(enemyPrefab, new Vector3(5, 5, 0), Quaternion.identity); // Example position
-
-            // Send data to the client to replicate the enemy
-            SendEnemyDataToClient(enemy.transform.position);
-        }
-
-        public void SendEnemyDataToClient(Vector3 position)
-        {
-            //var command = new Command(0, (int)UdpActions_.Create); // Create action
-            //var fieldPosition = new FieldDoubleInt((int)position.x, (int)position.y); // Simplified serialization for position
-            //command.fieldList.Add(fieldPosition);
-            //
-            //byte[] data = command.Serialize();
-            //Debug.Log("Sending enemy data to client.");
-            //socket.SendTo(data, SocketFlags.None, user.endPoint);
-        }
-
-
     }
 }

@@ -10,6 +10,7 @@ namespace Scripts
         public int lifeTime = 24 * 1000; // 24 frames * 15 seconds
         public Rigidbody2D rb;
         Collider2D coll;
+        public bool isHost = false;
         public void Start_()
         {
             // Add a Rigidbody2D component and set collision detection to Continuous
@@ -24,17 +25,23 @@ namespace Scripts
             lifeTime--;
             if (lifeTime < 0)
             {
-                
+
                 //Destroy(gameObject);
             }
         }
 
         void OnTriggerEnter2D(Collider2D other)
         {
-           // Debug.Log("this triggered" + " " + other.gameObject.tag);
+            // Debug.Log("this triggered" + " " + other.gameObject.tag);
             // Destroy the bullet if it hits an enemy or goes out of bounds
             if (other.CompareTag("Wall") || other.CompareTag("Enemy")) // Change this thing later
             {
+                Debug.Log("this worke!!!!!!!!!!!!!!!!!!!!!!!d");
+                if (other.CompareTag("Enemy") && isHost)
+                {
+                    GameObject obj = other.gameObject;
+                    obj.GetComponent<EnemyScript>().TakeDamage(25);
+                }
                 //Debug.Log("destroying");
                 Destroy(gameObject);
             }
@@ -42,7 +49,7 @@ namespace Scripts
 
         public void SetDirection(int direction) // only multiply by 1 or -1!!!
         {
-          
+
             rb.velocity *= transform.right * speed * direction;
         }
     }

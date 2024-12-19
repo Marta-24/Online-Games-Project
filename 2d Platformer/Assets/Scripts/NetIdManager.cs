@@ -125,7 +125,12 @@ namespace Scripts
 
                     Vector2 pos = new Vector2(2, -2);
                     obj = instanciator_.InstanceEnemyPrefab(pos);
-                    id = CreateNetId(obj, gameObjectType.enemy);
+
+                    list = new List<Component>();
+                    EnemyScript b = obj.GetComponent<EnemyScript>();
+                    list.Add(b);
+
+                    id = CreateNetId(obj, gameObjectType.enemy, list);
                     server.SendCreateObject(id.netId, id.type, pos);
                 }
             }
@@ -323,11 +328,11 @@ namespace Scripts
                 }
                 else if (type == gameObjectType.bullet)
                 {
-                    
+
                     Vector3 vec = new Vector3(pos.x, pos.y, 0.0f);//new Vector3(pos.x, pos.y + 0.5f, 0.0f) * direction;
                     Debug.Log(vec.x + " " + vec.y + "" + direction);
                     vec += new Vector3(0.4f, 0.0f, 0.0f) * direction.x;
-Debug.Log(vec.x + " " + vec.y + "second time");
+                    Debug.Log(vec.x + " " + vec.y + "second time");
                     GameObject obj = Instantiate(bulletPrefab, vec, Quaternion.identity);
                     BulletScript bulletScript = obj.GetComponent<BulletScript>();
                     bulletScript.Start_();
@@ -341,7 +346,10 @@ Debug.Log(vec.x + " " + vec.y + "second time");
                     //Debug.Log("this is triggering an enourmous amount of times");
                     GameObject obj = instanciator_.InstanceEnemyPrefab(pos);
 
-                    AddNetId(netId, obj, gameObjectType.enemy);
+                    List<Component> list = new List<Component>();
+                    EnemyScript a = obj.GetComponent<EnemyScript>();
+                    list.Add(a);
+                    AddNetId(netId, obj, gameObjectType.enemy, list);
                 }
             }
         }
@@ -387,6 +395,22 @@ Debug.Log(vec.x + " " + vec.y + "second time");
             {
                 client = objectUDP.GetComponent<ClientUDP>();
             }
+        }
+
+        public void TakeDamage(GameObject obj, int health)
+        {
+            int id = FindNetId(obj);
+
+            if (server != null) server.SendDamage(id, health);
+            if (client != null) client.SendDamage(id, health);
+        }
+
+        public void GiveDamage(int id, int health)
+        {
+            NetId obj = FindObject(id);
+
+            EnemyScript a = obj.compList[0] as EnemyScript;
+            a.ReceiveDamage(health);
         }
     }
 }

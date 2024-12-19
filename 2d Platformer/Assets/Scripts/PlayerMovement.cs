@@ -128,6 +128,7 @@ namespace Scripts
             GameObject bullet = Instantiate(bulletPrefab, position_, rb.transform.rotation);
             BulletScript bulletScript = bullet.GetComponent<BulletScript>();
             bulletScript.Start_();
+            bulletScript.isHost = true;
             bulletScript.rb.velocity = 10f * movementDirection * transform.right;
             Debug.Log("setting bullet direction" + movementDirection);
             //bulletScript.SetDirection(movementDirection);

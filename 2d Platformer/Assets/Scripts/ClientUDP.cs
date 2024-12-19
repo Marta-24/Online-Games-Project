@@ -177,6 +177,14 @@ namespace Scripts
             {
                 sceneLoader.LoadScene01Client_();
             }
+            else if (com.action == UdpActions_.Damage)
+            {
+                Debug.Log("mesage received");
+                json02 = reader.ReadString();
+                int_ dmg = JsonUtility.FromJson<int_>(json02);
+                Debug.Log("DAMAGE" + dmg.i);
+                netIdScript.GiveDamage(com.netID, dmg.i);
+            }
 
             return 1;
         }
@@ -259,6 +267,25 @@ namespace Scripts
             byte[] data = new byte[2048];
             data = stream.ToArray();
 
+            server.SendTo(data, SocketFlags.None, ipep);
+        }
+
+        public void SendDamage(int netId, int health)
+        {
+             Command com = new Command(netId, UdpActions_.Damage);
+            int_ i = new int_(health);
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(i);
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(json01);
+            writer.Write(json02);
+
+            byte[] data = new byte[2048];
+            data = stream.ToArray();
+            Debug.Log("SENDING DAMAGE" + health);
             server.SendTo(data, SocketFlags.None, ipep);
         }
 
