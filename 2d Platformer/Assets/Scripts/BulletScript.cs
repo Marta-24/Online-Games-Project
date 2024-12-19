@@ -33,7 +33,7 @@ namespace Scripts
         {
             Debug.Log("this triggered" + " " + other.gameObject.tag);
             // Destroy the bullet if it hits an enemy or goes out of bounds
-            if (other.CompareTag("Wall") || other.CompareTag("Player1") || other.CompareTag("Enemy")) // Change this thing later
+            if (other.CompareTag("Wall") || other.CompareTag("Enemy")) // Change this thing later
             {
                 Debug.Log("destroying");
                 Destroy(gameObject);
