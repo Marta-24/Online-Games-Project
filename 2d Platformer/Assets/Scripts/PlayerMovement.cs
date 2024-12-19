@@ -32,6 +32,7 @@ namespace Scripts
         public NetIdManager netIdScript;
         public GameObject bulletPrefab;
         public Transform firePoint;
+        public int sendInformation;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -53,6 +54,8 @@ namespace Scripts
             }
 
             camera.GetComponent<CameraFollow>().ChangeTarget(parent.transform);
+
+            sendInformation = 5;
         }
 
         void Update()
@@ -100,7 +103,14 @@ namespace Scripts
                 else if (client == null) FindNetIdManager();
 
             }
-            SendPlayerPosition(); //Send the position to the server every fram for the moment
+
+            sendInformation--;
+            if (sendInformation == 0)
+            {
+                sendInformation = 5;
+                SendPlayerPosition(); //Send the position to the server every fram for the moment
+            }
+            
         }
 
         void FireBullet()
