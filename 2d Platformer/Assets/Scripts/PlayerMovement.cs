@@ -124,7 +124,8 @@ namespace Scripts
         void FireBullet()
         {
             // Instantiate a bullet at the fire point
-            GameObject bullet = Instantiate(bulletPrefab, rb.transform.position, rb.transform.rotation);
+            Vector3 position_ = rb.transform.position + (new Vector3(0.6f, 0.0f, 0.0f) * movementDirection);
+            GameObject bullet = Instantiate(bulletPrefab, position_, rb.transform.rotation);
             BulletScript bulletScript = bullet.GetComponent<BulletScript>();
             bulletScript.Start_();
             bulletScript.rb.velocity = 10f * movementDirection * transform.right;
