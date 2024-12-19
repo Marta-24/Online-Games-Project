@@ -33,6 +33,7 @@ namespace Scripts
         public GameObject bulletPrefab;
         public Transform firePoint;
         public int sendInformation;
+        public int movementDirection = 1;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -62,7 +63,14 @@ namespace Scripts
         {
             // Get horizontal input for movement
             movement.x = Input.GetAxisRaw("Horizontal");
-
+            if (movement.x > 0)
+            {
+                movementDirection = 1;
+            }
+            else if (movement.x < 0)
+            {
+                movementDirection = -1;
+            }
             // Update animator parameter for walking
             animator.SetBool("isWalking", movement.x != 0);
 
@@ -116,10 +124,15 @@ namespace Scripts
         void FireBullet()
         {
             // Instantiate a bullet at the fire point
+            GameObject bullet = Instantiate(bulletPrefab, rb.transform.position, rb.transform.rotation);
+            BulletScript bulletScript = bullet.GetComponent<BulletScript>();
+            bulletScript.Start_();
+            bulletScript.rb.velocity = 10f * movementDirection * transform.right;
+            Debug.Log("setting bullet direction" + movementDirection);
+            //bulletScript.SetDirection(movementDirection);
             
-
             //Sending server creation of bullet
-            netIdScript.CreateBullet(Instantiate(bulletPrefab, rb.transform.position, rb.transform.rotation) as GameObject, rb.transform.position);
+            netIdScript.CreateBullet(bullet as GameObject, rb.transform.position, movementDirection);
         }
 
         void FixedUpdate()

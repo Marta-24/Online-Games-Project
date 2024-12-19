@@ -159,7 +159,19 @@ namespace Scripts
                 gameObjectType type = JsonUtility.FromJson<gameObjectType>(json02);
                 json02 = reader.ReadString();
                 Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
+
                 netIdScript.StackObject(com.netID, type, vec);
+            }
+            else if (com.action ==UdpActions_.CreateBullet)
+            {
+                 Debug.Log("creating BULLET");
+                json02 = reader.ReadString();
+                gameObjectType type = JsonUtility.FromJson<gameObjectType>(json02);
+                json02 = reader.ReadString();
+                Vector2 vec = JsonUtility.FromJson<Vector2>(json02);
+                json02 = reader.ReadString();
+                int direction = JsonUtility.FromJson<int>(json02);
+                netIdScript.StackObject(com.netID, type, vec, direction);
             }
             else if (com.action == UdpActions_.StartGame)
             {
@@ -175,14 +187,6 @@ namespace Scripts
             {
                 netIdScript.SetPosition(netId, pos);
             }
-            //if (playerScript == null)
-            //{
-            //
-            //}
-            //else if (playerScript != null)
-            //{
-            //    playerScript.SetPosition(pos);
-            //}
         }
 
         public void SendPosition(int netId, Vector2 position)
@@ -207,7 +211,10 @@ namespace Scripts
         public void SendCreateObject(int netId, gameObjectType type, Vector2 pos)
         {
             Command com = new Command(netId, UdpActions_.Create);
-
+            if (type == gameObjectType.bullet)
+            {
+                com.action = UdpActions_.CreateBullet;
+            }
             string json01 = JsonUtility.ToJson(com);
             string json02 = JsonUtility.ToJson(type);
             string json03 = JsonUtility.ToJson(pos);
@@ -220,6 +227,34 @@ namespace Scripts
             writer.Write(json01);
             writer.Write(json02);
             writer.Write(json03);
+
+            byte[] data = new byte[2048];
+            data = stream.ToArray();
+
+            server.SendTo(data, SocketFlags.None, ipep);
+        }
+
+        public void SendCreateObject(int netId, gameObjectType type, Vector2 pos, int direction)
+        {
+            Command com = new Command(netId, UdpActions_.Create);
+            if (type == gameObjectType.bullet)
+            {
+                com.action = UdpActions_.CreateBullet;
+            }
+            string json01 = JsonUtility.ToJson(com);
+            string json02 = JsonUtility.ToJson(type);
+            string json03 = JsonUtility.ToJson(pos);
+            string json04 = JsonUtility.ToJson(direction);
+
+            Debug.Log("sending comand create type " + ((int)type));
+
+            MemoryStream stream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(stream);
+
+            writer.Write(json01);
+            writer.Write(json02);
+            writer.Write(json03);
+            writer.Write(json04);
 
             byte[] data = new byte[2048];
             data = stream.ToArray();

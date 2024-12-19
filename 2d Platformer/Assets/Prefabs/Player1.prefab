@@ -139,6 +139,8 @@ MonoBehaviour:
   netIdScript: {fileID: 0}
   bulletPrefab: {fileID: 2807193202124031089, guid: f23debcb139aaa94c981b177b204f6d6, type: 3}
   firePoint: {fileID: 0}
+  sendInformation: 0
+  movementDirection: 1
 --- !u!50 &1010398609851588582
 Rigidbody2D:
   serializedVersion: 4

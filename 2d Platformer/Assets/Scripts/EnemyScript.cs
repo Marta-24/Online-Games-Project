@@ -52,7 +52,7 @@ public class EnemyScript : MonoBehaviour
         {
             if (hit2d.collider.tag == "Wall") hittingGround = true;
             //Hit something, print the tag of the object
-            Debug.Log("Hitting: " + hit2d.collider.tag);
+            
         }
 
         

@@ -49,6 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   lifeTime: 240
+  rb: {fileID: 0}
 --- !u!50 &3794710628606178327
 Rigidbody2D:
   serializedVersion: 4
@@ -110,7 +111,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.1
+  m_Radius: 0.11
 --- !u!1 &7164050607509859971
 GameObject:
   m_ObjectHideFlags: 0

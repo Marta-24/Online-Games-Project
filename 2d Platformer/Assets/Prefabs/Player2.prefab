@@ -103,7 +103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   animator: {fileID: 0}
   objectTCP: {fileID: 0}
   client: {fileID: 0}
@@ -139,6 +139,8 @@ MonoBehaviour:
   netIdScript: {fileID: 0}
   bulletPrefab: {fileID: 2807193202124031089, guid: f23debcb139aaa94c981b177b204f6d6, type: 3}
   firePoint: {fileID: 0}
+  sendInformation: 0
+  movementDirection: 1
 --- !u!50 &5808071855560141079
 Rigidbody2D:
   serializedVersion: 4

@@ -47,9 +47,9 @@ namespace Scripts
             return obj;
         }
 
-        public GameObject InstanceEnemyPrefab()
+        public GameObject InstanceEnemyPrefab(Vector2 pos)
         {
-            return Instantiate(enemyPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            return Instantiate(enemyPrefab, new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity);
         }
 
     }
