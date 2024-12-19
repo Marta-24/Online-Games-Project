@@ -322,7 +322,7 @@ namespace Scripts
                 else if (type == gameObjectType.bullet)
                 {
                     Transform myTransform = new GameObject().transform;
-                    myTransform.position = pos + (new Vector2(0.6f, 0.0f) * direction);
+                    myTransform.position = pos + (new Vector2(1.0f, 0.0f) * direction);
 
                     GameObject obj = Instantiate(bulletPrefab, myTransform);
                     BulletScript bulletScript = obj.GetComponent<BulletScript>();

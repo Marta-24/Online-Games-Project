@@ -39,10 +39,11 @@ public class EnemyScript : MonoBehaviour
 
     void CheckPosition()
     {
-        Vector3 vec = transform.position + (new Vector3(0.6f, 0, 0)* movementDirection);
+        Vector3 vec = transform.position + (new Vector3(0.55f, 0, 0)* movementDirection);
 
+        //Checking ground
         RaycastHit2D[] hit = Physics2D.RaycastAll(vec, Vector2.down, laserLength);
-        Vector3 vec3 = new Vector3(0, -1, 0);
+        Vector3 vec3 = new Vector3(0, -1 * laserLength, 0);
 
         Debug.DrawLine(vec, vec + vec3);
         Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
@@ -55,7 +56,23 @@ public class EnemyScript : MonoBehaviour
             
         }
 
-        
+        //Checking front
+        vec = transform.position;
+        RaycastHit2D[] hit_ = Physics2D.RaycastAll(vec, Vector2.right, laserLength - 0.45f);
+
+        vec3 = new Vector3(1 * laserLength * movementDirection, 0, 0);
+
+        Debug.DrawLine(vec, vec + vec3);
+
+        Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
+        foreach (RaycastHit2D hit2d in hit_)
+        {
+            Debug.Log("hitting things" + hit2d.collider.tag);
+            if (hit2d.collider.tag == "Wall") hittingGround = false;
+            //Hit something, print the tag of the object
+            
+        }
+
         if (hittingGround == false)
         {
             FlipDirection();
@@ -64,6 +81,7 @@ public class EnemyScript : MonoBehaviour
 
     void FlipDirection()
     {
+        Debug.Log("flipping direction");
         movementDirection *= -1;
     }
 }
