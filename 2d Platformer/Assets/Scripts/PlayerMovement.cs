@@ -56,7 +56,7 @@ namespace Scripts
 
             camera.GetComponent<CameraFollow>().ChangeTarget(parent.transform);
 
-            sendInformation = 5;
+            sendInformation = 3;
         }
 
         void Update()
