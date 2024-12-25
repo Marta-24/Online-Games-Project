@@ -29,6 +29,7 @@ namespace Scripts
         public GameObject enemyPrefab;
         public GameObject netManager;
         public NetIdManager netIdScript;
+        public Instanciator instanciator;
 
         // Function called with a button to start the udp server
         public void StartServer()
@@ -162,6 +163,10 @@ namespace Scripts
             {
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
                 netIdScript.GiveDamage(packet.netId, packet.a);
+            }
+            else if (actionType == ActionType.Hello)
+            {
+               instanciator.IntanceUserPrefab();
             }
         }
 

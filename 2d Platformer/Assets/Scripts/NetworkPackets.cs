@@ -36,9 +36,7 @@ namespace Scripts
         public int netId;
 
         public ParentPacket()
-        {
-
-        }
+        {       }
 
         public ParentPacket(int netId)
         {

@@ -17447,7 +17447,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2077018158}
   - component: {fileID: 2077018157}
-  - component: {fileID: 2077018156}
   m_Layer: 0
   m_Name: NetIdManager
   m_TagString: Untagged
@@ -17455,21 +17454,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2077018156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2077018155}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0de54fff46a412f4bb8583782c9abd42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Prefab: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
-  player2Prefab: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
-  enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
 --- !u!114 &2077018157
 MonoBehaviour:
   m_ObjectHideFlags: 0

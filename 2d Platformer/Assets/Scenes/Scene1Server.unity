@@ -17628,7 +17628,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1297117378}
   - component: {fileID: 1297117377}
-  - component: {fileID: 1297117379}
   m_Layer: 0
   m_Name: NetIdManager
   m_TagString: Untagged
@@ -17671,21 +17670,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1297117379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1297117376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0de54fff46a412f4bb8583782c9abd42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1Prefab: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
-  player2Prefab: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
-  enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
 --- !u!1 &1379916636
 GameObject:
   m_ObjectHideFlags: 0
