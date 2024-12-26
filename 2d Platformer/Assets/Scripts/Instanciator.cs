@@ -1,17 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace Scripts
 {
     public class FutureInstance
     {
         public GameObject obj;
+        public GameObject parent;
         public Vector3 pos;
+        public string user;
 
+        public FutureInstance()
+        {       }
         public FutureInstance(GameObject obj, Vector3 pos)
         {
             this.obj = obj;
+            this.parent = null;
+            this.pos = pos;
+        }
+
+        public FutureInstance(GameObject obj, GameObject parent, Vector3 pos)
+        {
+            this.obj = obj;
+            this.parent = parent;
+            this.pos = pos;
+        }
+    }
+
+    public class FuturePanelUser : FutureInstance
+    {
+       
+
+        public FuturePanelUser(GameObject obj, GameObject parent, string user, Vector3 pos)
+        {
+            this.obj = obj;
+            this.parent = parent;
+            this.user = user;
             this.pos = pos;
         }
     }
@@ -44,7 +70,20 @@ namespace Scripts
 
         public void CreateInstance(FutureInstance instance)
         {
-            Instantiate(instance.obj, instance.pos, Quaternion.identity);
+            var obj = Instantiate(instance.obj, instance.pos, Quaternion.identity);
+            if (instance.parent != null)
+            {
+                obj.transform.SetParent(instance.parent.transform);
+                var children = obj.GetComponentsInChildren<Transform>();
+                foreach (var child in children)
+                {
+                    if (child.name == "Text (TMP)")
+                    {
+                        TMP_Text text = child.GetComponent<TMP_Text>();
+                        text.SetText(instance.user);
+                    }
+                }
+            }
         }
 
         public GameObject InstancePlayerOne()
@@ -78,9 +117,9 @@ namespace Scripts
             return Instantiate(enemyPrefab, new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity);
         }
 
-        public GameObject IntanceUserPrefab()
+        public GameObject IntanceUserPrefab(GameObject parent, string name)
         {
-            FutureInstance ins = new FutureInstance(UserPrefab, new Vector3(0, 0, 0));
+            FuturePanelUser ins = new FuturePanelUser(UserPrefab, parent, name, new Vector3(0, 0, 0));
             instances.Add(ins);
             return null;
         }

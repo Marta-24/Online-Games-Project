@@ -30,6 +30,7 @@ namespace Scripts
         public GameObject netManager;
         public NetIdManager netIdScript;
         public Instanciator instanciator;
+        public GameObject panelUi;
 
         // Function called with a button to start the udp server
         public void StartServer()
@@ -166,7 +167,8 @@ namespace Scripts
             }
             else if (actionType == ActionType.Hello)
             {
-               instanciator.IntanceUserPrefab();
+                StringPacket packet = JsonUtility.FromJson<StringPacket>(str);
+               instanciator.IntanceUserPrefab(panelUi, packet.str);
             }
         }
 
