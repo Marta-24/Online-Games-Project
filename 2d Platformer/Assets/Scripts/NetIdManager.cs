@@ -91,7 +91,6 @@ namespace Scripts
             {
                 for (int i = 0; i < NeedToCreateList.Count; i++)
                 {
-                    Debug.Log(NeedToCreateList[i].pos);
                     CreateObject(NeedToCreateList[i].netID, NeedToCreateList[i].type, NeedToCreateList[i].pos, NeedToCreateList[i].direction);
                     NeedToCreateList[i].type = GameObjectType.none;
                 }
@@ -183,8 +182,6 @@ namespace Scripts
             }
 
             netIdList.Add(id);
-
-            Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
             return id;
         }
 
@@ -194,21 +191,15 @@ namespace Scripts
 
             id = new NetId(intId, obj, type, optionalList);
             netIdList.Add(id);
-
-            Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
             return id;
         }
 
         public NetId AddNetId(int intId, GameObject obj, GameObjectType type)
         {
             NetId id;
-            Debug.Log("WORKS CORRECTLU");
             id = new NetId(intId, obj, type);
 
-
             netIdList.Add(id);
-
-            Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
             return id;
         }
 
@@ -247,11 +238,10 @@ namespace Scripts
         }
         public void SendPosition(GameObject obj, Vector2 pos)
         {
-            Debug.Log(obj.name);
             int id = FindNetId(obj);
             if (id != -1)
             {
-                Debug.Log("sending a position that is not negative!");
+                
                 if (server != null) server.SendPosition(id, pos);
                 if (client != null) client.SendPosition(id, pos);
             }
@@ -270,13 +260,11 @@ namespace Scripts
 
         public void StackObject(int netId, GameObjectType type, Vector2 pos)
         {
-            Debug.Log("object stacked: " + ((int)type));
             NeedToCreateList.Add(new FutureObject(netId, pos, type));
         }
 
         public void StackObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction)
         {
-            Debug.Log("object stacked: " + ((int)type) + "this is the weird one");
             NeedToCreateList.Add(new FutureObject(netId, pos, type, direction));
         }
 
@@ -303,8 +291,6 @@ namespace Scripts
                         body.bodyType = RigidbodyType2D.Kinematic;
                         PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
                         list.Add(a);
-
-                        Debug.Log("adding playermovement to client");
                     }
 
 
@@ -337,20 +323,17 @@ namespace Scripts
                 {
 
                     Vector3 vec = new Vector3(pos.x, pos.y, 0.0f);//new Vector3(pos.x, pos.y + 0.5f, 0.0f) * direction;
-                    Debug.Log(vec.x + " " + vec.y + "" + direction);
                     vec += new Vector3(0.4f, 0.0f, 0.0f) * direction.x;
-                    Debug.Log(vec.x + " " + vec.y + "second time");
                     GameObject obj = Instantiate(bulletPrefab, vec, Quaternion.identity);
                     BulletScript bulletScript = obj.GetComponent<BulletScript>();
                     bulletScript.Start_();
-                    //Debug.Log(direction);
+
                     bulletScript.rb.velocity = 10f * direction * transform.right;
 
                     AddNetId(netId, obj, GameObjectType.bullet); // same
                 }
                 else if (type == GameObjectType.enemy)
                 {
-                    //Debug.Log("this is triggering an enourmous amount of times");
                     GameObject obj = instanciator_.InstanceEnemyPrefab(pos);
 
                     List<Component> list = new List<Component>();
@@ -363,7 +346,6 @@ namespace Scripts
 
         public void SetPosition(int id, Vector2 pos)
         {
-            //Debug.Log("receiveing orders to move");
             NetId obj = FindObject(id);
             if (obj != null)
             {
