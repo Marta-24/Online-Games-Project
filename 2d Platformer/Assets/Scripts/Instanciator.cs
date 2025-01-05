@@ -9,6 +9,7 @@ namespace Scripts
         public GameObject player1Prefab;
         public GameObject player2Prefab;
         public GameObject enemyPrefab;
+        public GameObject enemyFlyPrefab;
 
         // Start is called before the first frame update
         void Start()
@@ -23,16 +24,6 @@ namespace Scripts
 
         public GameObject InstancePlayerOne()
         {
-            /*GameObject player = new GameObject();
-            player.name = "Player1_";
-            
-            SpriteRenderer renderer = player.GetComponent<SpriteRenderer>();
-            renderer.
-            player.GetComponent<PlayerMovement>();
-            player.GetComponent<Rigidbody2D>();
-            player.GetComponent<BoxCollider2D>();
-            player.GetComponent<Animator>();
-            return player;*/
             GameObject obj = Instantiate(player1Prefab, new Vector3(0, 0, 0), Quaternion.identity);
             obj.name = "Player1";
             return obj;
@@ -52,5 +43,9 @@ namespace Scripts
             return Instantiate(enemyPrefab, new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity);
         }
 
+        public GameObject InstanceEnemyFlyPrefab(Vector2 pos)
+        {
+            return Instantiate(enemyFlyPrefab, new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity);
+        }
     }
 }

@@ -36,7 +36,6 @@ namespace Scripts
         {
             if (futurePosition != futurePositionCheck)
             {
-                Debug.Log("Changing player position");
                 rb.MovePosition(futurePosition);
                 futurePositionCheck = futurePosition;
             }
@@ -62,7 +61,6 @@ namespace Scripts
 
                 if (server != null)
                 {
-                    Debug.Log("AAAA");
                     server.ConnectToPlayer(parent);
                     TCPConnection = true;
                 }

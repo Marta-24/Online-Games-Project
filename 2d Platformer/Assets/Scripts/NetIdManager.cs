@@ -9,8 +9,9 @@ namespace Scripts
         none = 0,
         player1 = 1,
         player2 = 2,
-        enemy = 3,
-        bullet = 4
+        enemyGround = 3,
+        enemyFly = 4,
+        bullet = 5
     }
     public class NetId
     {
@@ -133,7 +134,21 @@ namespace Scripts
                     list.Add(b);
                     list.Add(hp);
 
-                    id = CreateNetId(obj, GameObjectType.enemy, list);
+                    id = CreateNetId(obj, GameObjectType.enemyGround, list);
+                    server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
+
+
+
+                    pos = new Vector2(2, -2);
+                    obj = instanciator_.InstanceEnemyFlyPrefab(pos);
+
+                    list = new List<Component>();
+                    EnemyFlyScript b_ = obj.GetComponent<EnemyFlyScript>();
+                    LifeSystem hp_ = obj.GetComponent<LifeSystem>();
+                    list.Add(b_);
+                    list.Add(hp_);
+
+                    id = CreateNetId(obj, GameObjectType.enemyFly, list);
                     server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
                 }
             }
@@ -243,7 +258,7 @@ namespace Scripts
             int id = FindNetId(obj);
             if (id != -1)
             {
-                
+
                 if (server != null) server.SendPosition(id, pos);
                 if (client != null) client.SendPosition(id, pos);
             }
@@ -334,14 +349,27 @@ namespace Scripts
 
                     AddNetId(netId, obj, GameObjectType.bullet); // same
                 }
-                else if (type == GameObjectType.enemy)
+                else if (type == GameObjectType.enemyGround)
                 {
                     GameObject obj = instanciator_.InstanceEnemyPrefab(pos);
 
                     List<Component> list = new List<Component>();
                     EnemyScript a = obj.GetComponent<EnemyScript>();
+                    LifeSystem hp = obj.GetComponent<LifeSystem>();
                     list.Add(a);
-                    AddNetId(netId, obj, GameObjectType.enemy, list);
+                    list.Add(hp);
+                    AddNetId(netId, obj, GameObjectType.enemyGround, list);
+                }
+                else if (type == GameObjectType.enemyFly)
+                {
+                    GameObject obj = instanciator_.InstanceEnemyFlyPrefab(pos);
+
+                    List<Component> list = new List<Component>();
+                    EnemyFlyScript a = obj.GetComponent<EnemyFlyScript>();
+                    LifeSystem hp = obj.GetComponent<LifeSystem>();
+                    list.Add(a);
+                    list.Add(hp);
+                    AddNetId(netId, obj, GameObjectType.enemyFly, list);
                 }
             }
         }
@@ -357,16 +385,28 @@ namespace Scripts
                     {
                         if (client != null)
                         {
-                            PlayerMovementServer a = obj.compList[0] as PlayerMovementServer;
-                            a.SetPosition(pos);
+                            foreach (Component c in obj.compList)
+                            {
+                                if (c.GetType() == typeof(PlayerMovementServer))
+                                {
+                                    PlayerMovementServer a = c as PlayerMovementServer;
+                                    a.SetPosition(pos);
+                                }
+                            }
                         }
                     }
                     else if (obj.type == GameObjectType.player2)
                     {
                         if (server != null)
                         {
-                            PlayerMovementServer a = obj.compList[0] as PlayerMovementServer;
-                            a.SetPosition(pos);
+                            foreach (Component c in obj.compList)
+                            {
+                                if (c.GetType() == typeof(PlayerMovementServer))
+                                {
+                                    PlayerMovementServer a = c as PlayerMovementServer;
+                                    a.SetPosition(pos);
+                                }
+                            }
                         }
                     }
                 }
@@ -400,8 +440,14 @@ namespace Scripts
         {
             NetId obj = FindObject(id);
 
-            LifeSystem a = obj.compList[1] as LifeSystem;
-            a.ReceiveDamage(health);
+            foreach (Component c in obj.compList)
+            {
+                if (c.GetType() == typeof(LifeSystem))
+                {
+                    LifeSystem a = c as LifeSystem;
+                    a.ReceiveDamage(health);
+                }
+            }
         }
     }
 }

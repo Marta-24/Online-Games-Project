@@ -17470,6 +17470,7 @@ MonoBehaviour:
   player1Prefab: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
   player2Prefab: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
+  enemyFlyPrefab: {fileID: 4817742331489584283, guid: cf87a9760629c21418185186e331d363, type: 3}
 --- !u!114 &2077018157
 MonoBehaviour:
   m_ObjectHideFlags: 0

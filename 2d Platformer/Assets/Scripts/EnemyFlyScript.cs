@@ -45,8 +45,6 @@ namespace Scripts
         void MoveTowardsPlayer(Vector2 pos)
         {
             Vector2 vector = new Vector2(-rb.position.x + pos.x, -rb.position.y + pos.y);
-            Debug.Log("moving");
-            Debug.Log(vector.x + ", " + vector.y);
             float divident = Mathf.Sqrt((vector.x * vector.x) + (vector.y * vector.y));
             float x = (vector.x / divident) * speed;
             float y = (vector.y / divident) * speed;

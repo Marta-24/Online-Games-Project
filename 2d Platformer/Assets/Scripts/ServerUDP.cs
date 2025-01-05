@@ -112,7 +112,6 @@ namespace Scripts
             byte[] data = new byte[2048];
 
             int rec = socket.ReceiveFrom(data, ref user.endPoint); // This works because there is only one connection
-            Debug.Log("Received message!!!" + rec);
 
             if (rec == 0)
             {
@@ -140,11 +139,11 @@ namespace Scripts
 
             actionType = JsonUtility.FromJson<ActionType>(json01);
 
-            SendAction(actionType, json02);
+            GiveManagerAction(actionType, json02);
             return 1;
         }
 
-        public void SendAction(ActionType actionType, string str)
+        public void GiveManagerAction(ActionType actionType, string str)
         {
             if (actionType == ActionType.Position)
             {
