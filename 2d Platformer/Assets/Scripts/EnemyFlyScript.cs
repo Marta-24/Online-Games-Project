@@ -12,7 +12,6 @@ namespace Scripts
         float laserLength = 1f;
         public float speed;
         public int movementDirection = 1;
-        private int health;
         private Rigidbody2D rb;
         public GameObject netIdManager;
         public NetIdManager netIdScript;
@@ -26,7 +25,6 @@ namespace Scripts
             rb = GetComponent<Rigidbody2D>();
             coll = GetComponent<Collider2D>();
             speed = 0.05f;
-            health = 100;
 
             //Get client component
             FindNetIdManager();
@@ -38,24 +36,20 @@ namespace Scripts
         {
             CheckPosition();
 
-            if (player != null)
+            if (followPlayer == true)
             {
                 MoveTowardsPlayer(player);
-            }
-
-            if (health <= 0)
-            {
-                Destroy(gameObject);
             }
         }
 
         void MoveTowardsPlayer(Vector2 pos)
         {
+            Vector2 vector = new Vector2(-rb.position.x + pos.x, -rb.position.y + pos.y);
             Debug.Log("moving");
-            Debug.Log(pos.x + ", " + pos.y);
-            float divident = Mathf.Sqrt((pos.x * pos.x) + (pos.y * pos.y));
-            float x = (pos.x / divident) * speed;
-            float y = (pos.y / divident) * speed;
+            Debug.Log(vector.x + ", " + vector.y);
+            float divident = Mathf.Sqrt((vector.x * vector.x) + (vector.y * vector.y));
+            float x = (vector.x / divident) * speed;
+            float y = (vector.y / divident) * speed;
             rb.MovePosition(new Vector2(transform.position.x + x, transform.position.y + y));
         }
 
@@ -64,18 +58,6 @@ namespace Scripts
 
         }
 
-        public void TakeDamage(int dmg)
-        {
-            Debug.Log("taking damage");
-            health -= dmg;
-
-            netIdScript.TakeDamage(parent, dmg);
-        }
-
-        public void ReceiveDamage(int dmg)
-        {
-            health -= dmg;
-        }
         void FlipDirection()
         {
             movementDirection *= -1;
@@ -87,9 +69,8 @@ namespace Scripts
             if (netIdManager != null) netIdScript = netIdManager.GetComponent<NetIdManager>();
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        void OnTriggerStay2D(Collider2D other)
         {
-            Debug.Log("trigger works");
             if (other.CompareTag("Player1"))
             {
                 player = other.transform.position;

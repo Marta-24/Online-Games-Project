@@ -129,7 +129,9 @@ namespace Scripts
 
                     list = new List<Component>();
                     EnemyScript b = obj.GetComponent<EnemyScript>();
+                    LifeSystem hp = obj.GetComponent<LifeSystem>();
                     list.Add(b);
+                    list.Add(hp);
 
                     id = CreateNetId(obj, GameObjectType.enemy, list);
                     server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
@@ -398,7 +400,7 @@ namespace Scripts
         {
             NetId obj = FindObject(id);
 
-            EnemyScript a = obj.compList[0] as EnemyScript;
+            LifeSystem a = obj.compList[1] as LifeSystem;
             a.ReceiveDamage(health);
         }
     }
