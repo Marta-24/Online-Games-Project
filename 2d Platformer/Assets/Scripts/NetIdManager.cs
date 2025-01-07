@@ -98,61 +98,6 @@ namespace Scripts
 
                 NeedToCreateList.Clear();
             }
-
-            if (frameCounter > 0)
-            {
-                frameCounter--;
-            }
-            else if (frameCounter == 0)
-            {
-                frameCounter--;
-                if (server != null)
-                {
-                    GameObject obj = instanciator_.InstancePlayerOne();
-                    List<Component> list = new List<Component>();
-                    PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                    list.Add(a);
-                    NetId id = CreateNetId(obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
-                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-
-
-                    obj = instanciator_.InstancePlayerTwo();
-                    list = new List<Component>();
-                    a = obj.GetComponent<PlayerMovementServer>();
-                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                    body.bodyType = RigidbodyType2D.Kinematic;
-                    list.Add(a);
-                    id = CreateNetId(obj, GameObjectType.player2, list); // same
-                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-
-                    Vector2 pos = new Vector2(2, -2);
-                    obj = instanciator_.InstanceEnemyPrefab(pos);
-
-                    list = new List<Component>();
-                    EnemyScript b = obj.GetComponent<EnemyScript>();
-                    LifeSystem hp = obj.GetComponent<LifeSystem>();
-                    list.Add(b);
-                    list.Add(hp);
-
-                    id = CreateNetId(obj, GameObjectType.enemyGround, list);
-                    server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
-
-
-
-                    pos = new Vector2(2, -2);
-                    obj = instanciator_.InstanceEnemyFlyPrefab(pos);
-
-                    list = new List<Component>();
-                    EnemyFlyScript b_ = obj.GetComponent<EnemyFlyScript>();
-                    LifeSystem hp_ = obj.GetComponent<LifeSystem>();
-                    list.Add(b_);
-                    list.Add(hp_);
-
-                    id = CreateNetId(obj, GameObjectType.enemyFly, list);
-                    server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
-                }
-            }
-
         }
 
         void AddServer()
@@ -374,6 +319,12 @@ namespace Scripts
             }
         }
 
+        public void SendObject(NetId id)
+        {
+            if (server != null) server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
+            if (client != null) client.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
+ 
+        }
         public void SetPosition(int id, Vector2 pos)
         {
             NetId obj = FindObject(id);
