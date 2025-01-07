@@ -1,40 +1,73 @@
 using UnityEngine;
-using TMPro;  // Import for TextMeshPro support
+using TMPro;
 
 public class SelectCharacter : MonoBehaviour
 {
-    private SpriteRenderer spriteRenderer;  // Holds the SpriteRenderer component
-    private Color originalColor;            // Stores the original sprite color
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
 
-    public Color hiddenColor = Color.black;  // Color when not hovered (default black)
-    public GameObject abilitiesText;         // Reference to the UI text GameObject
-    public string abilityDescription = "This character can perform a double jump and wall climb.";  // Custom description
+    public Color hiddenColor = Color.black;
+    public GameObject abilitiesText;
+    public string abilityDescription = "";
+
+    private static SelectCharacter selectedCharacter;
+
+    private bool isSelected = false;
 
     void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();  // Get the SpriteRenderer component
-        originalColor = spriteRenderer.color;             // Save the original color
-        spriteRenderer.color = hiddenColor;               // Set sprite color to black by default
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        originalColor = spriteRenderer.color;
+        spriteRenderer.color = hiddenColor;
 
-        // Hide the text at the start
         if (abilitiesText != null)
             abilitiesText.SetActive(false);
     }
 
     void OnMouseEnter()
     {
-        spriteRenderer.color = originalColor;  // Show the sprite’s original color
+        if (!isSelected)
+            spriteRenderer.color = originalColor;
+
         if (abilitiesText != null)
         {
-            abilitiesText.SetActive(true);     // Show the abilities text
-            abilitiesText.GetComponent<TextMeshProUGUI>().text = abilityDescription;  // Update the text dynamically
+            abilitiesText.SetActive(true);
+            abilitiesText.GetComponent<TextMeshProUGUI>().text = abilityDescription;
         }
     }
 
     void OnMouseExit()
     {
-        spriteRenderer.color = hiddenColor;  // Hide the sprite (back to black)
+        if (!isSelected)
+            spriteRenderer.color = hiddenColor;
+
         if (abilitiesText != null)
-            abilitiesText.SetActive(false);  // Hide the abilities text
+            abilitiesText.SetActive(false);
+    }
+
+    void OnMouseDown()
+    {
+        if (selectedCharacter == this)
+            return;
+
+        if (selectedCharacter != null)
+        {
+            selectedCharacter.Deselect();
+        }
+
+        Select();
+    }
+
+    private void Select()
+    {
+        isSelected = true;
+        spriteRenderer.color = originalColor;
+        selectedCharacter = this;
+    }
+
+    private void Deselect()
+    {
+        isSelected = false;
+        spriteRenderer.color = hiddenColor;
     }
 }
