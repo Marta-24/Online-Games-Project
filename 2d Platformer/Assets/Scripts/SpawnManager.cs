@@ -19,7 +19,7 @@ namespace Scripts
         {
             connectionType = false;
             FindComponents();
-            timerBeforeSpawn = 60;
+            timerBeforeSpawn = 450;
             spawnTypePlayer = 1;
         }
 
@@ -53,7 +53,7 @@ namespace Scripts
         {
             GameObject obj = instanciator_.InstancePlayerOne();
             List<Component> list = new List<Component>();
-            PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
+            PlayerMovement a = obj.GetComponent<PlayerMovement>();
             list.Add(a);
             NetId id = netIdManager_.CreateNetId(obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
             netIdManager_.SendObject(id);
@@ -63,9 +63,9 @@ namespace Scripts
         {
             GameObject obj = instanciator_.InstancePlayerTwo();
             List<Component> list = new List<Component>();
-            PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
+            PlayerMovement a = obj.GetComponent<PlayerMovement>();
             list.Add(a);
-            NetId id = netIdManager_.CreateNetId(obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
+            NetId id = netIdManager_.CreateNetId(obj, GameObjectType.player2, list); // player two created, send the clients the command create!!!
             netIdManager_.SendObject(id);
         }
 

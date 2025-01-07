@@ -238,23 +238,13 @@ namespace Scripts
                 {
                     GameObject obj = instanciator_.InstancePlayerOne();
                     List<Component> list = new List<Component>();
-                    if (server != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = false;
-                        obj.GetComponent<PlayerMovement>().enabled = true;
-                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
-                        list.Add(a);
-                    }
-                    if (client != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = true;
-                        obj.GetComponent<PlayerMovement>().enabled = false;
-                        Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                        body.bodyType = RigidbodyType2D.Kinematic;
-                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                        list.Add(a);
-                    }
 
+                    obj.GetComponent<PlayerMovementCopy>().enabled = true;
+                    obj.GetComponent<PlayerMovement>().enabled = false;
+                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
+                    body.bodyType = RigidbodyType2D.Kinematic;
+                    PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
+                    list.Add(a);
 
                     AddNetId(netId, obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
                 }
@@ -262,22 +252,13 @@ namespace Scripts
                 {
                     GameObject obj = instanciator_.InstancePlayerTwo();
                     List<Component> list = new List<Component>();
-                    if (server != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = true;
-                        obj.GetComponent<PlayerMovement>().enabled = false;
-                        Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                        body.bodyType = RigidbodyType2D.Kinematic;
-                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                        list.Add(a);
-                    }
-                    if (client != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = false;
-                        obj.GetComponent<PlayerMovement>().enabled = true;
-                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
-                        list.Add(a);
-                    }
+
+                    obj.GetComponent<PlayerMovementCopy>().enabled = true;
+                    obj.GetComponent<PlayerMovement>().enabled = false;
+                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
+                    body.bodyType = RigidbodyType2D.Kinematic;
+                    PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
+                    list.Add(a);
 
                     AddNetId(netId, obj, GameObjectType.player2, list); // same
                 }
@@ -323,7 +304,7 @@ namespace Scripts
         {
             if (server != null) server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
             if (client != null) client.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
- 
+
         }
         public void SetPosition(int id, Vector2 pos)
         {
@@ -338,9 +319,9 @@ namespace Scripts
                         {
                             foreach (Component c in obj.compList)
                             {
-                                if (c.GetType() == typeof(PlayerMovementServer))
+                                if (c.GetType() == typeof(PlayerMovementCopy))
                                 {
-                                    PlayerMovementServer a = c as PlayerMovementServer;
+                                    PlayerMovementCopy a = c as PlayerMovementCopy;
                                     a.SetPosition(pos);
                                 }
                             }
@@ -352,9 +333,9 @@ namespace Scripts
                         {
                             foreach (Component c in obj.compList)
                             {
-                                if (c.GetType() == typeof(PlayerMovementServer))
+                                if (c.GetType() == typeof(PlayerMovementCopy))
                                 {
-                                    PlayerMovementServer a = c as PlayerMovementServer;
+                                    PlayerMovementCopy a = c as PlayerMovementCopy;
                                     a.SetPosition(pos);
                                 }
                             }
