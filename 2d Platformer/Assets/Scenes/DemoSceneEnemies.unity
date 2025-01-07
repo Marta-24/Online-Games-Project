@@ -17366,8 +17366,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1869357827}
   m_SourcePrefab: {fileID: 100100000, guid: a004b19a22796354f8285ec2a384db54, type: 3}
+--- !u!1 &1869357826 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
+  m_PrefabInstance: {fileID: 1869357825}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1869357827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1869357826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f458b83536261d54989eb09f059a739a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  netIdManager: {fileID: 0}
+  netIdScript: {fileID: 0}
 --- !u!1 &2004148278
 GameObject:
   m_ObjectHideFlags: 0
@@ -17645,6 +17667,7 @@ MonoBehaviour:
   player1Prefab: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
   player2Prefab: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
+  enemyFlyPrefab: {fileID: 0}
 --- !u!114 &2077018157
 MonoBehaviour:
   m_ObjectHideFlags: 0
