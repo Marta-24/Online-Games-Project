@@ -17412,10 +17412,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ab561eee606f7f41bb46f9718a65c95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  idManager: {fileID: 0}
   instanciator_: {fileID: 0}
   netIdManager_: {fileID: 0}
+  InformationBetweenScenes_: {fileID: 0}
   timerBeforeSpawn: 9
   spawnTypePlayer: 0
+  connectionType: 0
 --- !u!1 &2004148278
 GameObject:
   m_ObjectHideFlags: 0
@@ -17671,9 +17674,10 @@ GameObject:
   - component: {fileID: 2077018158}
   - component: {fileID: 2077018157}
   - component: {fileID: 2077018156}
+  - component: {fileID: 2077018159}
   m_Layer: 0
   m_Name: NetIdManager
-  m_TagString: Untagged
+  m_TagString: NetIdManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17729,6 +17733,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2077018159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2077018155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12c6496195e0e0047ad6336365207f84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  typeOfPlayer: 0
 --- !u!1001 &8678614788397226946
 PrefabInstance:
   m_ObjectHideFlags: 0

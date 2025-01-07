@@ -400,5 +400,13 @@ namespace Scripts
                 }
             }
         }
+
+        public bool CheckConnection()
+        {
+            if (server != null) return true;
+            //if (client != null) return false;
+
+            return false;
+        }
     }
 }

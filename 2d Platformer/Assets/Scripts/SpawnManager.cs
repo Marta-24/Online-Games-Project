@@ -10,11 +10,14 @@ namespace Scripts
         public GameObject idManager;
         public Instanciator instanciator_;
         public NetIdManager netIdManager_;
+        public InformationBetweenScenes InformationBetweenScenes_;
         public int timerBeforeSpawn;
         public int spawnTypePlayer;
+        public bool connectionType;
         // Start is called before the first frame update
         void Start()
         {
+            connectionType = false;
             FindComponents();
             timerBeforeSpawn = 60;
             spawnTypePlayer = 1;
@@ -34,9 +37,14 @@ namespace Scripts
             else if (timerBeforeSpawn == 0)
             {
                 timerBeforeSpawn--;
+                spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
                 if (spawnTypePlayer == 1)
                 {
                     CreatePlayer1();
+                }
+                else if (spawnTypePlayer == 2)
+                {
+                    CreatePlayer2();
                 }
             }
         }
@@ -51,7 +59,7 @@ namespace Scripts
             netIdManager_.SendObject(id);
         }
 
-        void CreatePlayer2(Vector2 pos)
+        void CreatePlayer2()
         {
             GameObject obj = instanciator_.InstancePlayerTwo();
             List<Component> list = new List<Component>();
@@ -95,6 +103,11 @@ namespace Scripts
             idManager = GameObject.FindWithTag("NetIdManager");
             instanciator_ = idManager.GetComponent<Instanciator>();
             netIdManager_ = idManager.GetComponent<NetIdManager>();
+            InformationBetweenScenes_ = idManager.GetComponent<InformationBetweenScenes>();
+            if (netIdManager_ != null)
+            {
+                connectionType = netIdManager_.CheckConnection();
+            }
         }
     }
 }
