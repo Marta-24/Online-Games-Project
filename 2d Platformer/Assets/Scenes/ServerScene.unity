@@ -197,6 +197,8 @@ MonoBehaviour:
   objectPlayer: {fileID: 0}
   playerScript: {fileID: 0}
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
+  netManager: {fileID: 0}
+  netIdScript: {fileID: 0}
 --- !u!1 &228115241
 GameObject:
   m_ObjectHideFlags: 0
@@ -1523,9 +1525,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 648199592}
-        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadScene01Server
+      - m_Target: {fileID: 137970131}
+        m_TargetAssemblyTypeName: Scripts.ServerUDP, Assembly-CSharp
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1535,9 +1537,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 137970131}
-        m_TargetAssemblyTypeName: Scripts.ServerUDP, Assembly-CSharp
-        m_MethodName: StartGame
+      - m_Target: {fileID: 648199592}
+        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene01Server
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

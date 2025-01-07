@@ -170,6 +170,10 @@ namespace Scripts
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
                 netIdScript.GiveDamage(packet.netId, packet.a);
             }
+            else if (actionType == ActionType.StartGame)
+            {
+                sceneLoader.LoadScene01Client();
+            }
         }
 
         public void SendPosition(int netId, Vector2 position)
