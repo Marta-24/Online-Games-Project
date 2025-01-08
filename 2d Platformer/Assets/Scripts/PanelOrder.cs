@@ -16,7 +16,7 @@ public class PanelOrder : MonoBehaviour
         float pos = 0.0f;
         foreach (Transform child in transform)
         {
-            Debug.Log(child.gameObject.name);
+            
             child.gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(120.0f, 200.0f + pos);
             pos -= 100.0f;
         }

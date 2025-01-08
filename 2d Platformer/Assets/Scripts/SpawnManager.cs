@@ -30,23 +30,22 @@ namespace Scripts
             {
                 FindComponents();
             }
-            if (timerBeforeSpawn > 0)
+            
+        }
+
+        public void SpawnLvl1()
+        {
+            spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
+            if (spawnTypePlayer == 1)
             {
-                timerBeforeSpawn--;
+                CreatePlayer1();
             }
-            else if (timerBeforeSpawn == 0)
+            else if (spawnTypePlayer == 2)
             {
-                timerBeforeSpawn--;
-                spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
-                if (spawnTypePlayer == 1)
-                {
-                    CreatePlayer1();
-                }
-                else if (spawnTypePlayer == 2)
-                {
-                    CreatePlayer2();
-                }
+                CreatePlayer2();
             }
+
+            if (connectionType) CreateEnemyGround();
         }
 
         void CreatePlayer1()

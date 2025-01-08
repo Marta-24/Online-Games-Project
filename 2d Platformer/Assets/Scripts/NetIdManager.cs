@@ -67,11 +67,12 @@ namespace Scripts
         public ServerUDP server;
         public ClientUDP client;
         public GameObject netIdManagerGameObject;
+        public SpawnManager spawn;
         public Instanciator instanciator_;
         public bool startEnded = false;
         public List<FutureObject> NeedToCreateList = new List<FutureObject>();
         public int frameCounter = 60;
-
+        public bool sendReady = false;
         public GameObject bulletPrefab;
         void Start()
         {
@@ -98,6 +99,18 @@ namespace Scripts
 
                 NeedToCreateList.Clear();
             }
+
+            if (sendReady == false)
+            {
+                SendReadyToCreate();
+                sendReady = true;
+            }
+        }
+
+        void SendReadyToCreate()
+        {
+            if (server != null) server.SendReadyToCreate();
+            if (client != null) client.SendReadyToCreate();
         }
 
         void AddServer()
@@ -116,6 +129,7 @@ namespace Scripts
         void FindInstanciator()
         {
             instanciator_ = GetComponent<Instanciator>();
+            spawn = GetComponent<SpawnManager>();
         }
 
         public int FindNetId(GameObject obj)
@@ -222,11 +236,14 @@ namespace Scripts
 
         public void StackObject(int netId, GameObjectType type, Vector2 pos)
         {
+
+            Debug.Log("future object: " + netId + "" + type);
             NeedToCreateList.Add(new FutureObject(netId, pos, type));
         }
 
         public void StackObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction)
         {
+            Debug.Log("future object: " + netId + "" + type);
             NeedToCreateList.Add(new FutureObject(netId, pos, type, direction));
         }
 
@@ -320,6 +337,14 @@ namespace Scripts
                             PlayerMovementCopy a = c as PlayerMovementCopy;
                             a.SetPosition(pos);
                         }
+                        else if (c.GetType() == typeof(EnemyScript))
+                        {
+
+                        }
+                        else if (c.GetType() == typeof(EnemyFlyScript))
+                        {
+
+                        }
                     }
                 }
             }
@@ -368,6 +393,11 @@ namespace Scripts
             //if (client != null) return false;
 
             return false;
+        }
+
+        public void ActivateSpawn()
+        {
+            spawn.SpawnLvl1();
         }
     }
 }

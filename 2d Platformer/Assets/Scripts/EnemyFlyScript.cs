@@ -20,6 +20,10 @@ namespace Scripts
         Collider2D coll;
         Vector2 player;
         bool followPlayer = false;
+        bool isHost = false;
+        public int sendInformation = 3;
+        private Vector2 futurePosition;
+        private Vector2 futurePositionCheck;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -29,16 +33,36 @@ namespace Scripts
             //Get client component
             FindNetIdManager();
             parent = gameObject;
+            futurePosition = new Vector2(0.0f, 0.0f);
+            futurePositionCheck  = new Vector2(0.0f, 0.0f);
         }
 
         // Update is called once per frame
         void Update()
         {
-            CheckPosition();
-
-            if (followPlayer == true)
+            if (isHost == true)
             {
-                MoveTowardsPlayer(player);
+                CheckPosition();
+
+                if (followPlayer == true)
+                {
+                    MoveTowardsPlayer(player);
+                }
+            }
+            else if (isHost == false)
+            {
+                if (futurePosition != futurePositionCheck)
+                {
+                    rb.MovePosition(futurePosition);
+                    futurePositionCheck = futurePosition;
+                }
+            }
+
+            sendInformation--;
+            if (sendInformation == 0)
+            {
+                sendInformation = 5;
+                SendEnemyPosition(); //Send the position to the server every fram for the moment
             }
         }
 
@@ -64,7 +88,21 @@ namespace Scripts
         public void FindNetIdManager()
         {
             netIdManager = GameObject.Find("NetIdManager");
-            if (netIdManager != null) netIdScript = netIdManager.GetComponent<NetIdManager>();
+            if (netIdManager != null)
+            {
+                netIdScript = netIdManager.GetComponent<NetIdManager>();
+                isHost = netIdScript.CheckConnection();
+            }
+        }
+
+        void SendEnemyPosition()
+        {
+            netIdScript.SendPosition(parent, rb.position);
+        }
+
+        public void SetPosition(Vector2 position)
+        {
+            futurePosition = position;
         }
 
         void OnTriggerStay2D(Collider2D other)

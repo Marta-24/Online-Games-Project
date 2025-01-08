@@ -87,12 +87,12 @@ namespace Scripts
 
         void SendHello(EndPoint Remote)
         {
-            string str = "serverName";
+            /*string str = "serverName";
 
             StringPacket packet = new StringPacket(0, str);
 
             string json01 = JsonUtility.ToJson(packet);
-            SendString(json01, ActionType.Hello);
+            SendString(json01, ActionType.Hello);*/
         }
 
         void ReceiveJob(UserUDP user)
@@ -114,10 +114,10 @@ namespace Scripts
             byte[] data = new byte[2048];
 
             int rec = socket.ReceiveFrom(data, ref user.endPoint); // This works because there is only one connection
-
+            Debug.Log(rec);
             if (rec == 0)
             {
-                return 0;
+                //return 0;
             }
 
             int com = DeserializeJson(data);
@@ -140,13 +140,14 @@ namespace Scripts
             string json02 = reader.ReadString();
 
             actionType = JsonUtility.FromJson<ActionType>(json01);
-
+            Debug.Log(actionType);
             GiveManagerAction(actionType, json02);
             return 1;
         }
 
         public void GiveManagerAction(ActionType actionType, string str)
         {
+            
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
@@ -170,13 +171,17 @@ namespace Scripts
                 StringPacket packet = JsonUtility.FromJson<StringPacket>(str);
                 instanciator.IntanceUserPrefab(panelUi, packet.str);
             }
+            else if (actionType == ActionType.ReadyToCreate);
+            {
+                netIdScript.ActivateSpawn();
+            }
         }
 
         public void SendPosition(int netId, Vector2 position)
         {
             MovementPacket packet = new MovementPacket(netId, position);
             string json01 = JsonUtility.ToJson(packet);
-            Debug.Log("Sending position");
+            Debug.Log("Sending position" + position.x + "" + position.y);
             SendString(json01, ActionType.Position);
         }
 
@@ -194,6 +199,14 @@ namespace Scripts
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.Damage);
+        }
+
+         public void SendReadyToCreate()
+        {
+            StringPacket packet = new StringPacket(0, "ready");
+
+            string json01 = JsonUtility.ToJson(packet);
+            SendString(json01, ActionType.ReadyToCreate);
         }
 
         public void SendString(string str, ActionType type)

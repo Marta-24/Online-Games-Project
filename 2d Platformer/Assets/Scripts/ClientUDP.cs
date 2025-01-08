@@ -48,6 +48,7 @@ namespace Scripts
 
             if (goToScene1)
             {
+                Debug.Log("something");
                 sceneLoader.LoadScene01Client();
                 goToScene1 = false;
             }
@@ -151,7 +152,7 @@ namespace Scripts
             string json02 = reader.ReadString();
 
             actionType = JsonUtility.FromJson<ActionType>(json01);
-
+            Debug.Log(actionType);
             SendAction(actionType, json02);
             return 1;
         }
@@ -175,7 +176,9 @@ namespace Scripts
             }
             else if (actionType == ActionType.Create)
             {
+                Debug.Log("Creating!");
                 CreatePacket packet = JsonUtility.FromJson<CreatePacket>(str);
+                Debug.Log("creating object: " + packet.netId + packet.objType);
                 netIdScript.StackObject(packet.netId, packet.objType, packet.position, packet.direction);
             }
             else if (actionType == ActionType.Damage)
@@ -186,6 +189,10 @@ namespace Scripts
             else if (actionType == ActionType.StartGame)
             {
                 goToScene1 = true;
+            }
+            else if (actionType == ActionType.ReadyToCreate) ;
+            {
+                netIdScript.ActivateSpawn();
             }
         }
 
@@ -213,6 +220,14 @@ namespace Scripts
             SendString(json01, ActionType.Damage);
         }
 
+        public void SendReadyToCreate()
+        {
+            StringPacket packet = new StringPacket(0, "ready");
+
+            string json01 = JsonUtility.ToJson(packet);
+            SendString(json01, ActionType.ReadyToCreate);
+        }
+
         public void SendString(string str, ActionType type)
         {
             string json02 = JsonUtility.ToJson(type);
@@ -227,6 +242,7 @@ namespace Scripts
 
             server.SendTo(data, SocketFlags.None, ipep);
         }
+
 
 
         public void FindNetIdManager()
