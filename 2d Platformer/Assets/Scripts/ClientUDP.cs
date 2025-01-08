@@ -162,7 +162,7 @@ namespace Scripts
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
-
+                Debug.Log("reciveing position!");
                 // Setting position by netId
                 SetPosition(packet.netId, packet.position);
             }

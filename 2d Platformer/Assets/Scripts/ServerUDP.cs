@@ -168,7 +168,7 @@ namespace Scripts
         {
             MovementPacket packet = new MovementPacket(netId, position);
             string json01 = JsonUtility.ToJson(packet);
-
+            Debug.Log("Sending position");
             SendString(json01, ActionType.Position);
         }
 

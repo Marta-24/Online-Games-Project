@@ -313,32 +313,12 @@ namespace Scripts
             {
                 if (obj.compList != null || obj.compList.Count != 0)
                 {
-                    if (obj.type == GameObjectType.player1)
+                    foreach (Component c in obj.compList)
                     {
-                        if (client != null)
+                        if (c.GetType() == typeof(PlayerMovementCopy))
                         {
-                            foreach (Component c in obj.compList)
-                            {
-                                if (c.GetType() == typeof(PlayerMovementCopy))
-                                {
-                                    PlayerMovementCopy a = c as PlayerMovementCopy;
-                                    a.SetPosition(pos);
-                                }
-                            }
-                        }
-                    }
-                    else if (obj.type == GameObjectType.player2)
-                    {
-                        if (server != null)
-                        {
-                            foreach (Component c in obj.compList)
-                            {
-                                if (c.GetType() == typeof(PlayerMovementCopy))
-                                {
-                                    PlayerMovementCopy a = c as PlayerMovementCopy;
-                                    a.SetPosition(pos);
-                                }
-                            }
+                            PlayerMovementCopy a = c as PlayerMovementCopy;
+                            a.SetPosition(pos);
                         }
                     }
                 }
