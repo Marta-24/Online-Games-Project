@@ -12,7 +12,6 @@ namespace Scripts
         float laserLength = 1f;
         public float speed;
         public int movementDirection = 1;
-        private int health;
         private Rigidbody2D rb;
         public GameObject netIdManager;
         public NetIdManager netIdScript;
@@ -21,7 +20,6 @@ namespace Scripts
         {
             rb = GetComponent<Rigidbody2D>();
             speed = 0.05f;
-            health = 100;
 
             //Get client component
             FindNetIdManager();
@@ -34,10 +32,7 @@ namespace Scripts
             CheckPosition();
             MoveEnemy();
 
-            if (health <= 0)
-            {
-                Destroy(gameObject);
-            }
+            
         }
 
         void MoveEnemy()
@@ -87,18 +82,7 @@ namespace Scripts
             }
         }
 
-        public void TakeDamage(int dmg)
-        {
-            Debug.Log("taking damage");
-            health -= dmg;
-
-            netIdScript.TakeDamage(parent, dmg);
-        }
-
-        public void ReceiveDamage(int dmg)
-        {
-            health -= dmg;
-        }
+       
         void FlipDirection()
         {
             movementDirection *= -1;

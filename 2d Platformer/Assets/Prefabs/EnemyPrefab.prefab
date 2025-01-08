@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3691222099780597180}
   - component: {fileID: 534877343227182693}
+  - component: {fileID: 2094965109216348881}
   - component: {fileID: 7234542317365500749}
   - component: {fileID: 3365308869139218419}
   - component: {fileID: 8006897151495915387}
@@ -32,7 +33,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.25, y: -2.4419, z: 0}
   m_LocalScale: {x: 13.503608, y: 13.503608, z: 13.503608}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -88,6 +89,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2094965109216348881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7158211971725845945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f458b83536261d54989eb09f059a739a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  netIdManager: {fileID: 0}
+  netIdScript: {fileID: 0}
 --- !u!50 &7234542317365500749
 Rigidbody2D:
   serializedVersion: 4
@@ -174,6 +189,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   movementDirection: 1
+  netIdManager: {fileID: 0}
+  netIdScript: {fileID: 0}
 --- !u!95 &9036222988575060122
 Animator:
   serializedVersion: 5

@@ -16,26 +16,21 @@ namespace Scripts
     public class ClientUDP : MonoBehaviour
     {
         Socket server;
+        bool goToScene1 = false;
+        static MemoryStream stream;
         public GameObject objectPlayer;
-        public PlayerMovementServer playerScript;
+        public PlayerMovementCopy playerScript;
         IPEndPoint ipep;
-        public GameObject textPanelIp;
-        public GameObject textPanelName;
-        private TMP_InputField textIp;
-        private TMP_InputField textName;
+        public GameObject textPanel;
+        string text;
+        public GameObject enemyPrefab;
         public GameObject netManager;
         public NetIdManager netIdScript;
         public GameObject sceneManager;
         public SceneLoader sceneLoader;
-        string userName;
-        string nameIp;
-
         void Start()
         {
-            Debug.Log("starting thingies");
             sceneLoader = sceneManager.GetComponent<SceneLoader>();
-            textIp = textPanelIp.GetComponent<TMP_InputField>();
-            textName = textPanelName.GetComponent<TMP_InputField>();
         }
 
         void Update()
@@ -44,15 +39,18 @@ namespace Scripts
             {
                 FindNetIdManager();
             }
+
+            if (goToScene1)
+            {
+                sceneLoader.LoadScene01Client();
+                goToScene1 = false;
+            }
         }
 
         public void StartClient()
         {
             //127.0.0.1
-            
-            Debug.Log("startclient working");
-
-
+            text = textPanel.GetComponent<TMP_InputField>().text;
             Thread connect = new Thread(Connect);
             connect.Start();
 
@@ -60,16 +58,17 @@ namespace Scripts
 
         void Connect()
         {
-            Debug.Log("this is workuing");
-            nameIp = textIp.text;
-            userName = textName.text;
-            ipep = new IPEndPoint(IPAddress.Parse(nameIp), 9090);
+
+
+            ipep = new IPEndPoint(IPAddress.Parse(text), 9090);
 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            Debug.Log("starting sendusername");
-            Thread sendThread = new Thread(SendUsername);
+
+            Thread sendThread = new Thread(Send);
             sendThread.Start();
+            //SceneManager.LoadScene("WaitingRoom");
+
         }
 
         private void ReceiveJob()
@@ -106,16 +105,12 @@ namespace Scripts
             int com = deserializeJson(data);
             return rec;
         }
-        void SendUsername()
+        void Send()
         {
             byte[] data = new byte[2048];
-            
-            Debug.Log(userName);           
-            StringPacket packet = new StringPacket(0, userName);
 
-            string json01 = JsonUtility.ToJson(packet);
-            SendString(json01, ActionType.Hello);
-
+            data = Encoding.ASCII.GetBytes("userName");
+            server.SendTo(data, 0, SocketFlags.None, ipep);
             Receive();
         }
 
@@ -149,7 +144,7 @@ namespace Scripts
             string json02 = reader.ReadString();
 
             actionType = JsonUtility.FromJson<ActionType>(json01);
-            
+
             SendAction(actionType, json02);
             return 1;
         }
@@ -167,7 +162,7 @@ namespace Scripts
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
-
+                Debug.Log("reciveing position!");
                 // Setting position by netId
                 SetPosition(packet.netId, packet.position);
             }
@@ -181,14 +176,17 @@ namespace Scripts
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
                 netIdScript.GiveDamage(packet.netId, packet.a);
             }
-            
+            else if (actionType == ActionType.StartGame)
+            {
+                goToScene1 = true;
+            }
         }
 
         public void SendPosition(int netId, Vector2 position)
         {
             MovementPacket packet = new MovementPacket(netId, position);
             string json01 = JsonUtility.ToJson(packet);
-
+            Debug.Log("sending player pos");
             SendString(json01, ActionType.Position);
         }
 
@@ -237,7 +235,7 @@ namespace Scripts
                 objectPlayer = gameObject;
                 if (objectPlayer != null)
                 {
-                    playerScript = objectPlayer.GetComponent<PlayerMovementServer>();
+                    playerScript = objectPlayer.GetComponent<PlayerMovementCopy>();
 
                     if (playerScript != null)
                     {

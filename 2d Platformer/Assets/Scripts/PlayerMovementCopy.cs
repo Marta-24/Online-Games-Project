@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Scripts
 {
-    public class PlayerMovementServer : MonoBehaviour
+    public class PlayerMovementCopy : MonoBehaviour
     {
         private Rigidbody2D rb;
         private Collider2D coll;
@@ -36,7 +36,6 @@ namespace Scripts
         {
             if (futurePosition != futurePositionCheck)
             {
-                Debug.Log("Changing player position");
                 rb.MovePosition(futurePosition);
                 futurePositionCheck = futurePosition;
             }
@@ -62,7 +61,6 @@ namespace Scripts
 
                 if (server != null)
                 {
-                    Debug.Log("AAAA");
                     server.ConnectToPlayer(parent);
                     TCPConnection = true;
                 }

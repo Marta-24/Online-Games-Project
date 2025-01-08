@@ -32,18 +32,23 @@ namespace Scripts
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            // Debug.Log("this triggered" + " " + other.gameObject.tag);
+
             // Destroy the bullet if it hits an enemy or goes out of bounds
-            if (other.CompareTag("Wall") || other.CompareTag("Enemy")) // Change this thing later
+            if (other.CompareTag("Wall")) // Change this thing later
             {
-                Debug.Log("this worke!!!!!!!!!!!!!!!!!!!!!!!d");
-                if (other.CompareTag("Enemy") && isHost)
-                {
-                    GameObject obj = other.gameObject;
-                    obj.GetComponent<EnemyScript>().TakeDamage(25);
-                }
-                //Debug.Log("destroying");
                 Destroy(gameObject);
+            }
+
+            if (other.CompareTag("Enemy") && isHost)
+            {
+                if (other.isTrigger == false)
+                {
+                    Debug.Log("this worke!!!!!!!!!!!!!!!!!!!!!!!d");
+                    GameObject obj = other.gameObject;
+                    obj.GetComponent<LifeSystem>().TakeDamage(25);
+
+                    Destroy(gameObject);
+                }
             }
         }
 

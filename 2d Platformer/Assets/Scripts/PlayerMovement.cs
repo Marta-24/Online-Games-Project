@@ -34,6 +34,7 @@ namespace Scripts
         public Transform firePoint;
         public int sendInformation;
         public int movementDirection = 1;
+
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -78,13 +79,13 @@ namespace Scripts
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
-                animator.SetBool("isJumping", true);
+                //animator.SetBool("isJumping", true);
             }
 
             // Set isJumping to false when grounded
             if (IsGrounded())
             {
-                animator.SetBool("isJumping", false);
+                //animator.SetBool("isJumping", false);
             }
 
             if (Input.GetButtonDown("j"))

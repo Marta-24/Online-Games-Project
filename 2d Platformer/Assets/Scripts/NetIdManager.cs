@@ -9,8 +9,9 @@ namespace Scripts
         none = 0,
         player1 = 1,
         player2 = 2,
-        enemy = 3,
-        bullet = 4
+        enemyGround = 3,
+        enemyFly = 4,
+        bullet = 5
     }
     public class NetId
     {
@@ -91,52 +92,12 @@ namespace Scripts
             {
                 for (int i = 0; i < NeedToCreateList.Count; i++)
                 {
-                    Debug.Log(NeedToCreateList[i].pos);
                     CreateObject(NeedToCreateList[i].netID, NeedToCreateList[i].type, NeedToCreateList[i].pos, NeedToCreateList[i].direction);
                     NeedToCreateList[i].type = GameObjectType.none;
                 }
 
                 NeedToCreateList.Clear();
             }
-
-            if (frameCounter > 0)
-            {
-                frameCounter--;
-            }
-            else if (frameCounter == 0)
-            {
-                frameCounter--;
-                if (server != null)
-                {
-                    GameObject obj = instanciator_.InstancePlayerOne();
-                    List<Component> list = new List<Component>();
-                    PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                    list.Add(a);
-                    NetId id = CreateNetId(obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
-                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-
-
-                    obj = instanciator_.InstancePlayerTwo();
-                    list = new List<Component>();
-                    a = obj.GetComponent<PlayerMovementServer>();
-                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                    body.bodyType = RigidbodyType2D.Kinematic;
-                    list.Add(a);
-                    id = CreateNetId(obj, GameObjectType.player2, list); // same
-                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-
-                    Vector2 pos = new Vector2(2, -2);
-                    obj = instanciator_.InstanceEnemyPrefab(pos);
-
-                    list = new List<Component>();
-                    EnemyScript b = obj.GetComponent<EnemyScript>();
-                    list.Add(b);
-
-                    id = CreateNetId(obj, GameObjectType.enemy, list);
-                    server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
-                }
-            }
-
         }
 
         void AddServer()
@@ -183,8 +144,6 @@ namespace Scripts
             }
 
             netIdList.Add(id);
-
-            Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
             return id;
         }
 
@@ -194,21 +153,15 @@ namespace Scripts
 
             id = new NetId(intId, obj, type, optionalList);
             netIdList.Add(id);
-
-            Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
             return id;
         }
 
         public NetId AddNetId(int intId, GameObject obj, GameObjectType type)
         {
             NetId id;
-            Debug.Log("WORKS CORRECTLU");
             id = new NetId(intId, obj, type);
 
-
             netIdList.Add(id);
-
-            Debug.Log("Added new NetId with name and id:" + obj.name + " " + id.netId + " " + id.type);
             return id;
         }
 
@@ -247,11 +200,10 @@ namespace Scripts
         }
         public void SendPosition(GameObject obj, Vector2 pos)
         {
-            Debug.Log(obj.name);
             int id = FindNetId(obj);
             if (id != -1)
             {
-                Debug.Log("sending a position that is not negative!");
+
                 if (server != null) server.SendPosition(id, pos);
                 if (client != null) client.SendPosition(id, pos);
             }
@@ -270,13 +222,11 @@ namespace Scripts
 
         public void StackObject(int netId, GameObjectType type, Vector2 pos)
         {
-            Debug.Log("object stacked: " + ((int)type));
             NeedToCreateList.Add(new FutureObject(netId, pos, type));
         }
 
         public void StackObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction)
         {
-            Debug.Log("object stacked: " + ((int)type) + "this is the weird one");
             NeedToCreateList.Add(new FutureObject(netId, pos, type, direction));
         }
 
@@ -288,25 +238,13 @@ namespace Scripts
                 {
                     GameObject obj = instanciator_.InstancePlayerOne();
                     List<Component> list = new List<Component>();
-                    if (server != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = false;
-                        obj.GetComponent<PlayerMovement>().enabled = true;
-                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
-                        list.Add(a);
-                    }
-                    if (client != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = true;
-                        obj.GetComponent<PlayerMovement>().enabled = false;
-                        Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                        body.bodyType = RigidbodyType2D.Kinematic;
-                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                        list.Add(a);
 
-                        Debug.Log("adding playermovement to client");
-                    }
-
+                    obj.GetComponent<PlayerMovementCopy>().enabled = true;
+                    obj.GetComponent<PlayerMovement>().enabled = false;
+                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
+                    body.bodyType = RigidbodyType2D.Kinematic;
+                    PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
+                    list.Add(a);
 
                     AddNetId(netId, obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
                 }
@@ -314,22 +252,13 @@ namespace Scripts
                 {
                     GameObject obj = instanciator_.InstancePlayerTwo();
                     List<Component> list = new List<Component>();
-                    if (server != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = true;
-                        obj.GetComponent<PlayerMovement>().enabled = false;
-                        Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                        body.bodyType = RigidbodyType2D.Kinematic;
-                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                        list.Add(a);
-                    }
-                    if (client != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = false;
-                        obj.GetComponent<PlayerMovement>().enabled = true;
-                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
-                        list.Add(a);
-                    }
+
+                    obj.GetComponent<PlayerMovementCopy>().enabled = true;
+                    obj.GetComponent<PlayerMovement>().enabled = false;
+                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
+                    body.bodyType = RigidbodyType2D.Kinematic;
+                    PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
+                    list.Add(a);
 
                     AddNetId(netId, obj, GameObjectType.player2, list); // same
                 }
@@ -337,51 +266,58 @@ namespace Scripts
                 {
 
                     Vector3 vec = new Vector3(pos.x, pos.y, 0.0f);//new Vector3(pos.x, pos.y + 0.5f, 0.0f) * direction;
-                    Debug.Log(vec.x + " " + vec.y + "" + direction);
                     vec += new Vector3(0.4f, 0.0f, 0.0f) * direction.x;
-                    Debug.Log(vec.x + " " + vec.y + "second time");
                     GameObject obj = Instantiate(bulletPrefab, vec, Quaternion.identity);
                     BulletScript bulletScript = obj.GetComponent<BulletScript>();
                     bulletScript.Start_();
-                    //Debug.Log(direction);
+
                     bulletScript.rb.velocity = 10f * direction * transform.right;
 
                     AddNetId(netId, obj, GameObjectType.bullet); // same
                 }
-                else if (type == GameObjectType.enemy)
+                else if (type == GameObjectType.enemyGround)
                 {
-                    //Debug.Log("this is triggering an enourmous amount of times");
                     GameObject obj = instanciator_.InstanceEnemyPrefab(pos);
 
                     List<Component> list = new List<Component>();
                     EnemyScript a = obj.GetComponent<EnemyScript>();
+                    LifeSystem hp = obj.GetComponent<LifeSystem>();
                     list.Add(a);
-                    AddNetId(netId, obj, GameObjectType.enemy, list);
+                    list.Add(hp);
+                    AddNetId(netId, obj, GameObjectType.enemyGround, list);
+                }
+                else if (type == GameObjectType.enemyFly)
+                {
+                    GameObject obj = instanciator_.InstanceEnemyFlyPrefab(pos);
+
+                    List<Component> list = new List<Component>();
+                    EnemyFlyScript a = obj.GetComponent<EnemyFlyScript>();
+                    LifeSystem hp = obj.GetComponent<LifeSystem>();
+                    list.Add(a);
+                    list.Add(hp);
+                    AddNetId(netId, obj, GameObjectType.enemyFly, list);
                 }
             }
         }
 
+        public void SendObject(NetId id)
+        {
+            if (server != null) server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
+            if (client != null) client.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
+
+        }
         public void SetPosition(int id, Vector2 pos)
         {
-            //Debug.Log("receiveing orders to move");
             NetId obj = FindObject(id);
             if (obj != null)
             {
                 if (obj.compList != null || obj.compList.Count != 0)
                 {
-                    if (obj.type == GameObjectType.player1)
+                    foreach (Component c in obj.compList)
                     {
-                        if (client != null)
+                        if (c.GetType() == typeof(PlayerMovementCopy))
                         {
-                            PlayerMovementServer a = obj.compList[0] as PlayerMovementServer;
-                            a.SetPosition(pos);
-                        }
-                    }
-                    else if (obj.type == GameObjectType.player2)
-                    {
-                        if (server != null)
-                        {
-                            PlayerMovementServer a = obj.compList[0] as PlayerMovementServer;
+                            PlayerMovementCopy a = c as PlayerMovementCopy;
                             a.SetPosition(pos);
                         }
                     }
@@ -416,8 +352,22 @@ namespace Scripts
         {
             NetId obj = FindObject(id);
 
-            EnemyScript a = obj.compList[0] as EnemyScript;
-            a.ReceiveDamage(health);
+            foreach (Component c in obj.compList)
+            {
+                if (c.GetType() == typeof(LifeSystem))
+                {
+                    LifeSystem a = c as LifeSystem;
+                    a.ReceiveDamage(health);
+                }
+            }
+        }
+
+        public bool CheckConnection()
+        {
+            if (server != null) return true;
+            //if (client != null) return false;
+
+            return false;
         }
     }
 }
