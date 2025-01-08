@@ -23,7 +23,7 @@ namespace Scripts
         private List<UserUDP> _clientEndPoints = new List<UserUDP>();
         private List<Thread> _clientEndPointsThread = new List<Thread>();
         public GameObject objectPlayer;
-        public PlayerMovementServer playerScript;
+        public PlayerMovementCopy playerScript;
         Socket socket;
         UserUDP user;
         public GameObject enemyPrefab;
@@ -148,7 +148,7 @@ namespace Scripts
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
-
+                Debug.Log("receiving player pos");
                 // Setting position by netId
                 SetPosition(packet.netId, packet.position);
             }
@@ -168,7 +168,7 @@ namespace Scripts
         {
             MovementPacket packet = new MovementPacket(netId, position);
             string json01 = JsonUtility.ToJson(packet);
-
+            Debug.Log("Sending position");
             SendString(json01, ActionType.Position);
         }
 
@@ -216,7 +216,7 @@ namespace Scripts
                 objectPlayer = gameObject;
                 if (objectPlayer != null)
                 {
-                    playerScript = objectPlayer.GetComponent<PlayerMovementServer>();
+                    playerScript = objectPlayer.GetComponent<PlayerMovementCopy>();
 
                     if (playerScript != null)
                     {

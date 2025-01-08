@@ -98,61 +98,6 @@ namespace Scripts
 
                 NeedToCreateList.Clear();
             }
-
-            if (frameCounter > 0)
-            {
-                frameCounter--;
-            }
-            else if (frameCounter == 0)
-            {
-                frameCounter--;
-                if (server != null)
-                {
-                    GameObject obj = instanciator_.InstancePlayerOne();
-                    List<Component> list = new List<Component>();
-                    PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                    list.Add(a);
-                    NetId id = CreateNetId(obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
-                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-
-
-                    obj = instanciator_.InstancePlayerTwo();
-                    list = new List<Component>();
-                    a = obj.GetComponent<PlayerMovementServer>();
-                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                    body.bodyType = RigidbodyType2D.Kinematic;
-                    list.Add(a);
-                    id = CreateNetId(obj, GameObjectType.player2, list); // same
-                    server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-
-                    Vector2 pos = new Vector2(2, -2);
-                    obj = instanciator_.InstanceEnemyPrefab(pos);
-
-                    list = new List<Component>();
-                    EnemyScript b = obj.GetComponent<EnemyScript>();
-                    LifeSystem hp = obj.GetComponent<LifeSystem>();
-                    list.Add(b);
-                    list.Add(hp);
-
-                    id = CreateNetId(obj, GameObjectType.enemyGround, list);
-                    server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
-
-
-
-                    pos = new Vector2(2, -2);
-                    obj = instanciator_.InstanceEnemyFlyPrefab(pos);
-
-                    list = new List<Component>();
-                    EnemyFlyScript b_ = obj.GetComponent<EnemyFlyScript>();
-                    LifeSystem hp_ = obj.GetComponent<LifeSystem>();
-                    list.Add(b_);
-                    list.Add(hp_);
-
-                    id = CreateNetId(obj, GameObjectType.enemyFly, list);
-                    server.SendCreateObject(id.netId, id.type, pos, new Vector2(0.0f, 0.0f));
-                }
-            }
-
         }
 
         void AddServer()
@@ -293,23 +238,13 @@ namespace Scripts
                 {
                     GameObject obj = instanciator_.InstancePlayerOne();
                     List<Component> list = new List<Component>();
-                    if (server != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = false;
-                        obj.GetComponent<PlayerMovement>().enabled = true;
-                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
-                        list.Add(a);
-                    }
-                    if (client != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = true;
-                        obj.GetComponent<PlayerMovement>().enabled = false;
-                        Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                        body.bodyType = RigidbodyType2D.Kinematic;
-                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                        list.Add(a);
-                    }
 
+                    obj.GetComponent<PlayerMovementCopy>().enabled = true;
+                    obj.GetComponent<PlayerMovement>().enabled = false;
+                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
+                    body.bodyType = RigidbodyType2D.Kinematic;
+                    PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
+                    list.Add(a);
 
                     AddNetId(netId, obj, GameObjectType.player1, list); // player one created, send the clients the command create!!!
                 }
@@ -317,22 +252,13 @@ namespace Scripts
                 {
                     GameObject obj = instanciator_.InstancePlayerTwo();
                     List<Component> list = new List<Component>();
-                    if (server != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = true;
-                        obj.GetComponent<PlayerMovement>().enabled = false;
-                        Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
-                        body.bodyType = RigidbodyType2D.Kinematic;
-                        PlayerMovementServer a = obj.GetComponent<PlayerMovementServer>();
-                        list.Add(a);
-                    }
-                    if (client != null)
-                    {
-                        obj.GetComponent<PlayerMovementServer>().enabled = false;
-                        obj.GetComponent<PlayerMovement>().enabled = true;
-                        PlayerMovement a = obj.GetComponent<PlayerMovement>();
-                        list.Add(a);
-                    }
+
+                    obj.GetComponent<PlayerMovementCopy>().enabled = true;
+                    obj.GetComponent<PlayerMovement>().enabled = false;
+                    Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
+                    body.bodyType = RigidbodyType2D.Kinematic;
+                    PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
+                    list.Add(a);
 
                     AddNetId(netId, obj, GameObjectType.player2, list); // same
                 }
@@ -374,6 +300,12 @@ namespace Scripts
             }
         }
 
+        public void SendObject(NetId id)
+        {
+            if (server != null) server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
+            if (client != null) client.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
+
+        }
         public void SetPosition(int id, Vector2 pos)
         {
             NetId obj = FindObject(id);
@@ -381,32 +313,12 @@ namespace Scripts
             {
                 if (obj.compList != null || obj.compList.Count != 0)
                 {
-                    if (obj.type == GameObjectType.player1)
+                    foreach (Component c in obj.compList)
                     {
-                        if (client != null)
+                        if (c.GetType() == typeof(PlayerMovementCopy))
                         {
-                            foreach (Component c in obj.compList)
-                            {
-                                if (c.GetType() == typeof(PlayerMovementServer))
-                                {
-                                    PlayerMovementServer a = c as PlayerMovementServer;
-                                    a.SetPosition(pos);
-                                }
-                            }
-                        }
-                    }
-                    else if (obj.type == GameObjectType.player2)
-                    {
-                        if (server != null)
-                        {
-                            foreach (Component c in obj.compList)
-                            {
-                                if (c.GetType() == typeof(PlayerMovementServer))
-                                {
-                                    PlayerMovementServer a = c as PlayerMovementServer;
-                                    a.SetPosition(pos);
-                                }
-                            }
+                            PlayerMovementCopy a = c as PlayerMovementCopy;
+                            a.SetPosition(pos);
                         }
                     }
                 }
@@ -448,6 +360,14 @@ namespace Scripts
                     a.ReceiveDamage(health);
                 }
             }
+        }
+
+        public bool CheckConnection()
+        {
+            if (server != null) return true;
+            //if (client != null) return false;
+
+            return false;
         }
     }
 }

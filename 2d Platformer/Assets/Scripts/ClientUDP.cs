@@ -16,10 +16,10 @@ namespace Scripts
     public class ClientUDP : MonoBehaviour
     {
         Socket server;
-        bool goToSampleScene = false;
+        bool goToScene1 = false;
         static MemoryStream stream;
         public GameObject objectPlayer;
-        public PlayerMovementServer playerScript;
+        public PlayerMovementCopy playerScript;
         IPEndPoint ipep;
         public GameObject textPanel;
         string text;
@@ -38,6 +38,12 @@ namespace Scripts
             if (netManager == null) // Even though this is called at start, we had some problems and for now this is a way to make sure we find the server or client
             {
                 FindNetIdManager();
+            }
+
+            if (goToScene1)
+            {
+                sceneLoader.LoadScene01Client();
+                goToScene1 = false;
             }
         }
 
@@ -138,7 +144,7 @@ namespace Scripts
             string json02 = reader.ReadString();
 
             actionType = JsonUtility.FromJson<ActionType>(json01);
-            
+
             SendAction(actionType, json02);
             return 1;
         }
@@ -156,7 +162,7 @@ namespace Scripts
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
-
+                Debug.Log("reciveing position!");
                 // Setting position by netId
                 SetPosition(packet.netId, packet.position);
             }
@@ -170,13 +176,17 @@ namespace Scripts
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
                 netIdScript.GiveDamage(packet.netId, packet.a);
             }
+            else if (actionType == ActionType.StartGame)
+            {
+                goToScene1 = true;
+            }
         }
 
         public void SendPosition(int netId, Vector2 position)
         {
             MovementPacket packet = new MovementPacket(netId, position);
             string json01 = JsonUtility.ToJson(packet);
-
+            Debug.Log("sending player pos");
             SendString(json01, ActionType.Position);
         }
 
@@ -225,7 +235,7 @@ namespace Scripts
                 objectPlayer = gameObject;
                 if (objectPlayer != null)
                 {
-                    playerScript = objectPlayer.GetComponent<PlayerMovementServer>();
+                    playerScript = objectPlayer.GetComponent<PlayerMovementCopy>();
 
                     if (playerScript != null)
                     {

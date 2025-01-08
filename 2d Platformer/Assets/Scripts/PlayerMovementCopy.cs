@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Scripts
 {
-    public class PlayerMovementServer : MonoBehaviour
+    public class PlayerMovementCopy : MonoBehaviour
     {
         private Rigidbody2D rb;
         private Collider2D coll;
