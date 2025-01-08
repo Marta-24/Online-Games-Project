@@ -185,7 +185,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
   netManager: {fileID: 0}
   netIdScript: {fileID: 0}
-  instanciator: {fileID: 0}
+  instanciator: {fileID: 137970132}
   panelUi: {fileID: 1424103532}
 --- !u!114 &137970132
 MonoBehaviour:
@@ -2691,6 +2691,7 @@ GameObject:
   - component: {fileID: 1424103535}
   - component: {fileID: 1424103534}
   - component: {fileID: 1424103533}
+  - component: {fileID: 1424103536}
   m_Layer: 0
   m_Name: Panel
   m_TagString: Untagged
@@ -2755,6 +2756,18 @@ RectTransform:
   m_AnchoredPosition: {x: 178, y: 41}
   m_SizeDelta: {x: 300, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1424103536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424103532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2cce9345d512e4e84ef3fcfeb0076f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1444309872
 GameObject:
   m_ObjectHideFlags: 0
