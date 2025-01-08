@@ -166,8 +166,9 @@ namespace Scripts
             }
             else if (actionType == ActionType.Hello)
             {
+                Debug.Log("receiving new CONNECTION!!!!");
                 StringPacket packet = JsonUtility.FromJson<StringPacket>(str);
-               instanciator.IntanceUserPrefab(panelUi, packet.str);
+                instanciator.IntanceUserPrefab(panelUi, packet.str);
             }
         }
 

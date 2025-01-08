@@ -21,16 +21,22 @@ namespace Scripts
         public GameObject objectPlayer;
         public PlayerMovementCopy playerScript;
         IPEndPoint ipep;
-        public GameObject textPanel;
-        string text;
+        public GameObject textPanelIp;
+        public GameObject textPanelName;
+        private TMP_InputField textIp;
+        private TMP_InputField textName;
         public GameObject enemyPrefab;
         public GameObject netManager;
         public NetIdManager netIdScript;
         public GameObject sceneManager;
         public SceneLoader sceneLoader;
+        string userName;
+        string nameIp;
         void Start()
         {
             sceneLoader = sceneManager.GetComponent<SceneLoader>();
+            textIp = textPanelIp.GetComponent<TMP_InputField>();
+            textName = textPanelName.GetComponent<TMP_InputField>();
         }
 
         void Update()
@@ -50,7 +56,6 @@ namespace Scripts
         public void StartClient()
         {
             //127.0.0.1
-            text = textPanel.GetComponent<TMP_InputField>().text;
             Thread connect = new Thread(Connect);
             connect.Start();
 
@@ -58,9 +63,9 @@ namespace Scripts
 
         void Connect()
         {
-
-
-            ipep = new IPEndPoint(IPAddress.Parse(text), 9090);
+            nameIp = textIp.text;
+            userName = textName.text;
+            ipep = new IPEndPoint(IPAddress.Parse(nameIp), 9090);
 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
@@ -109,8 +114,10 @@ namespace Scripts
         {
             byte[] data = new byte[2048];
 
-            data = Encoding.ASCII.GetBytes("userName");
-            server.SendTo(data, 0, SocketFlags.None, ipep);
+            StringPacket packet = new StringPacket(0, userName);
+
+            string json01 = JsonUtility.ToJson(packet);
+            SendString(json01, ActionType.Hello);
             Receive();
         }
 

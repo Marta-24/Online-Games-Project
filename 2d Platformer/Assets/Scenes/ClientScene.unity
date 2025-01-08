@@ -3589,6 +3589,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 921b71b7003f9d943b1034e1bfc9ac85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  goToSampleScene: 0
+  serializeTry: 1
   objectPlayer: {fileID: 0}
   PlayerScript: {fileID: 0}
 --- !u!4 &723523460
@@ -3634,6 +3636,7 @@ MonoBehaviour:
   playerScript: {fileID: 0}
   textPanelIp: {fileID: 1481681149}
   textPanelName: {fileID: 455270147}
+  enemyPrefab: {fileID: 0}
   netManager: {fileID: 0}
   netIdScript: {fileID: 0}
   sceneManager: {fileID: 90177728}
@@ -3653,6 +3656,7 @@ MonoBehaviour:
   player1Prefab: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
   player2Prefab: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
+  enemyFlyPrefab: {fileID: 0}
   UserPrefab: {fileID: 22283295454004661, guid: eadd5590bb6eb494f8b7dea1e6eb2062, type: 3}
 --- !u!1 &784428433
 GameObject:
