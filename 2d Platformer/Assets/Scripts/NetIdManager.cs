@@ -74,12 +74,15 @@ namespace Scripts
         public int frameCounter = 60;
         public bool sendReady = false;
         public GameObject bulletPrefab;
+        public bool serverReady = false;
+        public bool clientReady = false;
+        public InformationBetweenScenes info;
         void Start()
         {
             //Generate Random instance
 
             AddServer();
-            FindInstanciator();
+            FindComponents();
             FindServerOrClient();
 
 
@@ -105,12 +108,31 @@ namespace Scripts
                 SendReadyToCreate();
                 sendReady = true;
             }
+
+
+            if (info.serverReady && info.clientReady)
+            {
+
+                info.serverReady = false;
+                info.clientReady = false;
+                ActivateSpawn();
+
+            }
         }
 
         void SendReadyToCreate()
         {
-            if (server != null) server.SendReadyToCreate();
-            if (client != null) client.SendReadyToCreate();
+
+            if (server != null)
+            {
+                info.serverReady = true;
+                server.SendReadyToCreate();
+            }
+            if (client != null)
+            {
+                info.clientReady = true;
+                client.SendReadyToCreate();
+            }
         }
 
         void AddServer()
@@ -126,10 +148,12 @@ namespace Scripts
             }
         }
 
-        void FindInstanciator()
+        void FindComponents()
         {
             instanciator_ = GetComponent<Instanciator>();
-            spawn = GetComponent<SpawnManager>();
+
+            GameObject obj = GameObject.Find("InformationBetweenScenes");
+            info = obj.GetComponent<InformationBetweenScenes>();
         }
 
         public int FindNetId(GameObject obj)

@@ -17680,7 +17680,6 @@ GameObject:
   - component: {fileID: 1297117378}
   - component: {fileID: 1297117377}
   - component: {fileID: 1297117379}
-  - component: {fileID: 1297117380}
   m_Layer: 0
   m_Name: NetIdManager
   m_TagString: NetIdManager
@@ -17704,10 +17703,15 @@ MonoBehaviour:
   server: {fileID: 0}
   client: {fileID: 0}
   netIdManagerGameObject: {fileID: 0}
+  spawn: {fileID: 1250537103}
   instanciator_: {fileID: 0}
   startEnded: 0
   frameCounter: 60
+  sendReady: 0
   bulletPrefab: {fileID: 2807193202124031089, guid: f23debcb139aaa94c981b177b204f6d6, type: 3}
+  serverReady: 0
+  clientReady: 0
+  info: {fileID: 0}
 --- !u!4 &1297117378
 Transform:
   m_ObjectHideFlags: 0
@@ -17739,19 +17743,7 @@ MonoBehaviour:
   player2Prefab: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
   enemyFlyPrefab: {fileID: 4817742331489584283, guid: cf87a9760629c21418185186e331d363, type: 3}
---- !u!114 &1297117380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1297117376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12c6496195e0e0047ad6336365207f84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  typeOfPlayer: 0
+  UserPrefab: {fileID: 0}
 --- !u!1 &1379916636
 GameObject:
   m_ObjectHideFlags: 0

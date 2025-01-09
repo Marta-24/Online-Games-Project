@@ -72,6 +72,7 @@ namespace Scripts
 
         public void CreateInstance(FutureInstance instance)
         {
+            Debug.Log("creating instance!!!");
             var obj = Instantiate(instance.obj, instance.pos, Quaternion.identity);
             if (instance.parent != null)
             {
@@ -117,6 +118,7 @@ namespace Scripts
             Debug.Log("adding new user instanciator!!!");
             FuturePanelUser ins = new FuturePanelUser(UserPrefab, parent, name, new Vector3(0, 0, 0));
             instances.Add(ins);
+            Debug.Log("adding new user instanciator!!!2");
             return null;
         }
     }

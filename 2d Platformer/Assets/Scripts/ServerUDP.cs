@@ -25,12 +25,15 @@ namespace Scripts
         public GameObject objectPlayer;
         public PlayerMovementCopy playerScript;
         Socket socket;
-        UserUDP user;
+
         public GameObject enemyPrefab;
         public GameObject netManager;
         public NetIdManager netIdScript;
         public Instanciator instanciator;
         public GameObject panelUi;
+        public bool receiveNewConnections = true;
+        public InformationBetweenScenes info;
+        Thread newConnection;
 
         // Function called with a button to start the udp server
         public void StartServer()
@@ -42,7 +45,7 @@ namespace Scripts
 
             socket.Bind(localEp);
 
-            Thread newConnection = new Thread(Receive);
+            newConnection = new Thread(Receive);
             newConnection.Start();
         }
 
@@ -59,21 +62,22 @@ namespace Scripts
             int recv;
             byte[] _data = new byte[2048];
 
-            while (true)
+            while (receiveNewConnections)
             {
                 IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
                 EndPoint Remote = (EndPoint)(sender);
 
-
+                Debug.Log("starting receive from");
                 recv = socket.ReceiveFrom(_data, ref Remote);
 
+                UserUDP user_ = new UserUDP(Remote, FirstDeserialize(_data));
 
+                _clientEndPoints.Add(user_);
 
-                //Creating user
-                UserUDP user_ = new UserUDP(Remote, Encoding.ASCII.GetString(_data, 0, recv));
-                user = user_;
+                Debug.Log("returning hello");
                 SendHello(Remote);
 
+                Debug.Log("starting cucle");
                 Thread clientThread = new Thread(() => ReceiveJob(user_));
                 clientThread.Start();
                 _clientEndPointsThread.Add(clientThread);
@@ -82,6 +86,8 @@ namespace Scripts
 
         public void StartGame()
         {
+            receiveNewConnections = false;
+            newConnection.Abort();
             SendString("", ActionType.StartGame);
         }
 
@@ -125,9 +131,31 @@ namespace Scripts
             return rec;
         }
 
-        //Right now this function only decodes the position of a player, in a future this function will either redistribute the calls from the client or be one little part of various functions to deserialize
+        public string FirstDeserialize(byte[] data_)
+        {
+            Debug.Log("starting deserialize");
+            MemoryStream stream = new MemoryStream();
+            stream.Write(data_, 0, data_.Length);
+
+            ActionType actionType;
+
+            BinaryReader reader = new BinaryReader(stream);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            string json01 = reader.ReadString();
+            string json02 = reader.ReadString();
+
+            actionType = JsonUtility.FromJson<ActionType>(json01);
+            Debug.Log(actionType);
+
+            StringPacket packet = JsonUtility.FromJson<StringPacket>(json02);
+            instanciator.IntanceUserPrefab(panelUi, packet.str);
+            return packet.str;
+        }
+
         public int DeserializeJson(byte[] data_)
         {
+            Debug.Log("starting deserialize");
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
@@ -145,9 +173,11 @@ namespace Scripts
             return 1;
         }
 
+
+
         public void GiveManagerAction(ActionType actionType, string str)
         {
-            
+            Debug.Log("starting give manager action");
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
@@ -167,13 +197,15 @@ namespace Scripts
             }
             else if (actionType == ActionType.Hello)
             {
-                Debug.Log("receiving new CONNECTION!!!!");
+                /*Debug.Log("receiving new CONNECTION!!!!");
                 StringPacket packet = JsonUtility.FromJson<StringPacket>(str);
                 instanciator.IntanceUserPrefab(panelUi, packet.str);
+                Debug.Log("hello action finished");*/
             }
-            else if (actionType == ActionType.ReadyToCreate);
+            else if (actionType == ActionType.ReadyToCreate) ;
             {
-                netIdScript.ActivateSpawn();
+                Debug.Log("readytoCreate!!!!!!!!!!!!!!");
+                info.clientReady = true;
             }
         }
 
@@ -201,7 +233,7 @@ namespace Scripts
             SendString(json01, ActionType.Damage);
         }
 
-         public void SendReadyToCreate()
+        public void SendReadyToCreate()
         {
             StringPacket packet = new StringPacket(0, "ready");
 
@@ -221,7 +253,11 @@ namespace Scripts
             byte[] data = new byte[2048];
             data = stream.ToArray();
 
-            socket.SendTo(data, SocketFlags.None, user.endPoint);
+            foreach (UserUDP u in _clientEndPoints)
+            {
+                socket.SendTo(data, SocketFlags.None, u.endPoint);
+            }
+
         }
 
         public void SetPosition(int netId, Vector2 pos)

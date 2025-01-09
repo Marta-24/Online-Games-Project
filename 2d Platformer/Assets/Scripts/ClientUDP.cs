@@ -32,6 +32,7 @@ namespace Scripts
         public SceneLoader sceneLoader;
         string userName;
         string nameIp;
+        public InformationBetweenScenes info;
         void Start()
         {
             sceneLoader = sceneManager.GetComponent<SceneLoader>();
@@ -192,7 +193,8 @@ namespace Scripts
             }
             else if (actionType == ActionType.ReadyToCreate) ;
             {
-                netIdScript.ActivateSpawn();
+                Debug.Log("readytoCreate!!!!!!!!!!!!!!");
+                info.serverReady = true;
             }
         }
 
@@ -243,29 +245,10 @@ namespace Scripts
             server.SendTo(data, SocketFlags.None, ipep);
         }
 
-
-
         public void FindNetIdManager()
         {
             netManager = GameObject.Find("NetIdManager");
             if (netManager != null) netIdScript = netManager.GetComponent<NetIdManager>();
-        }
-
-        public void ConnectToPlayer(GameObject gameObject)
-        {
-            if (playerScript == null)
-            {
-                objectPlayer = gameObject;
-                if (objectPlayer != null)
-                {
-                    playerScript = objectPlayer.GetComponent<PlayerMovementCopy>();
-
-                    if (playerScript != null)
-                    {
-
-                    }
-                }
-            }
         }
     }
 }

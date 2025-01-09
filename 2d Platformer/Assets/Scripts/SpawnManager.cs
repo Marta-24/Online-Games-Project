@@ -35,7 +35,7 @@ namespace Scripts
 
         public void SpawnLvl1()
         {
-            spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
+            /*spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
             if (spawnTypePlayer == 1)
             {
                 CreatePlayer1();
@@ -43,8 +43,9 @@ namespace Scripts
             else if (spawnTypePlayer == 2)
             {
                 CreatePlayer2();
-            }
+            }*/
 
+            CreatePlayer1();
             if (connectionType) CreateEnemyGround();
         }
 

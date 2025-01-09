@@ -61,7 +61,6 @@ namespace Scripts
 
                 if (server != null)
                 {
-                    server.ConnectToPlayer(parent);
                     TCPConnection = true;
                 }
             }
@@ -71,7 +70,6 @@ namespace Scripts
 
                 if (client != null)
                 {
-                    client.ConnectToPlayer(parent);
                     TCPConnection = false;
                 }
             }
