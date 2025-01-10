@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Scripts
 {
-    
+
     public class EnemyScript : MonoBehaviour
     {
         float laserLength = 1f;
@@ -16,6 +16,10 @@ namespace Scripts
         public GameObject netIdManager;
         public NetIdManager netIdScript;
         GameObject parent;
+        public bool isHost = false;
+        public int sendInformation = 3;
+        private Vector2 futurePosition;
+        private Vector2 futurePositionCheck;
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -24,15 +28,33 @@ namespace Scripts
             //Get client component
             FindNetIdManager();
             parent = gameObject;
+            futurePosition = new Vector2(0.0f, 0.0f);
+            futurePositionCheck  = new Vector2(0.0f, 0.0f);
         }
 
         // Update is called once per frame
         void Update()
         {
-            CheckPosition();
-            MoveEnemy();
+            if (isHost)
+            {
+                CheckPosition();
+                MoveEnemy();
+            }
+            else if (isHost == false)
+            {
+                if (futurePosition != futurePositionCheck)
+                {
+                    rb.MovePosition(futurePosition);
+                    futurePositionCheck = futurePosition;
+                }
+            }
 
-            
+            sendInformation--;
+            if (sendInformation == 0)
+            {
+                sendInformation = 5;
+                SendEnemyPosition(); //Send the position to the server every fram for the moment
+            }
         }
 
         void MoveEnemy()
@@ -82,16 +104,30 @@ namespace Scripts
             }
         }
 
-       
+
         void FlipDirection()
         {
             movementDirection *= -1;
         }
 
+        void SendEnemyPosition()
+        {
+            netIdScript.SendPosition(parent, rb.position);
+        }
+
+        public void SetPosition(Vector2 position)
+        {
+            futurePosition = position;
+        }
+
         public void FindNetIdManager()
         {
             netIdManager = GameObject.Find("NetIdManager");
-            if (netIdManager != null) netIdScript = netIdManager.GetComponent<NetIdManager>();
+            if (netIdManager != null)
+            {
+                netIdScript = netIdManager.GetComponent<NetIdManager>();
+                isHost = netIdScript.CheckConnection();
+            }
         }
     }
 }

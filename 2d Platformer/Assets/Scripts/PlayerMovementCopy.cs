@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Scripts
 {
-    public class PlayerMovementServer : MonoBehaviour
+    public class PlayerMovementCopy : MonoBehaviour
     {
         private Rigidbody2D rb;
         private Collider2D coll;
@@ -61,7 +61,6 @@ namespace Scripts
 
                 if (server != null)
                 {
-                    server.ConnectToPlayer(parent);
                     TCPConnection = true;
                 }
             }
@@ -71,7 +70,6 @@ namespace Scripts
 
                 if (client != null)
                 {
-                    client.ConnectToPlayer(parent);
                     TCPConnection = false;
                 }
             }

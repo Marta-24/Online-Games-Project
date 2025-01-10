@@ -20,7 +20,8 @@ namespace Scripts
         Position = 2,
         Create = 3,
         Damage = 4,
-        StartGame = 5
+        ReadyToCreate = 6,
+        StartGame = 7
     }
     struct int_
     {
@@ -36,9 +37,7 @@ namespace Scripts
         public int netId;
 
         public ParentPacket()
-        {
-
-        }
+        {       }
 
         public ParentPacket(int netId)
         {
