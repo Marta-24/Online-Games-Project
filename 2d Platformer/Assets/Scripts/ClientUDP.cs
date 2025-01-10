@@ -177,10 +177,8 @@ namespace Scripts
             }
             else if (actionType == ActionType.Create)
             {
-                Debug.Log("Creating!");
                 CreatePacket packet = JsonUtility.FromJson<CreatePacket>(str);
-                Debug.Log("creating object: " + packet.netId + packet.objType);
-                netIdScript.StackObject(packet.netId, packet.objType, packet.position, packet.direction);
+                netIdScript.StackObject(packet.netId, packet.objType, packet.position, packet.direction, packet.rotation);
             }
             else if (actionType == ActionType.Damage)
             {
@@ -206,9 +204,9 @@ namespace Scripts
             SendString(json01, ActionType.Position);
         }
 
-        public void SendCreateObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction)
+        public void SendCreateObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction, Vector3 rotation)
         {
-            CreatePacket packet = new CreatePacket(netId, pos, direction, type);
+            CreatePacket packet = new CreatePacket(netId, pos, direction, rotation, type);
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.Create);

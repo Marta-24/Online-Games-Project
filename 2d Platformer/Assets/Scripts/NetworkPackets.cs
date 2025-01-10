@@ -60,12 +60,14 @@ namespace Scripts
         public Vector2 position;
         public Vector2 direction;
         public GameObjectType objType;
-        public CreatePacket(int netId, Vector2 pos, Vector2 direction, GameObjectType objType)
+        public Vector3 rotation;
+        public CreatePacket(int netId, Vector2 pos, Vector2 direction, Vector3 rotation, GameObjectType objType)
         {
             this.netId = netId;
             this.position = pos;
             this.direction = direction;
             this.objType = objType;
+            this.rotation = rotation;
         }
     }
 

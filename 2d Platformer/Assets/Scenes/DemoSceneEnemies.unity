@@ -17697,7 +17697,9 @@ MonoBehaviour:
   player1Prefab: {fileID: 5608416850473110640, guid: a004b19a22796354f8285ec2a384db54, type: 3}
   player2Prefab: {fileID: 2936886951809000417, guid: 28fe41db8384e1e4689483bfdc4abb49, type: 3}
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
-  enemyFlyPrefab: {fileID: 0}
+  enemyFlyPrefab: {fileID: 4817742331489584283, guid: cf87a9760629c21418185186e331d363, type: 3}
+  UserPrefab: {fileID: 22283295454004661, guid: eadd5590bb6eb494f8b7dea1e6eb2062, type: 3}
+  WallPrefab: {fileID: 5995271975886298861, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
 --- !u!114 &2077018157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17705,7 +17707,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2077018155}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcd4fe2534eb3cc46b91ad112203132a, type: 3}
   m_Name: 
@@ -17714,10 +17716,15 @@ MonoBehaviour:
   server: {fileID: 0}
   client: {fileID: 0}
   netIdManagerGameObject: {fileID: 0}
+  spawn: {fileID: 0}
   instanciator_: {fileID: 0}
   startEnded: 0
   frameCounter: 60
+  sendReady: 0
   bulletPrefab: {fileID: 2807193202124031089, guid: f23debcb139aaa94c981b177b204f6d6, type: 3}
+  serverReady: 0
+  clientReady: 0
+  info: {fileID: 0}
 --- !u!4 &2077018158
 Transform:
   m_ObjectHideFlags: 0
@@ -17746,6 +17753,65 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   typeOfPlayer: 0
+  clientReady: 0
+  serverReady: 0
+--- !u!1001 &4175699427523937034
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.7131786
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2871310456156922823, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995271975886298861, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
+      propertyPath: m_Name
+      value: WallPrefab
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
 --- !u!1001 &8678614788397226946
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17815,3 +17881,4 @@ SceneRoots:
   - {fileID: 8678614788397226946}
   - {fileID: 1554978264}
   - {fileID: 1946875409}
+  - {fileID: 4175699427523937034}

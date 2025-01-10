@@ -49,6 +49,7 @@ namespace Scripts
         public GameObject enemyPrefab;
         public GameObject enemyFlyPrefab;
         public GameObject UserPrefab;
+        public GameObject WallPrefab;
         public List<FutureInstance> instances;
         // Start is called before the first frame update
         void Start()
@@ -120,6 +121,15 @@ namespace Scripts
             instances.Add(ins);
             Debug.Log("adding new user instanciator!!!2");
             return null;
+        }
+
+        public GameObject InstanceWall(Vector2 pos, Vector3 rotation)
+        {
+            Debug.Log("creating wall");
+            Quaternion quat = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+            GameObject obj = Instantiate(WallPrefab, new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity);
+            
+            return obj;
         }
     }
 }

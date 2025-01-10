@@ -11,7 +11,8 @@ namespace Scripts
         player2 = 2,
         enemyGround = 3,
         enemyFly = 4,
-        bullet = 5
+        bullet = 5,
+        wall = 6
     }
     public class NetId
     {
@@ -42,6 +43,7 @@ namespace Scripts
         public int netID;
         public Vector2 pos;
         public Vector2 direction;
+        public Vector3 rotation;
         public GameObjectType type;
 
         public FutureObject(int netID, Vector2 pos, GameObjectType type)
@@ -52,12 +54,13 @@ namespace Scripts
             direction = new Vector2(0.0f, 0.0f);
         }
 
-        public FutureObject(int netID, Vector2 pos, GameObjectType type, Vector2 direction)
+        public FutureObject(int netID, Vector2 pos, GameObjectType type, Vector2 direction, Vector3 rotation)
         {
             this.netID = netID;
             this.pos = pos;
             this.type = type;
             this.direction = direction;
+            this.rotation = rotation;  
         }
     }
     public class NetIdManager : MonoBehaviour
@@ -85,7 +88,6 @@ namespace Scripts
             FindComponents();
             FindServerOrClient();
 
-
             startEnded = true;
         }
 
@@ -96,7 +98,7 @@ namespace Scripts
             {
                 for (int i = 0; i < NeedToCreateList.Count; i++)
                 {
-                    CreateObject(NeedToCreateList[i].netID, NeedToCreateList[i].type, NeedToCreateList[i].pos, NeedToCreateList[i].direction);
+                    CreateObject(NeedToCreateList[i].netID, NeedToCreateList[i].type, NeedToCreateList[i].pos, NeedToCreateList[i].direction, NeedToCreateList[i].rotation);
                     NeedToCreateList[i].type = GameObjectType.none;
                 }
 
@@ -254,24 +256,23 @@ namespace Scripts
 
             CreateNetId(obj, GameObjectType.bullet);
 
-            if (server != null) server.SendCreateObject(id, GameObjectType.bullet, pos, direction);
-            if (client != null) client.SendCreateObject(id, GameObjectType.bullet, pos, direction);
+            if (server != null) server.SendCreateObject(id, GameObjectType.bullet, pos, direction, obj.transform.rotation.eulerAngles);
+            if (client != null) client.SendCreateObject(id, GameObjectType.bullet, pos, direction, obj.transform.rotation.eulerAngles);
         }
 
         public void StackObject(int netId, GameObjectType type, Vector2 pos)
         {
-
             Debug.Log("future object: " + netId + "" + type);
             NeedToCreateList.Add(new FutureObject(netId, pos, type));
         }
 
-        public void StackObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction)
+        public void StackObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction, Vector3 rotation)
         {
             Debug.Log("future object: " + netId + "" + type);
-            NeedToCreateList.Add(new FutureObject(netId, pos, type, direction));
+            NeedToCreateList.Add(new FutureObject(netId, pos, type, direction, rotation));
         }
 
-        public void CreateObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction)
+        public void CreateObject(int netId, GameObjectType type, Vector2 pos, Vector2 direction, Vector3 rotation)
         {
             if (startEnded)
             {
@@ -338,14 +339,24 @@ namespace Scripts
                     list.Add(hp);
                     AddNetId(netId, obj, GameObjectType.enemyFly, list);
                 }
+                else if (type == GameObjectType.wall)
+                {
+                    GameObject obj = instanciator_.InstanceWall(pos, rotation);
+
+                    List<Component> list = new List<Component>();
+                    EnemyFlyScript a = obj.GetComponent<EnemyFlyScript>();
+                    LifeSystem hp = obj.GetComponent<LifeSystem>();
+                    list.Add(a);
+                    list.Add(hp);
+                    AddNetId(netId, obj, GameObjectType.enemyFly, list);
+                }
             }
         }
 
         public void SendObject(NetId id)
         {
-            if (server != null) server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-            if (client != null) client.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f));
-
+            if (server != null) server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f));
+            if (client != null) client.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f));
         }
         public void SetPosition(int id, Vector2 pos)
         {
@@ -363,11 +374,13 @@ namespace Scripts
                         }
                         else if (c.GetType() == typeof(EnemyScript))
                         {
-
+                            EnemyScript a = c as EnemyScript;
+                            a.SetPosition(pos);   
                         }
                         else if (c.GetType() == typeof(EnemyFlyScript))
                         {
-
+                            EnemyFlyScript a = c as EnemyFlyScript;
+                            a.SetPosition(pos); 
                         }
                     }
                 }
