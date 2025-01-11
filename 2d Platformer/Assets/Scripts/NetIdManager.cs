@@ -301,6 +301,7 @@ namespace Scripts
 
                     obj.GetComponent<PlayerMovementCopy>().enabled = true;
                     obj.GetComponent<PlayerMovement>().enabled = false;
+                    obj.GetComponent<CreateWall>().enabled = false;
                     Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
                     body.bodyType = RigidbodyType2D.Kinematic;
                     PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
@@ -315,6 +316,7 @@ namespace Scripts
 
                     obj.GetComponent<PlayerMovementCopy>().enabled = true;
                     obj.GetComponent<PlayerMovement>().enabled = false;
+                    obj.GetComponent<CreateWall>().enabled = false;
                     Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
                     body.bodyType = RigidbodyType2D.Kinematic;
                     PlayerMovementCopy a = obj.GetComponent<PlayerMovementCopy>();
@@ -373,8 +375,9 @@ namespace Scripts
 
         public void SendObject(NetId id)
         {
-            if (server != null) server.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f));
-            if (client != null) client.SendCreateObject(id.netId, id.type, new Vector2(0.0f, 0.0f), new Vector2(0.0f, 0.0f), new Vector3(0.0f, 0.0f, 0.0f));
+            Transform trans = id.gameObject.transform;
+            if (server != null) server.SendCreateObject(id.netId, id.type, trans.position, new Vector2(0.0f, 0.0f), trans.rotation.eulerAngles);
+            if (client != null) client.SendCreateObject(id.netId, id.type, trans.position, new Vector2(0.0f, 0.0f), trans.rotation.eulerAngles);
         }
         public void SetPosition(int id, Vector2 pos)
         {

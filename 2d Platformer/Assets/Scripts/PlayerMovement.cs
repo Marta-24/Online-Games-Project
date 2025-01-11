@@ -119,7 +119,7 @@ namespace Scripts
                 sendInformation = 5;
                 SendPlayerPosition(); //Send the position to the server every fram for the moment
             }
-            
+
         }
 
         void FireBullet()
@@ -132,7 +132,7 @@ namespace Scripts
             bulletScript.isHost = true;
             bulletScript.rb.velocity = 10f * movementDirection * transform.right;
             //bulletScript.SetDirection(movementDirection);
-            
+
             //Sending server creation of bullet
             netIdScript.CreateBullet(bullet as GameObject, rb.transform.position, movementDirection);
         }

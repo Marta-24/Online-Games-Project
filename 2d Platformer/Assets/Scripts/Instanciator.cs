@@ -127,7 +127,7 @@ namespace Scripts
         {
             Debug.Log("creating wall");
             Quaternion quat = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
-            GameObject obj = Instantiate(WallPrefab, new Vector3(pos.x, pos.y, 0.0f), Quaternion.identity);
+            GameObject obj = Instantiate(WallPrefab, new Vector3(pos.x, pos.y, 0.0f), quat);
             
             return obj;
         }
