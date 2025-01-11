@@ -26,4 +26,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WaitingRoom.unity
     guid: e371ef33f8cad424fa54a33bd4a19263
+  - enabled: 1
+    path: Assets/Scenes/DemoSceneEnemies.unity
+    guid: dfb67955948507142bfad479a5c0ed6b
+  - enabled: 1
+    path: Assets/Scenes/Scene2Client.unity
+    guid: 82c5e54a3f0bced46ac7a0567704f016
+  - enabled: 1
+    path: Assets/Scenes/Scene2Server.unity
+    guid: ccaee277a8802254cbca1358b125746e
   m_configObjects: {}

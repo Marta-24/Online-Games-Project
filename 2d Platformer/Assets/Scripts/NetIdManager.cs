@@ -458,5 +458,23 @@ namespace Scripts
             Debug.Log("spawning");
             spawn.SpawnLvl1();
         }
+
+        public void ChangeScenesSave() // this function is called on server and client on scenechange so we dont need to comunicate online this process
+        {
+            foreach (NetId id in netIdList)
+            {
+                if ((id.type == GameObjectType.player1) || (id.type == GameObjectType.player2))
+                {
+                    //Add component if they are players
+                    id.gameObject.AddComponent<KeepBetweenScenes>();
+                }
+                else 
+                {
+                    //destroy if they are not players
+                    Destroy(id.gameObject);
+                    netIdList.Remove(id);
+                }
+            }
+        }
     }
 }
