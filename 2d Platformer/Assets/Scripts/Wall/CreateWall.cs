@@ -58,7 +58,9 @@ namespace Scripts
         {
             GameObject obj = GameObject.Find("NetIdManager");
             manager = obj.GetComponent<NetIdManager>();
-            instanciator_ = obj.GetComponent<Instanciator>();
+            GameObject objOnline = GameObject.Find("ClientManager");
+            if (objOnline == null) objOnline = GameObject.Find("ServerManager");
+            instanciator_ = objOnline.GetComponent<Instanciator>();
         }
     }
 }

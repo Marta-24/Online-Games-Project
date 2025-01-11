@@ -60,7 +60,7 @@ namespace Scripts
             this.pos = pos;
             this.type = type;
             this.direction = direction;
-            this.rotation = rotation;  
+            this.rotation = rotation;
         }
     }
     public class NetIdManager : MonoBehaviour
@@ -77,8 +77,7 @@ namespace Scripts
         public int frameCounter = 60;
         public bool sendReady = false;
         public GameObject bulletPrefab;
-        public bool serverReady = false;
-        public bool clientReady = false;
+
         public InformationBetweenScenes info;
         void Start()
         {
@@ -107,7 +106,7 @@ namespace Scripts
 
             if (sendReady == false)
             {
-                SendReadyToCreate();
+                ReadyToCreate();
                 sendReady = true;
             }
 
@@ -118,20 +117,21 @@ namespace Scripts
                 info.serverReady = false;
                 info.clientReady = false;
                 ActivateSpawn();
-
             }
         }
 
-        void SendReadyToCreate()
+        void ReadyToCreate()
         {
 
             if (server != null)
             {
+                Debug.Log("SERVER ID READY TO CREATE");
                 info.serverReady = true;
                 server.SendReadyToCreate();
             }
             if (client != null)
             {
+                Debug.Log(" client ID READY TO CREATE");
                 info.clientReady = true;
                 client.SendReadyToCreate();
             }
@@ -146,13 +146,31 @@ namespace Scripts
 
                 if (server != null)
                 {
+
+                }
+            }
+            else
+            {
+                objectUDP = GameObject.Find("ClientManager");
+                if (objectUDP != null)
+                {
+                    client = objectUDP.GetComponent<ClientUDP>();
+
+                    if (client != null)
+                    {
+
+                    }
                 }
             }
         }
 
         void FindComponents()
         {
-            instanciator_ = GetComponent<Instanciator>();
+            GameObject objServer = null;
+            if (server != null) objServer = GameObject.Find("ServerManager");
+            if (client != null) objServer = GameObject.Find("ClientManager");
+
+            instanciator_ = objServer.GetComponent<Instanciator>();
 
             GameObject obj = GameObject.Find("InformationBetweenScenes");
             info = obj.GetComponent<InformationBetweenScenes>();
@@ -375,12 +393,12 @@ namespace Scripts
                         else if (c.GetType() == typeof(EnemyScript))
                         {
                             EnemyScript a = c as EnemyScript;
-                            a.SetPosition(pos);   
+                            a.SetPosition(pos);
                         }
                         else if (c.GetType() == typeof(EnemyFlyScript))
                         {
                             EnemyFlyScript a = c as EnemyFlyScript;
-                            a.SetPosition(pos); 
+                            a.SetPosition(pos);
                         }
                     }
                 }
@@ -434,6 +452,7 @@ namespace Scripts
 
         public void ActivateSpawn()
         {
+            Debug.Log("spawning");
             spawn.SpawnLvl1();
         }
     }

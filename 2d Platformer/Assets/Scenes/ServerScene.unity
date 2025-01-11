@@ -206,6 +206,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 7158211971725845945, guid: e668b68749094644c9b69b4c1587158a, type: 3}
   enemyFlyPrefab: {fileID: 4817742331489584283, guid: cf87a9760629c21418185186e331d363, type: 3}
   UserPrefab: {fileID: 22283295454004661, guid: eadd5590bb6eb494f8b7dea1e6eb2062, type: 3}
+  WallPrefab: {fileID: 5995271975886298861, guid: 4a5ccfa3620a5f44cb4a19e0ba0598ff, type: 3}
 --- !u!1 &228115241
 GameObject:
   m_ObjectHideFlags: 0

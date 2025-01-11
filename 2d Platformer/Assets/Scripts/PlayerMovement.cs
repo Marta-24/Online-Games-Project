@@ -131,7 +131,6 @@ namespace Scripts
             bulletScript.Start_();
             bulletScript.isHost = true;
             bulletScript.rb.velocity = 10f * movementDirection * transform.right;
-            Debug.Log("setting bullet direction" + movementDirection);
             //bulletScript.SetDirection(movementDirection);
             
             //Sending server creation of bullet

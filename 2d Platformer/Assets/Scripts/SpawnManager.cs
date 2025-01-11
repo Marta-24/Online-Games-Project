@@ -101,8 +101,13 @@ namespace Scripts
         void FindComponents()
         {
             idManager = GameObject.FindWithTag("NetIdManager");
-            instanciator_ = idManager.GetComponent<Instanciator>();
             netIdManager_ = idManager.GetComponent<NetIdManager>();
+
+            GameObject objServer = GameObject.Find("ServerManager");
+            if (objServer == null) objServer = GameObject.Find("ClientManager");
+
+            instanciator_ = objServer.GetComponent<Instanciator>();
+
             InformationBetweenScenes_ = idManager.GetComponent<InformationBetweenScenes>();
             if (netIdManager_ != null)
             {

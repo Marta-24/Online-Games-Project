@@ -49,7 +49,7 @@ namespace Scripts
 
             if (goToScene1)
             {
-                Debug.Log("something");
+                Debug.Log("loading scene1");
                 sceneLoader.LoadScene01Client();
                 goToScene1 = false;
             }
@@ -120,7 +120,9 @@ namespace Scripts
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.Hello);
-            Receive();
+            
+            Thread receiveThread = new Thread(ReceiveJob);
+            receiveThread.Start();
         }
 
         void Receive()
@@ -171,7 +173,6 @@ namespace Scripts
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
-                Debug.Log("reciveing position!");
                 // Setting position by netId
                 SetPosition(packet.netId, packet.position);
             }
@@ -189,9 +190,9 @@ namespace Scripts
             {
                 goToScene1 = true;
             }
-            else if (actionType == ActionType.ReadyToCreate) ;
+            else if (actionType == ActionType.ReadyToCreate) 
             {
-                Debug.Log("readytoCreate!!!!!!!!!!!!!!");
+                Debug.Log("readytoCreate!!!!!!!!!!!!!!1234");
                 info.serverReady = true;
             }
         }
@@ -200,7 +201,6 @@ namespace Scripts
         {
             MovementPacket packet = new MovementPacket(netId, position);
             string json01 = JsonUtility.ToJson(packet);
-            Debug.Log("sending player pos");
             SendString(json01, ActionType.Position);
         }
 
@@ -222,6 +222,14 @@ namespace Scripts
 
         public void SendReadyToCreate()
         {
+            // this part is just in case netidscript hasnt found it yet
+            if (netIdScript == null)
+            {
+                GameObject obj = GameObject.Find("NetIdManager");
+                netIdScript = obj.GetComponent<NetIdManager>();
+            }
+            Debug.Log("client sned redy");
+            
             StringPacket packet = new StringPacket(0, "ready");
 
             string json01 = JsonUtility.ToJson(packet);

@@ -67,17 +67,17 @@ namespace Scripts
                 IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
                 EndPoint Remote = (EndPoint)(sender);
 
-                Debug.Log("starting receive from");
+
                 recv = socket.ReceiveFrom(_data, ref Remote);
 
                 UserUDP user_ = new UserUDP(Remote, FirstDeserialize(_data));
 
                 _clientEndPoints.Add(user_);
 
-                Debug.Log("returning hello");
+
                 SendHello(Remote);
 
-                Debug.Log("starting cucle");
+
                 Thread clientThread = new Thread(() => ReceiveJob(user_));
                 clientThread.Start();
                 _clientEndPointsThread.Add(clientThread);
@@ -93,12 +93,12 @@ namespace Scripts
 
         void SendHello(EndPoint Remote)
         {
-            /*string str = "serverName";
+            string str = "serverName";
 
             StringPacket packet = new StringPacket(0, str);
 
             string json01 = JsonUtility.ToJson(packet);
-            SendString(json01, ActionType.Hello);*/
+            SendString(json01, ActionType.Hello);
         }
 
         void ReceiveJob(UserUDP user)
@@ -120,7 +120,6 @@ namespace Scripts
             byte[] data = new byte[2048];
 
             int rec = socket.ReceiveFrom(data, ref user.endPoint); // This works because there is only one connection
-            Debug.Log(rec);
             if (rec == 0)
             {
                 //return 0;
@@ -133,7 +132,6 @@ namespace Scripts
 
         public string FirstDeserialize(byte[] data_)
         {
-            Debug.Log("starting deserialize");
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
@@ -155,7 +153,6 @@ namespace Scripts
 
         public int DeserializeJson(byte[] data_)
         {
-            Debug.Log("starting deserialize");
             MemoryStream stream = new MemoryStream();
             stream.Write(data_, 0, data_.Length);
 
@@ -177,18 +174,24 @@ namespace Scripts
 
         public void GiveManagerAction(ActionType actionType, string str)
         {
-            Debug.Log("starting give manager action");
             if (actionType == ActionType.Position)
             {
                 MovementPacket packet = JsonUtility.FromJson<MovementPacket>(str);
-                Debug.Log("receiving player pos");
                 // Setting position by netId
                 SetPosition(packet.netId, packet.position);
             }
             else if (actionType == ActionType.Create)
             {
                 CreatePacket packet = JsonUtility.FromJson<CreatePacket>(str);
-                netIdScript.StackObject(packet.netId, packet.objType, packet.position, packet.direction, packet.rotation);
+                Debug.Log(packet.rotation);
+                if (netIdScript != null)
+                {
+                    netIdScript.StackObject(packet.netId, packet.objType, packet.position, packet.direction, packet.rotation);
+                }
+                else 
+                {
+                    Debug.Log("I FUCKING KNEW IT");
+                }
             }
             else if (actionType == ActionType.Damage)
             {
@@ -202,9 +205,9 @@ namespace Scripts
                 instanciator.IntanceUserPrefab(panelUi, packet.str);
                 Debug.Log("hello action finished");*/
             }
-            else if (actionType == ActionType.ReadyToCreate) ;
+            else if (actionType == ActionType.ReadyToCreate) 
             {
-                Debug.Log("readytoCreate!!!!!!!!!!!!!!");
+                Debug.Log("readytoCreate!!!!!!!!!!!!!!9090");
                 info.clientReady = true;
             }
         }
@@ -235,6 +238,15 @@ namespace Scripts
 
         public void SendReadyToCreate()
         {
+            // this part is just in case netidscript hasnt found it yet
+            if (netIdScript == null)
+            {
+                GameObject obj = GameObject.Find("NetIdManager");
+                netIdScript = obj.GetComponent<NetIdManager>();
+            }
+
+            Debug.Log("readytocreate send");
+
             StringPacket packet = new StringPacket(0, "ready");
 
             string json01 = JsonUtility.ToJson(packet);
