@@ -2,14 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine;
 
 namespace Scripts
 {
 
     public class EnemyFlyScript : MonoBehaviour
     {
-        float laserLength = 1f;
         public float speed;
         public int movementDirection = 1;
         private Rigidbody2D rb;

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
-using UnityEngine.SceneManagement;
 namespace Scripts
 {
     public class ClientUDP : MonoBehaviour

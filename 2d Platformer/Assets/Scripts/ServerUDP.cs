@@ -19,7 +19,6 @@ namespace Scripts
     {
 
         private AutoResetEvent _waitHandle = new AutoResetEvent(false);
-        Thread mainThread = null;
         private List<UserUDP> _clientEndPoints = new List<UserUDP>();
         private List<Thread> _clientEndPointsThread = new List<Thread>();
         public GameObject objectPlayer;

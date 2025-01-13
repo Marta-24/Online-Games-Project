@@ -18,7 +18,7 @@ namespace Scripts
         // Update is called once per frame
         void Update()
         {
-            if (nextlevel == null)
+            if (lvlManager == null)
             {
                 FindLevelManager();
             }
