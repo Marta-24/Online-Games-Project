@@ -1495,6 +1495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd4cfa7b7d4b2c4fbe3bf743b9cde88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  idManager: {fileID: 0}
 --- !u!4 &874311338
 Transform:
   m_ObjectHideFlags: 0
@@ -38528,7 +38529,7 @@ GameObject:
   - component: {fileID: 2140953702}
   - component: {fileID: 2140953701}
   - component: {fileID: 2140953716}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
