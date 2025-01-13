@@ -33,6 +33,11 @@ namespace Scripts
             
         }
 
+        public void SpawnPlayers()
+        {
+
+        }
+
         public void SpawnLvl1()
         {
             /*spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
@@ -46,9 +51,18 @@ namespace Scripts
             }*/
 
             CreatePlayer1();
-            if (connectionType) CreateEnemyGround();
+            if (connectionType) CreateEnemyGround(new Vector2(2.0f, -2.0f));
         }
 
+        public void SpawnLvl2()
+        {
+
+        }
+
+        public void SpawnLvl3()
+        {
+
+        }
         void CreatePlayer1()
         {
             GameObject obj = instanciator_.InstancePlayerOne();
@@ -69,9 +83,8 @@ namespace Scripts
             netIdManager_.SendObject(id);
         }
 
-        void CreateEnemyGround()
+        void CreateEnemyGround(Vector2 pos)
         {
-            Vector2 pos = new Vector2(2, -2);
             GameObject obj = instanciator_.InstanceEnemyPrefab(pos);
 
             List<Component> list = new List<Component>();
@@ -84,9 +97,8 @@ namespace Scripts
             netIdManager_.SendObject(id);
         }
 
-        void CreateEnemyFly()
+        void CreateEnemyFly(Vector2 pos)
         {
-            Vector2 pos = new Vector2(2, -2);
             GameObject obj = instanciator_.InstanceEnemyFlyPrefab(pos);
 
             List<Component> list = new List<Component>();
