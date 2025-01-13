@@ -30,7 +30,7 @@ namespace Scripts
             if (other.CompareTag("Player1") || other.CompareTag("Player2"))
             {
                 Debug.Log("CHANGING SCENE");
-                lvlManager.ChangeToLevel(nextlevel);
+                lvlManager.ChangeToLevel(nextlevel, true);
             }
 
         }

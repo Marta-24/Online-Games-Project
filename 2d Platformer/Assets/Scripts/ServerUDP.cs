@@ -33,6 +33,7 @@ namespace Scripts
         public bool receiveNewConnections = true;
         public InformationBetweenScenes info;
         Thread newConnection;
+        public SceneLoader sceneLoader;
 
         // Function called with a button to start the udp server
         public void StartServer()
@@ -87,7 +88,10 @@ namespace Scripts
         {
             receiveNewConnections = false;
             newConnection.Abort();
-            SendString("", ActionType.StartGame);
+            IntPacket packet = new IntPacket(0, 1);
+
+            string json01 = JsonUtility.ToJson(packet);
+            SendString(json01, ActionType.ChangeLevel);
         }
 
         void SendHello(EndPoint Remote)
@@ -204,6 +208,11 @@ namespace Scripts
                 instanciator.IntanceUserPrefab(panelUi, packet.str);
                 Debug.Log("hello action finished");*/
             }
+            else if (actionType == ActionType.ChangeLevel)
+            {
+                IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
+               sceneLoader.NextFramChange(packet.a, false);
+            }
             else if (actionType == ActionType.ReadyToCreate) 
             {
                 Debug.Log("readytoCreate!!!!!!!!!!!!!!9090");
@@ -215,7 +224,6 @@ namespace Scripts
         {
             MovementPacket packet = new MovementPacket(netId, position);
             string json01 = JsonUtility.ToJson(packet);
-            Debug.Log("Sending position" + position.x + "" + position.y);
             SendString(json01, ActionType.Position);
         }
 
@@ -252,6 +260,13 @@ namespace Scripts
             SendString(json01, ActionType.ReadyToCreate);
         }
 
+        public void SendLevelChange(int level)
+        {
+            IntPacket packet = new IntPacket(0, level);
+
+            string json01 = JsonUtility.ToJson(packet);
+            SendString(json01, ActionType.ChangeLevel);
+        }
         public void SendString(string str, ActionType type)
         {
             string json02 = JsonUtility.ToJson(type);
@@ -298,6 +313,9 @@ namespace Scripts
         {
             netManager = GameObject.Find("NetIdManager");
             if (netManager != null) netIdScript = netManager.GetComponent<NetIdManager>();
+
+            GameObject obj = GameObject.Find("SceneLoader");
+            sceneLoader = obj.GetComponent<SceneLoader>();
         }
     }
 }

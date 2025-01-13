@@ -49,19 +49,17 @@ namespace Scripts
             //Get client component
             FindNetIdManager();
 
-            camera = GameObject.Find("Main Camera");
-            if (camera == null)
-            {
-                Debug.Log("CAMERA NOT FOUND!!");
-            }
-
-            camera.GetComponent<CameraFollow>().ChangeTarget(parent.transform);
+            FixCamera();
 
             sendInformation = 5;
         }
 
         void Update()
         {
+            if (camera == null)
+            {
+                FixCamera();
+            }
             // Get horizontal input for movement
             movement.x = Input.GetAxisRaw("Horizontal");
             if (movement.x > 0)
@@ -164,5 +162,17 @@ namespace Scripts
             netIdManager = GameObject.Find("NetIdManager");
             if (netIdManager != null) netIdScript = netIdManager.GetComponent<NetIdManager>();
         }
+
+        public void FixCamera()
+        {
+            camera = GameObject.Find("Main Camera");
+            if (camera == null)
+            {
+                Debug.Log("CAMERA NOT FOUND!!");
+            }
+
+            camera.GetComponent<CameraFollow>().ChangeTarget(parent.transform);
+        }
     }
+    
 }

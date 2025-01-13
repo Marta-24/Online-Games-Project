@@ -28,10 +28,10 @@ namespace Scripts
         public GameObject netManager;
         public NetIdManager netIdScript;
         public GameObject sceneManager;
-        public SceneLoader sceneLoader;
         string userName;
         string nameIp;
         public InformationBetweenScenes info;
+        public SceneLoader sceneLoader;
         void Start()
         {
             sceneLoader = sceneManager.GetComponent<SceneLoader>();
@@ -119,7 +119,7 @@ namespace Scripts
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.Hello);
-            
+
             Thread receiveThread = new Thread(ReceiveJob);
             receiveThread.Start();
         }
@@ -185,11 +185,13 @@ namespace Scripts
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
                 netIdScript.GiveDamage(packet.netId, packet.a);
             }
-            else if (actionType == ActionType.StartGame)
+            else if (actionType == ActionType.ChangeLevel)
             {
-                goToScene1 = true;
+                Debug.Log("action type receviere");
+                IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
+                sceneLoader.NextFramChange(packet.a, false);
             }
-            else if (actionType == ActionType.ReadyToCreate) 
+            else if (actionType == ActionType.ReadyToCreate)
             {
                 Debug.Log("readytoCreate!!!!!!!!!!!!!!1234");
                 info.serverReady = true;
@@ -228,11 +230,19 @@ namespace Scripts
                 netIdScript = obj.GetComponent<NetIdManager>();
             }
             Debug.Log("client sned redy");
-            
+
             StringPacket packet = new StringPacket(0, "ready");
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.ReadyToCreate);
+        }
+
+        public void SendLevelChange(int level)
+        {
+            IntPacket packet = new IntPacket(0, level);
+
+            string json01 = JsonUtility.ToJson(packet);
+            SendString(json01, ActionType.ChangeLevel);
         }
 
         public void SendString(string str, ActionType type)
@@ -254,6 +264,9 @@ namespace Scripts
         {
             netManager = GameObject.Find("NetIdManager");
             if (netManager != null) netIdScript = netManager.GetComponent<NetIdManager>();
+
+             GameObject obj = GameObject.Find("SceneLoader");
+            sceneLoader = obj.GetComponent<SceneLoader>();
         }
     }
 }

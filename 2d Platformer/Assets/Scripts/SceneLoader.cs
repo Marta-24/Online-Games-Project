@@ -6,14 +6,23 @@ namespace Scripts
     public class SceneLoader : MonoBehaviour
     {
         bool clientScene = false;
-        NetIdManager idManager;
+        public NetIdManager idManager;
         Scene scene;
+        bool nextFrame = false;
+        int nextFrameLevel;
         void Start()
         {
             scene = SceneManager.GetActiveScene();
         }
         void Update()
         {
+             if (nextFrame == true)
+            {
+                Debug.Log("Heeeeeelllooooooooo");
+                nextFrame = false;
+                ChangeToLevel(nextFrameLevel, false);
+            }
+
             if (clientScene)
             {
                 clientScene = false;
@@ -22,9 +31,11 @@ namespace Scripts
 
             if (idManager == null && ((scene.name != "ServerScene") || (scene.name != "ClientScene") || (scene.name != "MainMenu")))
             {
-                Debug.Log("Heeeeeelllooooooooo");
+                
                 FindManager();
             }
+
+           
         }
 
         public void LoadSceneClient(string Client)
@@ -57,13 +68,15 @@ namespace Scripts
             clientScene = true;
         }
 
-        public void ChangeToLevel(int level)
+        public void ChangeToLevel(int level, bool notifyConnection) //if notify connection is true this trigger will be send online
         {
             //Should call destroy everything minus players
-            idManager.ChangeScenesSave();
+            if (idManager != null) idManager.ChangeScenesSave();
 
+            Debug.Log(level);
             if (level == 1)
             {
+                
                 SceneManager.LoadScene("Scene1Server");
             }
             else if (level == 2)
@@ -74,6 +87,16 @@ namespace Scripts
             {
                 SceneManager.LoadScene("Scene3Server");
             }
+            
+            //Change Scene in other computer
+            if (notifyConnection) idManager.SendLevelChange(level);
+        }
+
+        public void NextFramChange(int level, bool notifyConnection) //if notify connection is true this trigger will be send online
+        {
+            Debug.Log("WORKED");
+            nextFrame = true;
+            nextFrameLevel = level;
         }
 
         void FindManager()

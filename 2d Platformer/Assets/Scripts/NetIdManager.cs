@@ -77,7 +77,7 @@ namespace Scripts
         public int frameCounter = 60;
         public bool sendReady = false;
         public GameObject bulletPrefab;
-
+        
         public InformationBetweenScenes info;
         void Start()
         {
@@ -174,6 +174,8 @@ namespace Scripts
 
             GameObject obj = GameObject.Find("InformationBetweenScenes");
             info = obj.GetComponent<InformationBetweenScenes>();
+
+            
         }
 
         public int FindNetId(GameObject obj)
@@ -265,6 +267,12 @@ namespace Scripts
                 if (server != null) server.SendPosition(id, pos);
                 if (client != null) client.SendPosition(id, pos);
             }
+        }
+
+        public void SendLevelChange(int level)
+        {
+            if (server != null) server.SendLevelChange(level);
+            if (client != null) client.SendLevelChange(level);
         }
 
         public void CreateBullet(GameObject obj, Vector2 pos, int dir)
@@ -468,7 +476,7 @@ namespace Scripts
                     //Add component if they are players
                     id.gameObject.AddComponent<KeepBetweenScenes>();
                 }
-                else 
+                else
                 {
                     //destroy if they are not players
                     Destroy(id.gameObject);

@@ -21,7 +21,7 @@ namespace Scripts
         Create = 3,
         Damage = 4,
         ReadyToCreate = 6,
-        StartGame = 7
+        ChangeLevel = 7
     }
     struct int_
     {
