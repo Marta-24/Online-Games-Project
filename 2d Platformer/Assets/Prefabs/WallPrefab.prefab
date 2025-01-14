@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8771988633135701700}
   - component: {fileID: 6524437753443841512}
   - component: {fileID: 7295854050314287912}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: WallPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,5 +170,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 2}
+  m_Size: {x: 0.08, y: 0.16}
   m_EdgeRadius: 0

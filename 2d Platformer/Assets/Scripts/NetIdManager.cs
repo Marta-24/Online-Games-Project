@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Scripts
 {
@@ -69,7 +70,6 @@ namespace Scripts
         public GameObject objectUDP;
         public ServerUDP server;
         public ClientUDP client;
-        public GameObject netIdManagerGameObject;
         public SpawnManager spawn;
         public Instanciator instanciator_;
         public bool startEnded = false;
@@ -77,22 +77,26 @@ namespace Scripts
         public int frameCounter = 60;
         public bool sendReady = false;
         public GameObject bulletPrefab;
-        
+
         public InformationBetweenScenes info;
         void Start()
         {
-            //Generate Random instance
-
-            AddServer();
-            FindComponents();
-            FindServerOrClient();
-
             startEnded = true;
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (objectUDP == null)
+            {
+                FindServerOrClient();
+            }
+
+            if (info == null)
+            {
+                FindComponents();
+            }
+
             if (NeedToCreateList.Count != 0)
             {
                 for (int i = 0; i < NeedToCreateList.Count; i++)
@@ -103,39 +107,8 @@ namespace Scripts
 
                 NeedToCreateList.Clear();
             }
-
-            if (sendReady == false)
-            {
-                ReadyToCreate();
-                sendReady = true;
-            }
-
-
-            if (info.serverReady && info.clientReady)
-            {
-
-                info.serverReady = false;
-                info.clientReady = false;
-                ActivateSpawn();
-            }
         }
 
-        void ReadyToCreate()
-        {
-
-            if (server != null)
-            {
-                Debug.Log("SERVER ID READY TO CREATE");
-                info.serverReady = true;
-                server.SendReadyToCreate();
-            }
-            if (client != null)
-            {
-                Debug.Log(" client ID READY TO CREATE");
-                info.clientReady = true;
-                client.SendReadyToCreate();
-            }
-        }
 
         void AddServer()
         {
@@ -166,16 +139,10 @@ namespace Scripts
 
         void FindComponents()
         {
-            GameObject objServer = null;
-            if (server != null) objServer = GameObject.Find("ServerManager");
-            if (client != null) objServer = GameObject.Find("ClientManager");
-
-            instanciator_ = objServer.GetComponent<Instanciator>();
-
             GameObject obj = GameObject.Find("InformationBetweenScenes");
             info = obj.GetComponent<InformationBetweenScenes>();
 
-            
+
         }
 
         public int FindNetId(GameObject obj)
@@ -418,16 +385,22 @@ namespace Scripts
 
         private void FindServerOrClient()
         {
-            if (objectUDP == null) objectUDP = GameObject.Find("ClientManager");
-            if (objectUDP == null) objectUDP = GameObject.Find("ServerManager");
+            string name = SceneManager.GetActiveScene().name;
+            if (name == "MainMenu")
+            {
+                if (objectUDP == null) objectUDP = GameObject.Find("ClientManager");
+                if (objectUDP == null) objectUDP = GameObject.Find("ServerManager");
 
-            if (server == null)
-            {
-                server = objectUDP.GetComponent<ServerUDP>();
-            }
-            if (client == null)
-            {
-                client = objectUDP.GetComponent<ClientUDP>();
+                if (server == null)
+                {
+                    server = objectUDP.GetComponent<ServerUDP>();
+                }
+                if (client == null)
+                {
+                    client = objectUDP.GetComponent<ClientUDP>();
+                }
+
+                if (objectUDP != null) instanciator_ = objectUDP.GetComponent<Instanciator>();
             }
         }
 
@@ -455,16 +428,20 @@ namespace Scripts
 
         public bool CheckConnection()
         {
-            if (server != null) return true;
+            if (server != null)
+            {
+                Debug.Log("SERVER TRUE");
+                return true;
+            }
             //if (client != null) return false;
-
+            Debug.Log("server not TREU");
             return false;
         }
 
         public void ActivateSpawn()
         {
-            Debug.Log("spawning");
-            spawn.SpawnLvl1();
+            spawn.framesForSpawn = 44;
+            Debug.Log("FRAOPSDIDG FOPR SPAWN" + spawn.framesForSpawn);
         }
 
         public void ChangeScenesSave() // this function is called on server and client on scenechange so we dont need to comunicate online this process
@@ -480,7 +457,7 @@ namespace Scripts
                 {
                     //destroy if they are not players
                     Destroy(id.gameObject);
-                    netIdList.Remove(id);
+                    //netIdList.Remove(id);
                 }
             }
         }

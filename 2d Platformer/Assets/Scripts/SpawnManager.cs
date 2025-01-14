@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Scripts
 {
@@ -14,11 +15,12 @@ namespace Scripts
         public int timerBeforeSpawn;
         public int spawnTypePlayer;
         public bool connectionType;
+        public int framesForSpawn = -1;
         // Start is called before the first frame update
         void Start()
         {
             connectionType = false;
-            FindComponents();
+            //FindComponents();
             timerBeforeSpawn = 450;
             spawnTypePlayer = 1;
         }
@@ -26,11 +28,32 @@ namespace Scripts
         // Update is called once per frame
         void Update()
         {
+            if (framesForSpawn >= 0)
+            {
+                Debug.Log(framesForSpawn);
+                framesForSpawn--;
+            }
+            else if (framesForSpawn == 0)
+            {
+                framesForSpawn--;
+                Debug.Log("S{AASDGA{}W{EFOA}{ERPGA}E{RG}}");
+                //Check information
+
+                connectionType = netIdManager_.CheckConnection();
+                ActivateSpawn();
+            }
+
             if (instanciator_ == null)
             {
                 FindComponents();
             }
-            
+
+            if (InformationBetweenScenes_ == null)
+            {
+                FindInfo();
+            }
+
+
         }
 
         public void SpawnPlayers()
@@ -38,7 +61,24 @@ namespace Scripts
 
         }
 
-        public void SpawnLvl1()
+        public void ActivateSpawn()
+        {
+            Scene scene = SceneManager.GetActiveScene();
+
+            if (scene.name == "Scene1Server")
+            {
+                SpawnLvl1();
+            }
+            else if (scene.name == "Scene2Server")
+            {
+                SpawnLvl2();
+            }
+            else if (scene.name == "Scene3Server")
+            {
+                SpawnLvl3();
+            }
+        }
+        private void SpawnLvl1()
         {
             /*spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
             if (spawnTypePlayer == 1)
@@ -49,14 +89,21 @@ namespace Scripts
             {
                 CreatePlayer2();
             }*/
+            Debug.Log("creating");
+            CreatePlayer2();
+            if (connectionType)
+            {
+                CreateEnemyGround(new Vector2(6.0f, -2.0f));
+                CreateEnemyGround(new Vector2(25.0f, 0.0f));
+                CreateEnemyGround(new Vector2(21.0f, -3.0f));
 
-            CreatePlayer1();
-            if (connectionType) CreateEnemyGround(new Vector2(2.0f, -2.0f));
+                CreateEnemyFly(new Vector2(33.0f, 1.0f));
+            }
         }
 
         public void SpawnLvl2()
         {
-
+            Debug.Log("SpawnLVL2 working!!!!!!!!!!!!!!!!!!!");
         }
 
         public void SpawnLvl3()
@@ -112,18 +159,26 @@ namespace Scripts
         }
         void FindComponents()
         {
+            string name = SceneManager.GetActiveScene().name;
+            if (name == "MainMenu")
+            {
             idManager = GameObject.FindWithTag("NetIdManager");
             netIdManager_ = idManager.GetComponent<NetIdManager>();
 
-            GameObject objServer = GameObject.Find("ServerManager");
-            if (objServer == null) objServer = GameObject.Find("ClientManager");
+            
+                GameObject objServer = GameObject.Find("ServerManager");
+                if (objServer == null) objServer = GameObject.Find("ClientManager");
 
-            instanciator_ = objServer.GetComponent<Instanciator>();
-
-            InformationBetweenScenes_ = idManager.GetComponent<InformationBetweenScenes>();
-            if (netIdManager_ != null)
+                instanciator_ = objServer.GetComponent<Instanciator>();
+            }
+        }
+        void FindInfo()
+        {
+            InformationBetweenScenes_ = GameObject.Find("InformationBetweenScenes").GetComponent<InformationBetweenScenes>();
+            if (InformationBetweenScenes_ != null)
             {
-                connectionType = netIdManager_.CheckConnection();
+                Debug.Log("connectiontype should work!!!!" + InformationBetweenScenes_.isServer);
+                connectionType = InformationBetweenScenes_.isServer;
             }
         }
     }

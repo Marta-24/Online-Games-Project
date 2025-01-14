@@ -32,6 +32,7 @@ namespace Scripts
         string nameIp;
         public InformationBetweenScenes info;
         public SceneLoader sceneLoader;
+        public int ColdDown = 20;
         void Start()
         {
             sceneLoader = sceneManager.GetComponent<SceneLoader>();
@@ -52,14 +53,18 @@ namespace Scripts
                 sceneLoader.LoadScene01Client();
                 goToScene1 = false;
             }
+
+            if (ColdDown > 0) ColdDown--;
         }
 
         public void StartClient()
         {
             //127.0.0.1
-            Thread connect = new Thread(Connect);
-            connect.Start();
-
+            if (ColdDown == 0)
+            {
+                Thread connect = new Thread(Connect);
+                connect.Start();
+            }
         }
 
         void Connect()
@@ -191,11 +196,6 @@ namespace Scripts
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
                 sceneLoader.NextFramChange(packet.a, false);
             }
-            else if (actionType == ActionType.ReadyToCreate)
-            {
-                Debug.Log("readytoCreate!!!!!!!!!!!!!!1234");
-                info.serverReady = true;
-            }
         }
 
         public void SendPosition(int netId, Vector2 position)
@@ -219,22 +219,6 @@ namespace Scripts
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.Damage);
-        }
-
-        public void SendReadyToCreate()
-        {
-            // this part is just in case netidscript hasnt found it yet
-            if (netIdScript == null)
-            {
-                GameObject obj = GameObject.Find("NetIdManager");
-                netIdScript = obj.GetComponent<NetIdManager>();
-            }
-            Debug.Log("client sned redy");
-
-            StringPacket packet = new StringPacket(0, "ready");
-
-            string json01 = JsonUtility.ToJson(packet);
-            SendString(json01, ActionType.ReadyToCreate);
         }
 
         public void SendLevelChange(int level)
@@ -265,7 +249,7 @@ namespace Scripts
             netManager = GameObject.Find("NetIdManager");
             if (netManager != null) netIdScript = netManager.GetComponent<NetIdManager>();
 
-             GameObject obj = GameObject.Find("SceneLoader");
+            GameObject obj = GameObject.Find("SceneLoader");
             sceneLoader = obj.GetComponent<SceneLoader>();
         }
     }

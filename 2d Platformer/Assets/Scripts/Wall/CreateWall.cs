@@ -10,9 +10,12 @@ namespace Scripts
         NetIdManager manager;
         int Cooldown = 0;
         public bool isHorizontal;
+        public PlayerMovement player;
+        float positiondiff = 4.0f;
         // Start is called before the first frame update
         void Start()
         {
+            player = gameObject.GetComponent<PlayerMovement>();
         }
 
         // Update is called once per frame
@@ -47,8 +50,16 @@ namespace Scripts
                 vec.z = 90.0f;
             }
             
+            if (player.movementDirection == 1)
+            {
+                positiondiff = 4.0f;
+            }
+            else if (player.movementDirection == -1)
+            {
+                positiondiff = -4.0f;
+            }
             Vector3 vec3 = gameObject.transform.position;
-            GameObject obj = instanciator_.InstanceWall(new Vector2(vec3.x + 2.0f, vec3.y), vec);
+            GameObject obj = instanciator_.InstanceWall(new Vector2(vec3.x + positiondiff, vec3.y), vec);
             NetId id = manager.CreateNetId(obj, GameObjectType.wall);
             manager.SendObject(id);
         }

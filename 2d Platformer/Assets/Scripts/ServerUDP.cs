@@ -70,17 +70,22 @@ namespace Scripts
 
                 recv = socket.ReceiveFrom(_data, ref Remote);
 
-                UserUDP user_ = new UserUDP(Remote, FirstDeserialize(_data));
+                string str = FirstDeserialize(_data);
 
-                _clientEndPoints.Add(user_);
+                if (str != null)
+                {
+                    UserUDP user_ = new UserUDP(Remote, str);
+
+                    _clientEndPoints.Add(user_);
 
 
-                SendHello(Remote);
+                    SendHello(Remote);
 
 
-                Thread clientThread = new Thread(() => ReceiveJob(user_));
-                clientThread.Start();
-                _clientEndPointsThread.Add(clientThread);
+                    Thread clientThread = new Thread(() => ReceiveJob(user_));
+                    clientThread.Start();
+                    _clientEndPointsThread.Add(clientThread);
+                }
             }
         }
 
@@ -148,10 +153,15 @@ namespace Scripts
 
             actionType = JsonUtility.FromJson<ActionType>(json01);
             Debug.Log(actionType);
+            if (actionType == ActionType.Hello)
+            {  
+                StringPacket packet = JsonUtility.FromJson<StringPacket>(json02);
+                instanciator.IntanceUserPrefab(panelUi, packet.str);
+                return packet.str;
+            }
 
-            StringPacket packet = JsonUtility.FromJson<StringPacket>(json02);
-            instanciator.IntanceUserPrefab(panelUi, packet.str);
-            return packet.str;
+            return null;
+
         }
 
         public int DeserializeJson(byte[] data_)
@@ -168,7 +178,6 @@ namespace Scripts
             string json02 = reader.ReadString();
 
             actionType = JsonUtility.FromJson<ActionType>(json01);
-            Debug.Log(actionType);
             GiveManagerAction(actionType, json02);
             return 1;
         }
@@ -186,14 +195,9 @@ namespace Scripts
             else if (actionType == ActionType.Create)
             {
                 CreatePacket packet = JsonUtility.FromJson<CreatePacket>(str);
-                Debug.Log(packet.rotation);
                 if (netIdScript != null)
                 {
                     netIdScript.StackObject(packet.netId, packet.objType, packet.position, packet.direction, packet.rotation);
-                }
-                else 
-                {
-                    Debug.Log("I FUCKING KNEW IT");
                 }
             }
             else if (actionType == ActionType.Damage)
@@ -203,20 +207,11 @@ namespace Scripts
             }
             else if (actionType == ActionType.Hello)
             {
-                /*Debug.Log("receiving new CONNECTION!!!!");
-                StringPacket packet = JsonUtility.FromJson<StringPacket>(str);
-                instanciator.IntanceUserPrefab(panelUi, packet.str);
-                Debug.Log("hello action finished");*/
             }
             else if (actionType == ActionType.ChangeLevel)
             {
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
-               sceneLoader.NextFramChange(packet.a, false);
-            }
-            else if (actionType == ActionType.ReadyToCreate) 
-            {
-                Debug.Log("readytoCreate!!!!!!!!!!!!!!9090");
-                info.clientReady = true;
+                sceneLoader.NextFramChange(packet.a, false);
             }
         }
 
@@ -241,23 +236,6 @@ namespace Scripts
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.Damage);
-        }
-
-        public void SendReadyToCreate()
-        {
-            // this part is just in case netidscript hasnt found it yet
-            if (netIdScript == null)
-            {
-                GameObject obj = GameObject.Find("NetIdManager");
-                netIdScript = obj.GetComponent<NetIdManager>();
-            }
-
-            Debug.Log("readytocreate send");
-
-            StringPacket packet = new StringPacket(0, "ready");
-
-            string json01 = JsonUtility.ToJson(packet);
-            SendString(json01, ActionType.ReadyToCreate);
         }
 
         public void SendLevelChange(int level)

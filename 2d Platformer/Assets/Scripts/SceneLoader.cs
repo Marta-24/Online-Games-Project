@@ -16,7 +16,7 @@ namespace Scripts
         }
         void Update()
         {
-             if (nextFrame == true)
+            if (nextFrame == true)
             {
                 Debug.Log("Heeeeeelllooooooooo");
                 nextFrame = false;
@@ -29,13 +29,17 @@ namespace Scripts
                 SceneManager.LoadScene("Scene1Client");
             }
 
-            if (idManager == null && ((scene.name != "ServerScene") || (scene.name != "ClientScene") || (scene.name != "MainMenu")))
+            if (idManager == null)
             {
-                
-                FindManager();
+                if (scene.name != "MainMenu")
+                {
+                    Debug.Log(scene.name);
+                    FindManager();
+                }
+
             }
 
-           
+
         }
 
         public void LoadSceneClient(string Client)
@@ -73,10 +77,11 @@ namespace Scripts
             //Should call destroy everything minus players
             if (idManager != null) idManager.ChangeScenesSave();
 
+            idManager.ActivateSpawn();
             Debug.Log(level);
+
             if (level == 1)
             {
-                
                 SceneManager.LoadScene("Scene1Server");
             }
             else if (level == 2)
@@ -87,7 +92,7 @@ namespace Scripts
             {
                 SceneManager.LoadScene("Scene3Server");
             }
-            
+
             //Change Scene in other computer
             if (notifyConnection) idManager.SendLevelChange(level);
         }
