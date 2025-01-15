@@ -31,13 +31,11 @@ namespace Scripts
         {
             if (framesForSpawn > 0)
             {
-                Debug.Log(framesForSpawn);
                 framesForSpawn--;
             }
             else if (framesForSpawn == 0)
             {
                 framesForSpawn--;
-                Debug.Log("S{AASDGA{}W{EFOA}{ERPGA}E{RG}}");
                 //Check information
 
                 connectionType = netIdManager_.CheckConnection();
@@ -53,8 +51,6 @@ namespace Scripts
             {
                 FindInfo();
             }
-
-
         }
 
         public void SpawnPlayers()
@@ -65,10 +61,11 @@ namespace Scripts
             {
                 CreatePlayer1();
             }
-            else if (playerType == 2)
+            else
             {
                 CreatePlayer2();
             }
+            
         }
 
         public void ActivateSpawn()
@@ -109,11 +106,12 @@ namespace Scripts
             Debug.Log("SpawnLVL2 working!!!!!!!!!!!!!!!!!!!");
             if (connectionType)
             {
-                CreateEnemyGround(new Vector2(6.0f, -2.0f));
-                CreateEnemyGround(new Vector2(25.0f, 0.0f));
-                CreateEnemyGround(new Vector2(21.0f, -3.0f));
+                CreateEnemyGround(new Vector2(6.0f, -7.0f));
+                CreateEnemyGround(new Vector2(9.0f, -15.0f));
+                CreateEnemyGround(new Vector2(46.0f, -9.5f));
 
-                CreateEnemyFly(new Vector2(33.0f, 1.0f));
+                CreateEnemyFly(new Vector2(-5.0f, -7.0f));
+                CreateEnemyFly(new Vector2(-3.0f, -6.0f));
             }
         }
 
@@ -121,11 +119,15 @@ namespace Scripts
         {
             if (connectionType)
             {
-                CreateEnemyGround(new Vector2(6.0f, -2.0f));
-                CreateEnemyGround(new Vector2(25.0f, 0.0f));
-                CreateEnemyGround(new Vector2(21.0f, -3.0f));
+               CreateEnemyGround(new Vector2(8.0f, -11.5f));
+                CreateEnemyGround(new Vector2(18.0f, -14.0f));
+                CreateEnemyGround(new Vector2(18.0f, -8.5f));
 
-                CreateEnemyFly(new Vector2(33.0f, 1.0f));
+                CreateEnemyFly(new Vector2(14.0f, 0.0f));
+                CreateEnemyFly(new Vector2(-27.0f, -15.0f));
+
+                CreateEnemyFly(new Vector2(46.0f, -13.0f));
+                CreateEnemyFly(new Vector2(45.0f, -15.0f));
             }
         }
         void CreatePlayer1()

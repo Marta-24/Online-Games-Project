@@ -29,13 +29,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DemoSceneEnemies.unity
     guid: dfb67955948507142bfad479a5c0ed6b
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Scene2Client.unity
     guid: 82c5e54a3f0bced46ac7a0567704f016
   - enabled: 1
     path: Assets/Scenes/Scene2Server.unity
     guid: ccaee277a8802254cbca1358b125746e
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Scene3Client.unity
     guid: 4bb444f2fdf7c5b4a8a88ee7a41ad616
   - enabled: 1

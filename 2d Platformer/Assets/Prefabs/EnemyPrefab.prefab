@@ -118,7 +118,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -191,6 +191,8 @@ MonoBehaviour:
   movementDirection: 1
   netIdManager: {fileID: 0}
   netIdScript: {fileID: 0}
+  isHost: 0
+  sendInformation: 3
 --- !u!95 &9036222988575060122
 Animator:
   serializedVersion: 5

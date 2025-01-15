@@ -84,6 +84,7 @@ namespace Scripts
             if (Input.GetButtonDown("ResetPos"))
             {
                 rb.MovePosition(new Vector2(0.0f, 0.0f));
+                rb.velocity = new Vector2(0.0f, 0.0f);
             }
             // Set isJumping to false when grounded
             if (IsGrounded())
@@ -187,6 +188,7 @@ namespace Scripts
                 
                 Debug.Log("what i ma doing here");
                 rb.MovePosition(new Vector2(0.0f, 0.0f));
+                rb.velocity = new Vector2(0.0f, 0.0f);
             }
         }
     }

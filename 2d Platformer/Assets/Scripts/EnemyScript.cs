@@ -73,17 +73,16 @@ namespace Scripts
             Debug.DrawLine(vec, vec + vec3);
             Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
 
-            bool hittingGround = false;
+            bool hittingGroundUnder = false;
+            bool hittingGroundRight = false;
             foreach (RaycastHit2D hit2d in hit)
             {
-                if (hit2d.collider.tag == "Wall") hittingGround = true;
-                //Hit something, print the tag of the object
-
+                if (hit2d.collider.tag == "Wall") hittingGroundUnder = true;
             }
 
             //Checking front
             vec = transform.position;
-            RaycastHit2D[] hit_ = Physics2D.RaycastAll(vec, Vector2.right, laserLength - 0.45f);
+            RaycastHit2D[] hit_ = Physics2D.RaycastAll(vec, Vector2.right, laserLength);
 
             vec3 = new Vector3(1 * laserLength * movementDirection, 0, 0);
 
@@ -92,12 +91,14 @@ namespace Scripts
             Debug.DrawLine(transform.position, new Vector3(0, 0, 0));
             foreach (RaycastHit2D hit2d in hit_)
             {
-                if (hit2d.collider.tag == "Wall") hittingGround = false;
+                if (hit2d.collider.tag == "Wall") hittingGroundRight = true;
                 //Hit something, print the tag of the object
             }
+            Debug.Log(hittingGroundRight);
 
-            if (hittingGround == false)
+            if (hittingGroundUnder == false || hittingGroundRight == true)
             {
+                Debug.Log("flipping");
                 FlipDirection();
             }
         }

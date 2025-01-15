@@ -194,6 +194,7 @@ namespace Scripts
            else if (actionType == ActionType.ChangeLevel)
             {
                 StartGamePacket packet = JsonUtility.FromJson<StartGamePacket>(str);
+                Debug.Log("player" + packet.player);
                 sceneLoader.NextFramChange(packet.a, false, packet.player);
             }
         }

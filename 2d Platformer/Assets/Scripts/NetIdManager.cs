@@ -454,6 +454,7 @@ namespace Scripts
                 {
                     //Add component if they are players
                     id.gameObject.AddComponent<KeepBetweenScenes>();
+                    id.gameObject.GetComponent<Rigidbody2D>().position = new Vector3(0.0f, 0.0f, 0.0f);
                 }
                 else
                 {
