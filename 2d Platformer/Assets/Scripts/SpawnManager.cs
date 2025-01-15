@@ -31,13 +31,11 @@ namespace Scripts
         {
             if (framesForSpawn > 0)
             {
-                Debug.Log(framesForSpawn);
                 framesForSpawn--;
             }
             else if (framesForSpawn == 0)
             {
                 framesForSpawn--;
-                Debug.Log("S{AASDGA{}W{EFOA}{ERPGA}E{RG}}");
                 //Check information
 
                 connectionType = netIdManager_.CheckConnection();
@@ -106,7 +104,6 @@ namespace Scripts
 
         public void SpawnLvl2()
         {
-            Debug.Log("SpawnLVL2 working!!!!!!!!!!!!!!!!!!!");
             if (connectionType)
             {
                 CreateEnemyGround(new Vector2(6.0f, -2.0f));

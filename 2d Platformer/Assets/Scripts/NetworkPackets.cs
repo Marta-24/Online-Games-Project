@@ -21,7 +21,8 @@ namespace Scripts
         Create = 3,
         Damage = 4,
         ReadyToCreate = 6,
-        ChangeLevel = 7
+        ChangeLevel = 7,
+        Confirmation = 8
     }
     struct int_
     {
@@ -34,24 +35,28 @@ namespace Scripts
 
     public class ParentPacket
     {
+        public int id;
+        public int i;
         public int netId;
 
         public ParentPacket()
         {       }
 
-        public ParentPacket(int netId)
+        public ParentPacket(int netId, int id)
         {
             this.netId = netId;
+            this.id = id;
         }
     }
 
     public class MovementPacket : ParentPacket
     {
         public Vector2 position;
-        public MovementPacket(int netId, Vector2 pos)
+        public MovementPacket(int netId, Vector2 pos, int id)
         {
             this.netId = netId;
             this.position = pos;
+            this.id = id;
         }
     }
 
@@ -61,13 +66,14 @@ namespace Scripts
         public Vector2 direction;
         public GameObjectType objType;
         public Vector3 rotation;
-        public CreatePacket(int netId, Vector2 pos, Vector2 direction, Vector3 rotation, GameObjectType objType)
+        public CreatePacket(int netId, Vector2 pos, Vector2 direction, Vector3 rotation, GameObjectType objType, int id)
         {
             this.netId = netId;
             this.position = pos;
             this.direction = direction;
             this.objType = objType;
             this.rotation = rotation;
+            this.id = id;
         }
     }
 
@@ -75,10 +81,11 @@ namespace Scripts
     {
         public string str;
 
-        public StringPacket(int netId, string str)
+        public StringPacket(int netId, string str, int id)
         {
             this.netId = netId;
             this.str = str;
+            this.id = id;
         }
     }
 
@@ -86,10 +93,11 @@ namespace Scripts
     {
         public int a;
 
-        public IntPacket(int netId, int a)
+        public IntPacket(int netId, int a, int id)
         {
             this.netId = netId;
             this.a = a;
+            this.id = id;
         }
     }
 
@@ -98,14 +106,24 @@ namespace Scripts
         public int a;
         public bool player;
 
-        public StartGamePacket(int netId, int a, bool player)
+        public StartGamePacket(int netId, int a, bool player, int id)
         {
             this.netId = netId;
             this.a = a;
             this.player = player;
+            this.id = id;
         }
     }
 
+     public class ConfirmationPacket : ParentPacket
+    {
+        ActionType act;
+        public ConfirmationPacket(int id)
+        {
+            this.netId = 0;
+            this.id = id;
+        }
+    }
     public class UserUDP
     {
         public EndPoint endPoint;
