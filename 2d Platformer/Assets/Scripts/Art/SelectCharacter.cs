@@ -1,73 +1,89 @@
 using UnityEngine;
 using TMPro;
 
-public class SelectCharacter : MonoBehaviour
+namespace Scripts
 {
-    private SpriteRenderer spriteRenderer;
-    private Color originalColor;
-
-    public Color hiddenColor = Color.black;
-    public GameObject abilitiesText;
-    public string abilityDescription = "";
-
-    private static SelectCharacter selectedCharacter;
-
-    private bool isSelected = false;
-
-    void Start()
+    public class SelectCharacter : MonoBehaviour
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        originalColor = spriteRenderer.color;
-        spriteRenderer.color = hiddenColor;
+        private SpriteRenderer spriteRenderer;
+        private Color originalColor;
 
-        if (abilitiesText != null)
-            abilitiesText.SetActive(false);
-    }
+        public Color hiddenColor = Color.black;
+        public GameObject abilitiesText;
+        public string abilityDescription = "";
 
-    void OnMouseEnter()
-    {
-        if (!isSelected)
-            spriteRenderer.color = originalColor;
+        private static SelectCharacter selectedCharacter;
 
-        if (abilitiesText != null)
+        private bool isSelected = false;
+        public int typeOfCharacter;
+        InformationBetweenScenes info;
+
+        void Start()
         {
-            abilitiesText.SetActive(true);
-            abilitiesText.GetComponent<TextMeshProUGUI>().text = abilityDescription;
-        }
-    }
-
-    void OnMouseExit()
-    {
-        if (!isSelected)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            originalColor = spriteRenderer.color;
             spriteRenderer.color = hiddenColor;
 
-        if (abilitiesText != null)
-            abilitiesText.SetActive(false);
-    }
-
-    void OnMouseDown()
-    {
-        if (selectedCharacter == this)
-            return;
-
-        if (selectedCharacter != null)
-        {
-            selectedCharacter.Deselect();
+            if (abilitiesText != null)
+                abilitiesText.SetActive(false);
         }
 
-        Select();
-    }
+        void OnMouseEnter()
+        {
+            if (!isSelected)
+                spriteRenderer.color = originalColor;
 
-    private void Select()
-    {
-        isSelected = true;
-        spriteRenderer.color = originalColor;
-        selectedCharacter = this;
-    }
+            if (abilitiesText != null)
+            {
+                abilitiesText.SetActive(true);
+                abilitiesText.GetComponent<TextMeshProUGUI>().text = abilityDescription;
+            }
+        }
 
-    private void Deselect()
-    {
-        isSelected = false;
-        spriteRenderer.color = hiddenColor;
+        void OnMouseExit()
+        {
+            if (!isSelected)
+                spriteRenderer.color = hiddenColor;
+
+            if (abilitiesText != null)
+                abilitiesText.SetActive(false);
+        }
+
+        void OnMouseDown()
+        {
+            if (selectedCharacter == this)
+                return;
+
+            if (selectedCharacter != null)
+            {
+                selectedCharacter.Deselect();
+            }
+
+            Select();
+        }
+
+        private void Select()
+        {
+            isSelected = true;
+            spriteRenderer.color = originalColor;
+            selectedCharacter = this;
+            if (info == null)
+            {
+                FindInfo();
+            }
+
+            info.typeOfPlayer = typeOfCharacter;
+        }
+
+        public void FindInfo()
+        {
+            GameObject obj = GameObject.Find("InformationBetweenScenes");
+            info = obj.GetComponent<InformationBetweenScenes>();
+        }
+        private void Deselect()
+        {
+            isSelected = false;
+            spriteRenderer.color = hiddenColor;
+        }
     }
 }

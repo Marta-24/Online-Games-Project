@@ -11,7 +11,7 @@ namespace Scripts
         int Cooldown = 0;
         public bool isHorizontal;
         public PlayerMovement player;
-        float positiondiff = 4.0f;
+        float positiondiff = 3.0f;
         // Start is called before the first frame update
         void Start()
         {
@@ -52,11 +52,11 @@ namespace Scripts
             
             if (player.movementDirection == 1)
             {
-                positiondiff = 4.0f;
+                positiondiff = 3.0f;
             }
             else if (player.movementDirection == -1)
             {
-                positiondiff = -4.0f;
+                positiondiff = -3.0f;
             }
             Vector3 vec3 = gameObject.transform.position;
             GameObject obj = instanciator_.InstanceWall(new Vector2(vec3.x + positiondiff, vec3.y), vec);

@@ -9,6 +9,7 @@ namespace Scripts
     {
         public int typeOfPlayer;
         public bool isServer = false;
+
         // Start is called before the first frame update
         void Start()
         {
