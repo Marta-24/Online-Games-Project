@@ -59,14 +59,9 @@ namespace Scripts
         {
             SceneManager.LoadScene("WaitingRoom");
         }
-
-        public void LoadScene01Client()
+        public void LoadScene01()
         {
-            SceneManager.LoadScene("Scene1Client");
-        }
-        public void LoadScene01Server()
-        {
-            SceneManager.LoadScene("Scene1Server");
+            SceneManager.LoadScene("Scene1");
         }
         public void LoadScene01Client_()
         {
@@ -83,15 +78,15 @@ namespace Scripts
 
             if (level == 1)
             {
-                SceneManager.LoadScene("Scene1Server");
+                SceneManager.LoadScene("Scene1");
             }
             else if (level == 2)
             {
-                SceneManager.LoadScene("Scene2Server");
+                SceneManager.LoadScene("Scene2");
             }
             else if (level == 3)
             {
-                SceneManager.LoadScene("Scene3Server");
+                SceneManager.LoadScene("Scene3");
             }
 
             //Change Scene in other computer

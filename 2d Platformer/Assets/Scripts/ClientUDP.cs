@@ -48,12 +48,7 @@ namespace Scripts
                 FindNetIdManager();
             }
 
-            if (goToScene1)
-            {
-                Debug.Log("loading scene1");
-                sceneLoader.LoadScene01Client();
-                goToScene1 = false;
-            }
+            
 
             if (ColdDown > 0) ColdDown--;
         }

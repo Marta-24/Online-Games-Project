@@ -76,15 +76,15 @@ namespace Scripts
                 spawnPlayer = false;
                 SpawnPlayers();
             }
-            if (scene.name == "Scene1Server")
+            if (scene.name == "Scene1")
             {
                 SpawnLvl1();
             }
-            else if (scene.name == "Scene2Server")
+            else if (scene.name == "Scene2")
             {
                 SpawnLvl2();
             }
-            else if (scene.name == "Scene3Server")
+            else if (scene.name == "Scene3")
             {
                 SpawnLvl3();
             }
@@ -108,7 +108,7 @@ namespace Scripts
             {
                 CreateEnemyGround(new Vector2(6.0f, -7.0f));
                 CreateEnemyGround(new Vector2(9.0f, -15.0f));
-                CreateEnemyGround(new Vector2(46.0f, -9.5f));
+                CreateEnemyGround(new Vector2(46.0f, -10f));
 
                 CreateEnemyFly(new Vector2(-5.0f, -7.0f));
                 CreateEnemyFly(new Vector2(-3.0f, -6.0f));
