@@ -236,10 +236,10 @@ namespace Scripts
             }
         }
 
-        public void SendLevelChange(int level)
+        public void SendLevelChange(int level, bool spawnPlayer)
         {
-            if (server != null) server.SendLevelChange(level);
-            if (client != null) client.SendLevelChange(level);
+            if (server != null) server.SendLevelChange(level, spawnPlayer);
+            if (client != null) client.SendLevelChange(level, spawnPlayer);
         }
 
         public void CreateBullet(GameObject obj, Vector2 pos, int dir)
@@ -385,8 +385,9 @@ namespace Scripts
 
         private void FindServerOrClient()
         {
-            string name = SceneManager.GetActiveScene().name;
-            if (name == "MainMenu")
+            Scene man = SceneManager.GetActiveScene();
+           
+            if (man.name != "MainMenu")
             {
                 if (objectUDP == null) objectUDP = GameObject.Find("ClientManager");
                 if (objectUDP == null) objectUDP = GameObject.Find("ServerManager");
@@ -438,9 +439,10 @@ namespace Scripts
             return false;
         }
 
-        public void ActivateSpawn()
+        public void ActivateSpawn(bool player)
         {
             spawn.framesForSpawn = 44;
+            spawn.spawnPlayer = player;
             Debug.Log("FRAOPSDIDG FOPR SPAWN" + spawn.framesForSpawn);
         }
 

@@ -90,10 +90,21 @@ namespace Scripts
         {
             this.netId = netId;
             this.a = a;
-
         }
     }
 
+    public class StartGamePacket : ParentPacket
+    {
+        public int a;
+        public bool player;
+
+        public StartGamePacket(int netId, int a, bool player)
+        {
+            this.netId = netId;
+            this.a = a;
+            this.player = player;
+        }
+    }
 
     public class UserUDP
     {

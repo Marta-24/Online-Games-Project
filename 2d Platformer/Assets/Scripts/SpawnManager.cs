@@ -16,6 +16,7 @@ namespace Scripts
         public int spawnTypePlayer;
         public bool connectionType;
         public int framesForSpawn = -1;
+        public bool spawnPlayer = false;
         // Start is called before the first frame update
         void Start()
         {
@@ -28,7 +29,7 @@ namespace Scripts
         // Update is called once per frame
         void Update()
         {
-            if (framesForSpawn >= 0)
+            if (framesForSpawn > 0)
             {
                 Debug.Log(framesForSpawn);
                 framesForSpawn--;
@@ -58,13 +59,26 @@ namespace Scripts
 
         public void SpawnPlayers()
         {
+            int playerType = InformationBetweenScenes_.typeOfPlayer;
 
+            if (playerType == 1)
+            {
+                CreatePlayer1();
+            }
+            else if (playerType == 2)
+            {
+                CreatePlayer2();
+            }
         }
 
         public void ActivateSpawn()
         {
             Scene scene = SceneManager.GetActiveScene();
-
+            if (spawnPlayer)
+            {
+                spawnPlayer = false;
+                SpawnPlayers();
+            }
             if (scene.name == "Scene1Server")
             {
                 SpawnLvl1();
@@ -80,17 +94,6 @@ namespace Scripts
         }
         private void SpawnLvl1()
         {
-            /*spawnTypePlayer = InformationBetweenScenes_.typeOfPlayer;
-            if (spawnTypePlayer == 1)
-            {
-                CreatePlayer1();
-            }
-            else if (spawnTypePlayer == 2)
-            {
-                CreatePlayer2();
-            }*/
-            Debug.Log("creating");
-            CreatePlayer2();
             if (connectionType)
             {
                 CreateEnemyGround(new Vector2(6.0f, -2.0f));
@@ -104,11 +107,26 @@ namespace Scripts
         public void SpawnLvl2()
         {
             Debug.Log("SpawnLVL2 working!!!!!!!!!!!!!!!!!!!");
+            if (connectionType)
+            {
+                CreateEnemyGround(new Vector2(6.0f, -2.0f));
+                CreateEnemyGround(new Vector2(25.0f, 0.0f));
+                CreateEnemyGround(new Vector2(21.0f, -3.0f));
+
+                CreateEnemyFly(new Vector2(33.0f, 1.0f));
+            }
         }
 
         public void SpawnLvl3()
         {
+            if (connectionType)
+            {
+                CreateEnemyGround(new Vector2(6.0f, -2.0f));
+                CreateEnemyGround(new Vector2(25.0f, 0.0f));
+                CreateEnemyGround(new Vector2(21.0f, -3.0f));
 
+                CreateEnemyFly(new Vector2(33.0f, 1.0f));
+            }
         }
         void CreatePlayer1()
         {
@@ -160,12 +178,12 @@ namespace Scripts
         void FindComponents()
         {
             string name = SceneManager.GetActiveScene().name;
-            if (name == "MainMenu")
+            if (name != "MainMenu")
             {
-            idManager = GameObject.FindWithTag("NetIdManager");
-            netIdManager_ = idManager.GetComponent<NetIdManager>();
+                idManager = GameObject.FindWithTag("NetIdManager");
+                netIdManager_ = idManager.GetComponent<NetIdManager>();
 
-            
+
                 GameObject objServer = GameObject.Find("ServerManager");
                 if (objServer == null) objServer = GameObject.Find("ClientManager");
 

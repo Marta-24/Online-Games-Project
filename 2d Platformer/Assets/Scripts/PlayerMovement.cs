@@ -12,6 +12,7 @@ namespace Scripts
         private Vector2 movement;
 
         public LayerMask groundLayer;
+         public LayerMask playerLayer;
         private bool isGrounded;
         private Collider2D coll;
 
@@ -148,7 +149,11 @@ namespace Scripts
         //Ground check using collision layers
         bool IsGrounded()
         {
-            return Physics2D.IsTouchingLayers(coll, groundLayer);
+            if (Physics2D.IsTouchingLayers(coll, groundLayer)) return true;
+
+            if (Physics2D.IsTouchingLayers(coll, playerLayer)) return true;
+
+            return false;
         }
 
         void SendPlayerPosition()
@@ -172,6 +177,17 @@ namespace Scripts
             }
 
             camera.GetComponent<CameraFollow>().ChangeTarget(parent.transform);
+        }
+
+        void OnTriggerEnter2D(Collider2D other)
+        {   
+            Debug.Log("i tiger" + other.tag);
+            if (other.CompareTag("Enemy") && !other.isTrigger)
+            {
+                
+                Debug.Log("what i ma doing here");
+                rb.MovePosition(new Vector2(0.0f, 0.0f));
+            }
         }
     }
     

@@ -35,6 +35,11 @@ namespace Scripts
         Thread newConnection;
         public SceneLoader sceneLoader;
 
+        public void Start()
+        {
+            GameObject obj = GameObject.Find("SceneLoader");
+            sceneLoader = obj.GetComponent<SceneLoader>();
+        }
         // Function called with a button to start the udp server
         public void StartServer()
         {
@@ -93,10 +98,8 @@ namespace Scripts
         {
             receiveNewConnections = false;
             newConnection.Abort();
-            IntPacket packet = new IntPacket(0, 1);
 
-            string json01 = JsonUtility.ToJson(packet);
-            SendString(json01, ActionType.ChangeLevel);
+            sceneLoader.ChangeToLevel(1, true, true);
         }
 
         void SendHello(EndPoint Remote)
@@ -210,8 +213,8 @@ namespace Scripts
             }
             else if (actionType == ActionType.ChangeLevel)
             {
-                IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
-                sceneLoader.NextFramChange(packet.a, false);
+                StartGamePacket packet = JsonUtility.FromJson<StartGamePacket>(str);
+                sceneLoader.NextFramChange(packet.a, false, packet.player);
             }
         }
 
@@ -238,13 +241,14 @@ namespace Scripts
             SendString(json01, ActionType.Damage);
         }
 
-        public void SendLevelChange(int level)
+        public void SendLevelChange(int level, bool playerSpawn)
         {
-            IntPacket packet = new IntPacket(0, level);
+            StartGamePacket packet = new StartGamePacket(0, level, playerSpawn);
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.ChangeLevel);
         }
+
         public void SendString(string str, ActionType type)
         {
             string json02 = JsonUtility.ToJson(type);

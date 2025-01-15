@@ -10,6 +10,7 @@ namespace Scripts
         Scene scene;
         bool nextFrame = false;
         int nextFrameLevel;
+        bool nextFramSpawnPlayer = false;
         void Start()
         {
             scene = SceneManager.GetActiveScene();
@@ -20,7 +21,7 @@ namespace Scripts
             {
                 Debug.Log("Heeeeeelllooooooooo");
                 nextFrame = false;
-                ChangeToLevel(nextFrameLevel, false);
+                ChangeToLevel(nextFrameLevel, false, nextFramSpawnPlayer);
             }
 
             if (clientScene)
@@ -72,12 +73,12 @@ namespace Scripts
             clientScene = true;
         }
 
-        public void ChangeToLevel(int level, bool notifyConnection) //if notify connection is true this trigger will be send online
+        public void ChangeToLevel(int level, bool notifyConnection, bool spawnPlayer) //if notify connection is true this trigger will be send online
         {
             //Should call destroy everything minus players
             if (idManager != null) idManager.ChangeScenesSave();
 
-            idManager.ActivateSpawn();
+            idManager.ActivateSpawn(spawnPlayer);
             Debug.Log(level);
 
             if (level == 1)
@@ -94,13 +95,14 @@ namespace Scripts
             }
 
             //Change Scene in other computer
-            if (notifyConnection) idManager.SendLevelChange(level);
+            if (notifyConnection) idManager.SendLevelChange(level, spawnPlayer);
         }
 
-        public void NextFramChange(int level, bool notifyConnection) //if notify connection is true this trigger will be send online
+        public void NextFramChange(int level, bool notifyConnection, bool player) //if notify connection is true this trigger will be send online
         {
             Debug.Log("WORKED");
             nextFrame = true;
+            nextFramSpawnPlayer = player;
             nextFrameLevel = level;
         }
 

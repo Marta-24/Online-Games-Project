@@ -27,7 +27,6 @@ namespace Scripts
         public GameObject enemyPrefab;
         public GameObject netManager;
         public NetIdManager netIdScript;
-        public GameObject sceneManager;
         string userName;
         string nameIp;
         public InformationBetweenScenes info;
@@ -35,9 +34,11 @@ namespace Scripts
         public int ColdDown = 20;
         void Start()
         {
-            sceneLoader = sceneManager.GetComponent<SceneLoader>();
             textIp = textPanelIp.GetComponent<TMP_InputField>();
             textName = textPanelName.GetComponent<TMP_InputField>();
+
+            GameObject obj = GameObject.Find("SceneLoader");
+            sceneLoader = obj.GetComponent<SceneLoader>();
         }
 
         void Update()
@@ -190,11 +191,10 @@ namespace Scripts
                 IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
                 netIdScript.GiveDamage(packet.netId, packet.a);
             }
-            else if (actionType == ActionType.ChangeLevel)
+           else if (actionType == ActionType.ChangeLevel)
             {
-                Debug.Log("action type receviere");
-                IntPacket packet = JsonUtility.FromJson<IntPacket>(str);
-                sceneLoader.NextFramChange(packet.a, false);
+                StartGamePacket packet = JsonUtility.FromJson<StartGamePacket>(str);
+                sceneLoader.NextFramChange(packet.a, false, packet.player);
             }
         }
 
@@ -221,9 +221,9 @@ namespace Scripts
             SendString(json01, ActionType.Damage);
         }
 
-        public void SendLevelChange(int level)
+        public void SendLevelChange(int level, bool playerSpawn)
         {
-            IntPacket packet = new IntPacket(0, level);
+            StartGamePacket packet = new StartGamePacket(0, level, playerSpawn);
 
             string json01 = JsonUtility.ToJson(packet);
             SendString(json01, ActionType.ChangeLevel);

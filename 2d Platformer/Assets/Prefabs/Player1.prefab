@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 5248161808531041800}
   - component: {fileID: -2379158702107969218}
   - component: {fileID: -3600970536227373684}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player1
   m_TagString: Player1
   m_Icon: {fileID: 0}
@@ -130,6 +130,9 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
   animator: {fileID: 0}
   objectUDP: {fileID: 0}
   server: {fileID: 0}
@@ -263,3 +266,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isHorizontal: 1
+  player: {fileID: 0}
